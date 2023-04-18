@@ -26,7 +26,7 @@
 #include <media/v4l2-image-sizes.h>
 #include <media/v4l2-mediabus.h>
 
-#define DRIVER_VERSION			KERNEL_VERSION(0, 0x01, 0x1)
+#define DRIVER_VERSION			KERNEL_VERSION(0, 0x01, 0x2)
 
 /* IMX219 supported geometry */
 #define IMX219_TABLE_END		0xffff
@@ -813,12 +813,39 @@ static int imx219_enum_frame_interval(struct v4l2_subdev *sd,
 	if (fie->index >= priv->cfg_num)
 		return -EINVAL;
 
-	if (fie->code != MEDIA_BUS_FMT_SRGGB10_1X10)
-		return -EINVAL;
-
+	// if (fie->code != MEDIA_BUS_FMT_SRGGB10_1X10)
+	// 	return -EINVAL;
+	fie->code = MEDIA_BUS_FMT_SRGGB10_1X10;
 	fie->width = supported_modes[fie->index].width;
 	fie->height = supported_modes[fie->index].height;
 	fie->interval = supported_modes[fie->index].max_fps;
+	fie->reserved[0] = NO_HDR;
+
+	return 0;
+}
+
+static int imx219_enum_frame_size(struct v4l2_subdev *sd,
+				      struct v4l2_subdev_pad_config *cfg,
+				      struct v4l2_subdev_frame_size_enum *fse)
+{
+	struct i2c_client *client = v4l2_get_subdevdata(sd);
+	struct imx219 *priv = to_imx219(client);
+
+	//if (fse->pad >= NUM_PADS)
+	//	return -EINVAL;
+
+	if (fse->index >= priv->cfg_num)
+		return -EINVAL;
+
+	//imx219_get_format_code(priv, fse->code)
+	if (fse->code != MEDIA_BUS_FMT_SRGGB10_1X10)
+		return -EINVAL;
+
+	fse->min_width = supported_modes[fse->index].width;
+	fse->max_width = fse->min_width;
+	fse->min_height = supported_modes[fse->index].height;
+	fse->max_height = fse->min_height;
+
 	return 0;
 }
 
@@ -839,6 +866,7 @@ static struct v4l2_subdev_core_ops imx219_subdev_core_ops = {
 static const struct v4l2_subdev_pad_ops imx219_subdev_pad_ops = {
 	.enum_mbus_code = imx219_enum_mbus_code,
 	.enum_frame_interval = imx219_enum_frame_interval,
+	.enum_frame_size = imx219_enum_frame_size,
 	.set_fmt = imx219_set_fmt,
 	.get_fmt = imx219_get_fmt,
 };
