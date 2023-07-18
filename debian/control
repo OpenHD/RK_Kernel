@@ -18,11 +18,3 @@ Description: Linux kernel headers for 5.10.160 on arm64
  This package provides kernel header files for 5.10.160 on arm64
  .
  This is useful for people who need to build external modules
-
-Package: linux-libc-dev-5.10.160-rockchip
-Architecture: arm64
-Description: Linux libc for 5.10.160 on arm64
- This package libc files for 5.10.160 on arm64
- .
- This is useful for people who need to build external modules
-
