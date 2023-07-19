@@ -52,9 +52,9 @@ jobs:
 
     - name: build legacy kernel
       run: |
+        cd ..
         mkdir rk3588-sdk 
         mkdir -p rk3588-sdk/kernel
-        ls -a
         mv RK_Kernel/* rk3588-sdk/kernel/
         cd rk3588-sdk
         git clone -b master https://github.com/radxa/rkbin.git
