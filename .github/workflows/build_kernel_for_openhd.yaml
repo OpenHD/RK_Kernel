@@ -27,7 +27,9 @@ jobs:
       run: |
         wget https://dl.radxa.com/tools/linux/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu.tar.gz
         sudo tar zxvf gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu.tar.gz -C /usr/local/
+        echo "debug"
         echo 'export PATH="/usr/local/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu/linux-x86/aarch64/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu/bin:$PATH"' >> ~/.bashrc
+        echo "debug"
         source ~/.bashrc
         which aarch64-none-linux-gnu-gcc
         aarch64-none-linux-gnu-gcc -v
