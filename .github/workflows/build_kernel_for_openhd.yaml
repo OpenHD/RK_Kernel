@@ -8,7 +8,7 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-20.04
     env:
       CLOUDSMITH_API_KEY: ${{ secrets.CLOUDSMITH_API_KEY }}
     steps:
@@ -31,7 +31,6 @@ jobs:
         source ~/.bashrc
         which aarch64-none-linux-gnu-gcc
         aarch64-none-linux-gnu-gcc -v
-        sudo apt-get install device-tree-compiler libncurses5 libncurses5-dev build-essential libssl-dev mtools bc dosfstools
     # - name: clone drivers into kernel
     #   run: |
     #     mkdir workdir
