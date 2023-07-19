@@ -24,6 +24,7 @@ jobs:
         sudo tar zxvf gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu.tar.gz -C /usr/local/
         export PATH="/usr/local/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu/linux-x86/aarch64/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu/bin:$PATH"
         source ~/.bashrc
+        
     # - name: clone drivers into kernel
     #   run: |
     #     mkdir workdir
