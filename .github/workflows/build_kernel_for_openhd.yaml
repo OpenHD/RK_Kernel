@@ -23,14 +23,14 @@ jobs:
         # only needed for build_legacy_kernel
         sudo apt install -y binutils-aarch64-linux-gnu gcc-aarch64-linux-gnu device-tree-compiler libncurses5 libncurses5-dev build-essential libssl-dev mtools bc dosfstools bison flex rsync u-boot-tools make
     
-    - name: link and install compiler
-      run: |
-        wget https://dl.radxa.com/tools/linux/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu.tar.gz
-        sudo tar zxvf gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu.tar.gz -C /usr/local/
-        export PATH="/usr/local/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu/linux-x86/aarch64/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu/bin:$PATH"
-        source ~/.bashrc
-        which aarch64-none-linux-gnu-gcc
-        aarch64-none-linux-gnu-gcc -v
+    # - name: link and install compiler
+    #   run: |
+    #     wget https://dl.radxa.com/tools/linux/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu.tar.gz
+    #     sudo tar zxvf gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu.tar.gz -C /usr/local/
+    #     export PATH="/usr/local/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu/linux-x86/aarch64/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu/bin:$PATH"
+    #     source ~/.bashrc
+    #     which aarch64-none-linux-gnu-gcc
+    #     aarch64-none-linux-gnu-gcc -v
     # - name: clone drivers into kernel
     #   run: |
     #     mkdir workdir
@@ -65,7 +65,7 @@ jobs:
         mv RK_Kernel/* rk3588-sdk/kernel/
         cd rk3588-sdk
         git clone -b master https://github.com/radxa/rkbin.git
-        git clone -b debian https://github.com/radxa/build.git
+        git clone -b debian https://github.com/openhd/buildrk3558.git build
         sudo ./build/mk-kernel.sh rk3588-rock-5b
         sudo ./build/pack-kernel.sh -d rockchip_linux_defconfig -r 99
 
