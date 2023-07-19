@@ -8,7 +8,7 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     env:
       CLOUDSMITH_API_KEY: ${{ secrets.CLOUDSMITH_API_KEY }}
     steps:
@@ -23,8 +23,6 @@ jobs:
         sudo apt install -y parted udev dosfstools uuid-runtime git-lfs device-tree-compiler python2 python3 python-is-python3 fdisk bc
         # only needed for build_legacy_kernel
         sudo apt install -y device-tree-compiler libncurses5 libncurses5-dev build-essential libssl-dev mtools bc dosfstools bison flex rsync u-boot-tools make
-        sudo apt-get install -y gcc-aarch64-linux-gnu # GNU C compiler for the arm64 architecture
-        sudo apt-get install -y g++-aarch64-linux-gnu # GNU C++ compiler
     - name: clone drivers into kernel
       run: |
         mkdir workdir
@@ -51,25 +49,25 @@ jobs:
         cd ../../../
         ls -a
 
-    - name: build legacy kernel
-      run: |
-        cd ..
-        mkdir rk3588-sdk 
-        mkdir -p rk3588-sdk/kernel
-        mv RK_Kernel/* rk3588-sdk/kernel/
-        cd rk3588-sdk
-        git clone -b master https://github.com/radxa/rkbin.git
-        git clone -b debian https://github.com/radxa/build.git
-        export CROSS_COMPILE=aarch64-linux-gnu-
-        sudo ./build/mk-kernel.sh rk3588-rock-5b
-        sudo ./build/pack-kernel.sh -d rockchip_linux_defconfig -r 99
-
-    # - name: build kernel
+    # - name: build legacy kernel
     #   run: |
-    #     dpkg-buildpackage -a "$(cat debian/arch)" -d -b -nc -uc
-    #     ls -a ../
-    #     cd .. 
-    #     cp *.deb RK_Kernel/
+    #     cd ..
+    #     mkdir rk3588-sdk 
+    #     mkdir -p rk3588-sdk/kernel
+    #     mv RK_Kernel/* rk3588-sdk/kernel/
+    #     cd rk3588-sdk
+    #     git clone -b master https://github.com/radxa/rkbin.git
+    #     git clone -b debian https://github.com/radxa/build.git
+    #     export CROSS_COMPILE=aarch64-linux-gnu-
+    #     sudo ./build/mk-kernel.sh rk3588-rock-5b
+    #     sudo ./build/pack-kernel.sh -d rockchip_linux_defconfig -r 99
+
+    - name: build kernel
+      run: |
+        dpkg-buildpackage -a "$(cat debian/arch)" -d -b -nc -uc
+        ls -a ../
+        cd .. 
+        cp *.deb RK_Kernel/
   
     - name: Upload to Github
       uses: 'actions/upload-artifact@v2'
