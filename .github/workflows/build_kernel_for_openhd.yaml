@@ -23,38 +23,39 @@ jobs:
         sudo apt install -y parted udev dosfstools uuid-runtime git-lfs device-tree-compiler python2 python3 python-is-python3 fdisk bc
         # only needed for build_legacy_kernel
         sudo apt install -y device-tree-compiler libncurses5 libncurses5-dev build-essential libssl-dev mtools bc dosfstools bison flex rsync u-boot-tools make
-    - name: clone drivers into kernel
-      run: |
-        mkdir workdir
-        cd workdir
-        git clone https://github.com/OpenHD/rtl8812au -b rockchip
-        cd rtl8812au
-        mkdir -p ../../drivers/net/wireless/rtl8812au
-        mv * ../../drivers/net/wireless/rtl8812au/
-        cd ../.. 
-        rm -Rf workdir
-        cd drivers/net/wireless/
-        echo 'obj-$(CONFIG_RTL8812AU) += rtl8812au/' >> Makefile
-        sed -i '1s/^/CONFIG_RTL8812AU=m\n/' ../../../arch/arm64/configs/rockchip_linux_defconfig
-        echo "debug on"
-        echo "$(cat Makefile)"
-        echo "debug off"
-        echo "debug on config"
-        cat ../../../arch/arm64/configs/rockchip_linux_defconfig
-        echo "debug off"
-        sed -i '52s/.*/source "drivers\/net\/wireless\/rtl8812au\/Kconfig"/' Kconfig
-        echo "debug on"
-        echo "$(cat Kconfig)"
-        echo "debug off"
-        cd ../../../
-        ls -a
+    # - name: clone drivers into kernel
+    #   run: |
+    #     mkdir workdir
+    #     cd workdir
+    #     git clone https://github.com/OpenHD/rtl8812au -b rockchip
+    #     cd rtl8812au
+    #     mkdir -p ../../drivers/net/wireless/rtl8812au
+    #     mv * ../../drivers/net/wireless/rtl8812au/
+    #     cd ../.. 
+    #     rm -Rf workdir
+    #     cd drivers/net/wireless/
+    #     echo 'obj-$(CONFIG_RTL8812AU) += rtl8812au/' >> Makefile
+    #     sed -i '1s/^/CONFIG_RTL8812AU=m\n/' ../../../arch/arm64/configs/rockchip_linux_defconfig
+    #     echo "debug on"
+    #     echo "$(cat Makefile)"
+    #     echo "debug off"
+    #     echo "debug on config"
+    #     cat ../../../arch/arm64/configs/rockchip_linux_defconfig
+    #     echo "debug off"
+    #     sed -i '52s/.*/source "drivers\/net\/wireless\/rtl8812au\/Kconfig"/' Kconfig
+    #     echo "debug on"
+    #     echo "$(cat Kconfig)"
+    #     echo "debug off"
+    #     cd ../../../
+    #     ls -a
 
     - name: build legacy kernel
       run: |
         cd ..
         mkdir rk3588-sdk 
         mkdir -p rk3588-sdk/kernel
-        git clone -b dev-rkr3.4 https://github.com/ArduCAM/RK_Kernel.git kernel        cd rk3588-sdk
+        git clone -b dev-rkr3.4 https://github.com/ArduCAM/RK_Kernel.git kernel        
+        cd rk3588-sdk
         git clone -b master https://github.com/radxa/rkbin.git
         git clone -b debian https://github.com/radxa/build.git
         export CROSS_COMPILE=aarch64-linux-gnu-
