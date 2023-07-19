@@ -31,7 +31,7 @@ jobs:
         source ~/.bashrc
         which aarch64-none-linux-gnu-gcc
         aarch64-none-linux-gnu-gcc -v
-        sudo apt-get install device-tree-compiler libncurses5 libncurses5-dev build-essential libssl-dev mtools bc python dosfstools
+        sudo apt-get install device-tree-compiler libncurses5 libncurses5-dev build-essential libssl-dev mtools bc dosfstools
     # - name: clone drivers into kernel
     #   run: |
     #     mkdir workdir
