@@ -55,7 +55,6 @@ jobs:
       run: |
         cd ..
         mkdir rk3588-sdk 
-#        mkdir -p rk3588-sdk/kernel
         git clone -b dev-rkr3.4 https://github.com/ArduCAM/RK_Kernel.git kernel        
         cd rk3588-sdk
         git clone -b master https://github.com/radxa/rkbin.git
