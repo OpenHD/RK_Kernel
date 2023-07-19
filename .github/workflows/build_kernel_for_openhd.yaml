@@ -53,7 +53,7 @@ jobs:
         dpkg-buildpackage -a "$(cat debian/arch)" -d -b -nc -uc
         ls -a ../
         cd .. 
-        cp *.deb linux-rockchip/
+
   
     - name: Upload to Github
       uses: 'actions/upload-artifact@v2'
