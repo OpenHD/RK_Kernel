@@ -63,31 +63,31 @@ jobs:
           *.deb
           RK_Kernel/*.deb
           
-    - name: Push
-      id: push
-      uses: cloudsmith-io/action@master
-      with:
-        api-key: ${{ secrets.CLOUDSMITH_API_KEY }}
-        command: "push"
-        format: "deb"
-        owner: "openhd"
-        repo: "openhd-2-3-evo"
-        distro: "ubuntu"
-        release: "jammy"
-        republish: "true" # needed ONLY if version is not changing
-        file: "linux-image*.deb"
+    # - name: Push
+    #   id: push
+    #   uses: cloudsmith-io/action@master
+    #   with:
+    #     api-key: ${{ secrets.CLOUDSMITH_API_KEY }}
+    #     command: "push"
+    #     format: "deb"
+    #     owner: "openhd"
+    #     repo: "openhd-2-3-evo"
+    #     distro: "ubuntu"
+    #     release: "jammy"
+    #     republish: "true" # needed ONLY if version is not changing
+    #     file: "linux-image*.deb"
 
-    - name: Push header
-      id: push_headers
-      uses: cloudsmith-io/action@master
-      with:
-        api-key: ${{ secrets.CLOUDSMITH_API_KEY }}
-        command: "push"
-        format: "deb"
-        owner: "openhd"
-        repo: "openhd-2-3-evo"
-        distro: "ubuntu"
-        release: "jammy"
-        republish: "true" # needed ONLY if version is not changing
-        file: "linux-header*.deb"
+    # - name: Push header
+    #   id: push_headers
+    #   uses: cloudsmith-io/action@master
+    #   with:
+    #     api-key: ${{ secrets.CLOUDSMITH_API_KEY }}
+    #     command: "push"
+    #     format: "deb"
+    #     owner: "openhd"
+    #     repo: "openhd-2-3-evo"
+    #     distro: "ubuntu"
+    #     release: "jammy"
+    #     republish: "true" # needed ONLY if version is not changing
+    #     file: "linux-header*.deb"
 
