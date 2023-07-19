@@ -8,7 +8,7 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-20.04
     env:
       CLOUDSMITH_API_KEY: ${{ secrets.CLOUDSMITH_API_KEY }}
     steps:
@@ -60,7 +60,6 @@ jobs:
         cd rk3588-sdk
         git clone -b master https://github.com/radxa/rkbin.git
         git clone -b debian https://github.com/radxa/build.git
-        aarch64-linux-gnu-gcc --version
         export CROSS_COMPILE=aarch64-linux-gnu-
         sudo ./build/mk-kernel.sh rk3588-rock-5b
         sudo ./build/pack-kernel.sh -d rockchip_linux_defconfig -r 99
