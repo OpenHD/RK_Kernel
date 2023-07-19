@@ -21,6 +21,8 @@ jobs:
         sudo apt update
         sudo apt install -y build-essential gcc-aarch64-linux-gnu bison qemu-user-static qemu-system-arm qemu-efi u-boot-tools binfmt-support debootstrap flex libssl-dev bc rsync kmod cpio xz-utils fakeroot 
         sudo apt install -y parted udev dosfstools uuid-runtime git-lfs device-tree-compiler python2 python3 python-is-python3 fdisk bc
+        # only needed for build_image
+        sudo apt install -y device-tree-compiler libncurses5 libncurses5-dev build-essential libssl-dev mtools bc python dosfstools bison flex rsync u-boot-tools make
 
     - name: clone drivers into kernel
       run: |
@@ -46,14 +48,25 @@ jobs:
         echo "$(cat Kconfig)"
         echo "debug off"
         cd ../../../
+        ls -a
 
-
-    - name: build kernel
+    - name: build legycy kernel
       run: |
-        dpkg-buildpackage -a "$(cat debian/arch)" -d -b -nc -uc
-        ls -a ../
-        cd .. 
-        cp *.deb RK_Kernel/
+        mkdir rk3588-sdk 
+        mkdir -p rk3588-sdk/kernel
+        mv * rk3588-sdk/kernel/
+        cd rk3588-sdk
+        git clone -b master https://github.com/radxa/rkbin.git
+        git clone -b debian https://github.com/radxa/build.git
+        sudo ./build/mk-kernel.sh rk3588-rock-5b
+        sudo ./build/pack-kernel.sh -d rockchip_linux_defconfig -r 99
+
+    # - name: build kernel
+    #   run: |
+    #     dpkg-buildpackage -a "$(cat debian/arch)" -d -b -nc -uc
+    #     ls -a ../
+    #     cd .. 
+    #     cp *.deb RK_Kernel/
   
     - name: Upload to Github
       uses: 'actions/upload-artifact@v2'
