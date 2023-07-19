@@ -21,7 +21,7 @@ jobs:
       run: |
         sudo apt update
         # only needed for build_legacy_kernel
-        sudo apt install -y gcc-aarch64-linux-gnu device-tree-compiler libncurses5 libncurses5-dev build-essential libssl-dev mtools bc dosfstools bison flex rsync u-boot-tools make
+        sudo apt install -y binutils-aarch64-linux-gnu gcc-aarch64-linux-gnu device-tree-compiler libncurses5 libncurses5-dev build-essential libssl-dev mtools bc dosfstools bison flex rsync u-boot-tools make
     
     # - name: link and install compiler
     #   run: |
