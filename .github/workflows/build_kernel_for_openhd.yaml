@@ -60,8 +60,8 @@ jobs:
       run: |
         cd ..
         mkdir rk3588-sdk 
-        git clone -b dev-rkr3.4 https://github.com/ArduCAM/RK_Kernel.git kernel        
         cd rk3588-sdk
+        git clone -b dev-rkr3.4 https://github.com/ArduCAM/RK_Kernel.git kernel        
         git clone -b master https://github.com/radxa/rkbin.git
         git clone -b debian https://github.com/radxa/build.git
         export CROSS_COMPILE=aarch64-linux-gnu-
