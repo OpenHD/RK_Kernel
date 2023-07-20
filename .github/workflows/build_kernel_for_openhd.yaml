@@ -22,7 +22,7 @@ jobs:
         sudo apt update
         # only needed for build_legacy_kernel
         #sudo apt install -y binutils-aarch64-linux-gnu gcc-aarch64-linux-gnu device-tree-compiler libncurses5 libncurses5-dev build-essential libssl-dev mtools bc dosfstools bison flex rsync u-boot-tools make
-        sudo apt install -y  build-essential crossbuild-essential-arm64 gcc-arm-none-eabi git u-boot-tools cpio multipath-tools jq docker.io bison flex libssl-dev python2 ruby swig python2-dev minicom
+        sudo apt install -y  build-essential crossbuild-essential-arm64 gcc-arm-none-eabi git u-boot-tools cpio multipath-tools jq bison flex libssl-dev python2 ruby swig python2-dev minicom
     # - name: link and install compiler
     #   run: |
     #     echo $USER
