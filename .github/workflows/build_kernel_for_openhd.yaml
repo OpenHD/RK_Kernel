@@ -61,7 +61,7 @@ jobs:
         echo "ubuntu" > /opt/ChrootCompilationTest/additionalFiles/distro.txt
         echo "jammy" > /opt/ChrootCompilationTest/additionalFiles/flavor.txt
         cd /opt/ChrootCompilationTest/
-        apt update
+        sudo apt update
         sudo bash install_dep.sh
         sudo bash build.sh rock5 $API_KEY debian bullseye
 
