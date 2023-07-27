@@ -2,6 +2,7 @@
 #This file is the install instruction for the CHROOT build
 #We're using cloudsmith-cli to upload the file in CHROOT
 
+sudo apt-get install -y git device-tree-compiler libncurses5 libncurses5-dev build-essential libssl-dev mtools bc python-is-python3 dosfstools bison flex rsync u-boot-tools make
 sudo apt install -y python3-pip
 sudo pip3 install --upgrade cloudsmith-cli
 ls -a
