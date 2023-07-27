@@ -7,7 +7,7 @@ sudo apt install -y python3-pip
 sudo pip3 install --upgrade cloudsmith-cli
 ls -a
 mkdir ~/rk3588-sdk && cd ~/rk3588-sdk
-git clone -b dev-rkr3.4 https://github.com/ArduCAM/RK_Kernel.git kernel
+git clone -b dev-rkr3.4 https://github.com/OpenHD/RK_Kernel.git kernel --depth=1
 git clone -b master https://github.com/radxa/rkbin.git
 git clone -b debian https://github.com/radxa/build.git
 cd ~/rk3588-sdk
