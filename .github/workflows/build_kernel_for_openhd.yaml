@@ -10,24 +10,12 @@ jobs:
   build:
     runs-on: ubuntu-22.04
     container:
-      image: docker://ubuntu:lunar
+      image: docker://debian:bullseye
     env:
       CLOUDSMITH_API_KEY: ${{ secrets.CLOUDSMITH_API_KEY }}
     steps:
 
-    - uses: actions/checkout@v3
-      with:
-        submodules: recursive
 
-    - name: install dependencies
-      run: |
-        wget https://releases.linaro.org/components/toolchain/binaries/7.3-2018.05/aarch64-linux-gnu/gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu.tar.xz
-        sudo tar xvf gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu.tar.xz  -C /usr/local/
-        export CROSS_COMPILE=/usr/local/gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-
-        export PATH="/usr/local/gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu/bin:$PATH"
-        which aarch64-linux-gnu-gcc
-        sudo apt-get install gcc-aarch64-linux-gnu device-tree-compiler libncurses5 libncurses5-dev build-essential libssl-dev mtools
-        sudo apt-get install bc python-is-python3 dosfstools
     #   run: |
     #     echo $USER
     #     wget https://dl.radxa.com/tools/linux/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu.tar.gz
@@ -66,6 +54,8 @@ jobs:
 
     - name: build legacy kernel
       run: |
+        apt update
+        apt install git
         git clone https://github.com/OpenHD/ChrootCompilationTest /opt/ChrootCompilationTest
         mkdir -p /opt/ChrootCompilationTest/additionalFiles
         git clone https://github.com/OpenHD/OpenHD -b 2.4-evo /opt/ChrootCompilationTest/additionalFiles/ --recursive
@@ -73,9 +63,9 @@ jobs:
         echo "ubuntu" > /opt/ChrootCompilationTest/additionalFiles/distro.txt
         echo "jammy" > /opt/ChrootCompilationTest/additionalFiles/flavor.txt
         cd /opt/ChrootCompilationTest/
-        sudo apt update
-        sudo bash install_dep.sh
-        sudo bash build.sh rock5 $API_KEY ubuntu jammy
+        apt update
+        bash install_dep.sh
+        bash build.sh rock5 $API_KEY debian bullseye
 
     # - name: build kernel
     #   run: |
