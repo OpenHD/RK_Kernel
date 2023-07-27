@@ -9,6 +9,8 @@ env:
 jobs:
   build:
     runs-on: ubuntu-22.04
+    container:
+      image: docker://ubuntu:lunar
     env:
       CLOUDSMITH_API_KEY: ${{ secrets.CLOUDSMITH_API_KEY }}
     steps:
@@ -64,16 +66,16 @@ jobs:
 
     - name: build legacy kernel
       run: |
-        cd ..
-        mkdir rk3588-sdk 
-        mkdir -p rk3588-sdk/kernel
-        #mv RK_Kernel/* rk3588-sdk/kernel/
-        cd rk3588-sdk
-        git clone https://github.com/radxa/kernel
-        git clone -b master https://github.com/radxa/rkbin.git
-        git clone -b debian https://github.com/radxa/build.git
-        sudo ./build/mk-kernel.sh rk3588-rock-5b
-        sudo ./build/pack-kernel.sh -d rockchip_linux_defconfig -r 99
+        git clone https://github.com/OpenHD/ChrootCompilationTest /opt/ChrootCompilationTest
+        mkdir -p /opt/ChrootCompilationTest/additionalFiles
+        git clone https://github.com/OpenHD/OpenHD -b 2.4-evo /opt/ChrootCompilationTest/additionalFiles/ --recursive
+        echo $CLOUDSMITH_API_KEY > /opt/ChrootCompilationTest/additionalFiles/cloudsmith_api_key.txt
+        echo "ubuntu" > /opt/ChrootCompilationTest/additionalFiles/distro.txt
+        echo "jammy" > /opt/ChrootCompilationTest/additionalFiles/flavor.txt
+        cd /opt/ChrootCompilationTest/
+        sudo apt update
+        sudo bash install_dep.sh
+        sudo bash build.sh rock5 $API_KEY ubuntu jammy
 
     # - name: build kernel
     #   run: |
