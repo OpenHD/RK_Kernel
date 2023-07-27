@@ -14,7 +14,7 @@ cd ~/rk3588-sdk
 sudo ./build/mk-kernel.sh rk3588-rock-5b
 
 mkdir -p /opt/out/
-cp -v out/*.dep /opt/out/
+cp -v out/packages/*.dep /opt/out/
 echo "copied deb file"
 echo "push to cloudsmith"
 git describe --exact-match HEAD >/dev/null 2>&1
