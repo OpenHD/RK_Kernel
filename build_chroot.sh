@@ -11,7 +11,7 @@ git clone -b dev-rkr3.4 https://github.com/OpenHD/RK_Kernel.git kernel --depth=1
 git clone -b master https://github.com/radxa/rkbin.git
 git clone -b debian https://github.com/radxa/build.git
 cd ~/rk3588-sdk
-sudo ./build/mk-kernel.sh rk3588-rock-5b
+sudo ./build/pack-kernel.sh -d rockchip_linux_defconfig -r 99 
 
 mkdir -p /opt/out/
 cp -v out/packages/*.dep /opt/out/
