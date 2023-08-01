@@ -73,12 +73,7 @@ jobs:
         cd ..
         mv RK_Kernel kernel
         export PATH="/usr/local/gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu/bin:$PATH"
-        git clone -b master https://github.com/radxa/rockchip-bsp.git
-        cd rockchip-bsp
-        git submodule init
-        git submodule update
-        rm -Rf kernel 
-        mv ../kernel kernel/
+        git clone https://github.com/openhd/build_radxa_sdk build
         ls -a
         export ARCH=arm64
         export CROSS_COMPILE=aarch64-linux-gnu-
