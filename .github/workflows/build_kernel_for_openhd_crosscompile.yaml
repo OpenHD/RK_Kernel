@@ -32,31 +32,31 @@ jobs:
     #     cat ~/.bashrc
     #     sudo rm -Rf /usr/local/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu/linux-x86/aarch64/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu/bin/aarch64-rockchip1031*
     #     ls /usr/local/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu/linux-x86/aarch64/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu/bin
-    - name: clone drivers into kernel
-      run: |
-        mkdir workdir
-        cd workdir
-        git clone https://github.com/OpenHD/rtl8812au -b rockchip
-        cd rtl8812au
-        mkdir -p ../../drivers/net/wireless/rtl8812au
-        mv * ../../drivers/net/wireless/rtl8812au/
-        cd ../.. 
-        rm -Rf workdir
-        cd drivers/net/wireless/
-        echo 'obj-$(CONFIG_RTL8812AU) += rtl8812au/' >> Makefile
-        sed -i '1s/^/CONFIG_RTL8812AU=m\n/' ../../../arch/arm64/configs/rockchip_linux_defconfig
-        echo "debug on"
-        echo "$(cat Makefile)"
-        echo "debug off"
-        echo "debug on config"
-        cat ../../../arch/arm64/configs/rockchip_linux_defconfig
-        echo "debug off"
-        sed -i '52s/.*/source "drivers\/net\/wireless\/rtl8812au\/Kconfig"/' Kconfig
-        echo "debug on"
-        echo "$(cat Kconfig)"
-        echo "debug off"
-        cd ../../../
-        ls -a
+    # - name: clone drivers into kernel
+    #   run: |
+    #     mkdir workdir
+    #     cd workdir
+    #     git clone https://github.com/OpenHD/rtl8812au -b rockchip
+    #     cd rtl8812au
+    #     mkdir -p ../../drivers/net/wireless/rtl8812au
+    #     mv * ../../drivers/net/wireless/rtl8812au/
+    #     cd ../.. 
+    #     rm -Rf workdir
+    #     cd drivers/net/wireless/
+    #     echo 'obj-$(CONFIG_RTL8812AU) += rtl8812au/' >> Makefile
+    #     sed -i '1s/^/CONFIG_RTL8812AU=m\n/' ../../../arch/arm64/configs/rockchip_linux_defconfig
+    #     echo "debug on"
+    #     echo "$(cat Makefile)"
+    #     echo "debug off"
+    #     echo "debug on config"
+    #     cat ../../../arch/arm64/configs/rockchip_linux_defconfig
+    #     echo "debug off"
+    #     sed -i '52s/.*/source "drivers\/net\/wireless\/rtl8812au\/Kconfig"/' Kconfig
+    #     echo "debug on"
+    #     echo "$(cat Kconfig)"
+    #     echo "debug off"
+    #     cd ../../../
+    #     ls -a
 
     - name: build legacy kernel
       run: |
