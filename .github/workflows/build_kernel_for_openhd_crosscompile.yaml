@@ -51,7 +51,7 @@ jobs:
     #     cd ../../../
     #     ls -a
 
-    - name: build legacy kernel
+    - name: install dependencies
       run: |
         apt-get update
         dpkg --add-architecture arm64
@@ -60,6 +60,29 @@ jobs:
         gem install fpm
         curl https://bootstrap.pypa.io/pip/2.7/get-pip.py | python2
         python2 -m pip install pyelftools
+        apt-get install --no-install-recommends -y qemu-user-static binfmt-support
+
+    - name: install dependencies
+      run: |
+        git clone https://github.com/openhd/RK_Kernel
+        cd RK_Kernel
+        wget https://releases.linaro.org/components/toolchain/binaries/7.3-2018.05/aarch64-linux-gnu/gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu.tar.xz
+        tar xvf gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu.tar.xz  -C /usr/local/
+        apt-get install gcc-aarch64-linux-gnu device-tree-compiler libncurses5 libncurses5-dev build-essential libssl-dev mtools
+        apt-get install bc python dosfstools
+        cd ..
+        mv RK_Kernel kernel
+        export PATH="/usr/local/gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu/bin:$PATH"
+        git clone -b master https://github.com/radxa/rockchip-bsp.git
+        cd rockchip-bsp
+        git submodule init
+        git submodule update
+        rm -Rf kernel 
+        mv ../kernel kernel/
+        ls -a
+        export ARCH=arm64
+        export CROSS_COMPILE=aarch64-linux-gnu-
+        ./build/mk-kernel.sh rk3588-rock-5b 
 
     # - name: build kernel
     #   run: |
