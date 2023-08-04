@@ -77,7 +77,7 @@ jobs:
         ls -a
         export ARCH=arm64
         export CROSS_COMPILE=aarch64-linux-gnu-
-        ./build/mk-kernel.sh rk3588-rock-5b 
+        sudo ./build/pack-kernel.sh -d rockchip_linux_defconfig -r 99 
 
     # - name: build kernel
     #   run: |
