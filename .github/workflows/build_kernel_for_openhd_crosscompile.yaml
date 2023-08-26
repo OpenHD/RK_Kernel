@@ -64,6 +64,8 @@ jobs:
 
     - name: compile
       run: |
+        echo"wtf is going on"
+        
         git clone --recursive https://github.com/openhd/RK_Kernel 
         cd RK_Kernel
         ls -a drivers/net/wireless/realtek/rtl88x2bu/
