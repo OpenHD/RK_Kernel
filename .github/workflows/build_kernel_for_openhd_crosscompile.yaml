@@ -79,6 +79,7 @@ jobs:
         export ARCH=arm64
         export CROSS_COMPILE=aarch64-linux-gnu-
         cd build
+        chmod +777 -R ../*
         sudo ./pack-kernel.sh -d rockchip_linux_defconfig -r 99 
 
     # - name: build kernel
