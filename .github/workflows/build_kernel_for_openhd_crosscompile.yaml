@@ -75,7 +75,7 @@ jobs:
         mv RK_Kernel kernel
         export PATH="/usr/local/gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu/bin:$PATH"
         git clone https://github.com/openhd/build_radxa_sdk build
-        ls -a
+        ls -a kernel/drivers/net/wireless/realtek/rtl88x2bu
         export ARCH=arm64
         export CROSS_COMPILE=aarch64-linux-gnu-
         cd build
