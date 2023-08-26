@@ -67,7 +67,7 @@ jobs:
         git clone --depth=1 https://github.com/openhd/RK_Kernel 
         cd RK_Kernel
         mkdir -p drivers/net/wireless/realtek/rtl88x2bu/
-        git clone https://github.com/openhd/rtl88x2bu drivers/net/wireless/realtek/rtl88x2bu/
+        git clone -b rockchip https://github.com/openhd/rtl88x2bu drivers/net/wireless/realtek/rtl88x2bu/
         wget -q https://releases.linaro.org/components/toolchain/binaries/7.3-2018.05/aarch64-linux-gnu/gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu.tar.xz
         tar xvf gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu.tar.xz  -C /usr/local/
         apt-get -y install gcc-aarch64-linux-gnu device-tree-compiler libncurses5 libncurses5-dev build-essential libssl-dev mtools
