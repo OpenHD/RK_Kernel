@@ -1,6 +1,9 @@
 name: Build_Kernel_for_OpenHD_crosscompile
 
-on: [push]
+on:
+  push:
+    branches:
+      - main  # You can specify the branch you want to trigger this workflow for
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
@@ -14,112 +17,74 @@ jobs:
     env:
       CLOUDSMITH_API_KEY: ${{ secrets.CLOUDSMITH_API_KEY }}
     steps:
+      - name: install dependencies
+        run: |
+          apt-get update
+          dpkg --add-architecture arm64
+          apt-get update
+          apt-get full-upgrade --no-install-recommends -y wget build-essential crossbuild-essential-arm64 gcc-arm-none-eabi git ruby sudo apt-utils python3 python2 python-is-python2 curl debhelper python3-distutils python3-pkg-resources python3-setuptools python3-pyelftools python3-ply python3-git cpio bc flex fakeroot bison rsync kmod swig device-tree-compiler u-boot-tools python2-dev python3-dev libssl-dev uuid-dev libgnutls28-dev libc6:arm64 libssl-dev:arm64
+          gem install fpm
+          curl https://bootstrap.pypa.io/pip/2.7/get-pip.py | python2
+          python2 -m pip install pyelftools
+          apt-get install --no-install-recommends -y qemu-user-static binfmt-support
 
-    #   run: |
-    #     echo $USER
-    #     wget https://dl.radxa.com/tools/linux/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu.tar.gz
-    #     sudo tar zxvf gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu.tar.gz -C /usr/local/
-    #     echo "debug"
-    #     echo 'export PATH="/usr/local/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu/linux-x86/aarch64/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu/bin:$PATH"' >> ~/.bashrc
-    #     echo "debug"
-    #     cat ~/.bashrc
-    #     sudo rm -Rf /usr/local/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu/linux-x86/aarch64/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu/bin/aarch64-rockchip1031*
-    #     ls /usr/local/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu/linux-x86/aarch64/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu/bin
-    # - name: clone drivers into kernel
-    #   run: |
-    #     mkdir workdir
-    #     cd workdir
-    #     git clone https://github.com/OpenHD/rtl8812au -b rockchip
-    #     cd rtl8812au
-    #     mkdir -p ../../drivers/net/wireless/rtl8812au
-    #     mv * ../../drivers/net/wireless/rtl8812au/
-    #     cd ../.. 
-    #     rm -Rf workdir
-    #     cd drivers/net/wireless/
-    #     echo 'obj-$(CONFIG_RTL8812AU) += rtl8812au/' >> Makefile
-    #     sed -i '1s/^/CONFIG_RTL8812AU=m\n/' ../../../arch/arm64/configs/rockchip_linux_defconfig
-    #     echo "debug on"
-    #     echo "$(cat Makefile)"
-    #     echo "debug off"
-    #     echo "debug on config"
-    #     cat ../../../arch/arm64/configs/rockchip_linux_defconfig
-    #     echo "debug off"
-    #     sed -i '52s/.*/source "drivers\/net\/wireless\/rtl8812au\/Kconfig"/' Kconfig
-    #     echo "debug on"
-    #     echo "$(cat Kconfig)"
-    #     echo "debug off"
-    #     cd ../../../
-    #     ls -a
+      - name: compile
+        run: |
+          git clone --depth=1 https://github.com/openhd/RK_Kernel 
+          cd RK_Kernel
+          wget -q https://releases.linaro.org/components/toolchain/binaries/7.3-2018.05/aarch64-linux-gnu/gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu.tar.xz
+          tar xvf gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu.tar.xz  -C /usr/local/
+          apt-get -y install gcc-aarch64-linux-gnu device-tree-compiler libncurses5 libncurses5-dev build-essential libssl-dev mtools
+          apt-get -y install bc python dosfstools
+          cd ..
+          mv RK_Kernel kernel
+          export PATH="/usr/local/gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu/bin:$PATH"
+          git clone https://github.com/openhd/build_radxa_sdk build
+          export ARCH=arm64
+          export CROSS_COMPILE=aarch64-linux-gnu-
+          cd build
+          chmod +777 -R ../*
+          sudo ./pack-kernel.sh -d rockchip_linux_defconfig -r 99 
 
-    - name: install dependencies
-      run: |
-        apt-get update
-        dpkg --add-architecture arm64
-        apt-get update
-        apt-get full-upgrade --no-install-recommends -y wget build-essential crossbuild-essential-arm64 gcc-arm-none-eabi git ruby sudo apt-utils python3 python2 python-is-python2 curl debhelper python3-distutils python3-pkg-resources python3-setuptools python3-pyelftools python3-ply python3-git cpio bc flex fakeroot bison rsync kmod swig device-tree-compiler u-boot-tools python2-dev python3-dev libssl-dev uuid-dev libgnutls28-dev libc6:arm64 libssl-dev:arm64
-        gem install fpm
-        curl https://bootstrap.pypa.io/pip/2.7/get-pip.py | python2
-        python2 -m pip install pyelftools
-        apt-get install --no-install-recommends -y qemu-user-static binfmt-support
-
-    - name: compile
-      run: |      
-        git clone --depth=1 https://github.com/openhd/RK_Kernel 
-        cd RK_Kernel
-        wget -q https://releases.linaro.org/components/toolchain/binaries/7.3-2018.05/aarch64-linux-gnu/gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu.tar.xz
-        tar xvf gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu.tar.xz  -C /usr/local/
-        apt-get -y install gcc-aarch64-linux-gnu device-tree-compiler libncurses5 libncurses5-dev build-essential libssl-dev mtools
-        apt-get -y install bc python dosfstools
-        cd ..
-        mv RK_Kernel kernel
-        export PATH="/usr/local/gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu/bin:$PATH"
-        git clone https://github.com/openhd/build_radxa_sdk build
-        export ARCH=arm64
-        export CROSS_COMPILE=aarch64-linux-gnu-
-        cd build
-        chmod +777 -R ../*
-        sudo ./pack-kernel.sh -d rockchip_linux_defconfig -r 99 
-
-    # - name: build kernel
-    #   run: |
-    #     dpkg-buildpackage -a "$(cat debian/arch)" -d -b -nc -uc
-    #     ls -a ../
-    #     cd .. 
-    #     cp *.deb RK_Kernel/
+      # - name: build kernel
+      #   run: |
+      #     dpkg-buildpackage -a "$(cat debian/arch)" -d -b -nc -uc
+      #     ls -a ../
+      #     cd .. 
+      #     cp *.deb RK_Kernel/
   
-    - name: Upload to Github
-      uses: 'actions/upload-artifact@v2'
-      with:
-        name: "rock5-kernel-openhd"
-        path: |
-          *.deb
-          RK_Kernel/*.deb
+      - name: Upload to Github
+        uses: actions/upload-artifact@v2
+        with:
+          name: "rock5-kernel-openhd"
+          path: |
+            *.deb
+            RK_Kernel/*.deb
           
-     - name: Push
-       id: push
-       uses: cloudsmith-io/action@master
-       with:
-         api-key: ${{ secrets.CLOUDSMITH_API_KEY }}
-         command: "push"
-         format: "deb"
-         owner: "openhd"
-         repo: "openhd-2-3-evo"
-         distro: "debian"
-         release: "bullseye"
-         republish: "true" # needed ONLY if version is not changing
-         file: "linux-image*.deb"
+      - name: Push
+        id: push
+        uses: cloudsmith-io/action@master
+        with:
+          api-key: ${{ secrets.CLOUDSMITH_API_KEY }}
+          command: "push"
+          format: "deb"
+          owner: "openhd"
+          repo: "openhd-2-3-evo"
+          distro: "debian"
+          release: "bullseye"
+          republish: "true" # needed ONLY if version is not changing
+          file: "linux-image*.deb"
 
-     - name: Push header
-       id: push_headers
-       uses: cloudsmith-io/action@master
-       with:
-         api-key: ${{ secrets.CLOUDSMITH_API_KEY }}
-         command: "push"
-         format: "deb"
-         owner: "openhd"
-         repo: "openhd-2-3-evo"
-         distro: "debian"
-         release: "bullseye"
-         republish: "true" # needed ONLY if version is not changing
-         file: "linux-header*.deb"
-
+      - name: Push header
+        id: push_headers
+        uses: cloudsmith-io/action@master
+        with:
+          api-key: ${{ secrets.CLOUDSMITH_API_KEY }}
+          command: "push"
+          format: "deb"
+          owner: "openhd"
+          repo: "openhd-2-3-evo"
+          distro: "debian"
+          release: "bullseye"
+          republish: "true" # needed ONLY if version is not changing
+          file: "linux-header*.deb"
