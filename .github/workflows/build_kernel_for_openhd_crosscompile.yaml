@@ -1,9 +1,6 @@
 name: Build_Kernel_for_OpenHD_crosscompile
 
-on:
-  push:
-    branches:
-      - main  # You can specify the branch you want to trigger this workflow for
+on: [push]
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
