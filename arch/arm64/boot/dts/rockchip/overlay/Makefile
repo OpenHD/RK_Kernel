@@ -67,7 +67,7 @@ dtbo-$(CONFIG_ARCH_ROCKCHIP) += \
 	rock-5b-rpi-camera-v2.dtbo \
 	rock-5b-radxa-camera-4k.dtbo \
 	rock-5b-arducam-pivariety.dtbo \
-	rock-5b-arducam-imx477.dtbo \
+	rock-5b-custom-imx477.dtbo \
 	rock-5b-sata.dtbo \
 
 dtbotxt-$(CONFIG_ARCH_ROCKCHIP) += \
