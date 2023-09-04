@@ -1,4 +1,4 @@
-From 71cd854d2539aa59d7fb5fe5e7d69e6199c23af4 Mon Sep 17 00:00:00 2001
+From 71cd854d2539aa59d7fb5fe5e7d69e6199c23af4 Mon Sep 17 00:00:00 2023
 From: dennis <dennis@arducam.com>
 Date: Mon, 4 Sep 2023 16:40:41 +0000
 Subject: [PATCH]             arm64: dts: rock 5b: add support for arducam
