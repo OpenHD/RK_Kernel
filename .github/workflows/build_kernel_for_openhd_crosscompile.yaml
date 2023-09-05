@@ -45,13 +45,6 @@ jobs:
           chmod +777 -R ../*
           sudo ./pack-kernel.sh -d rockchip_linux_defconfig -r 99 
 
-      # - name: build kernel
-      #   run: |
-      #     dpkg-buildpackage -a "$(cat debian/arch)" -d -b -nc -uc
-      #     ls -a ../
-      #     cd .. 
-      #     cp *.deb RK_Kernel/
-  
       - name: Upload to Github
         uses: actions/upload-artifact@v2
         with:
