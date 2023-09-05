@@ -660,118 +660,118 @@ static const struct imx708_reg mode_hdr_regs[] = {
 	{0x3368, 0x04},
 	{0x3369, 0x38},
 };
-
 /* Mode configs. Keep separate lists for when HDR is enabled or not. */
 static const struct imx708_mode supported_modes[] = {
-	{
-		.bus_fmt = MEDIA_BUS_FMT_SRGGB10_1X10,
-		/* Full resolution. */
-		.width = 4608,
-		.height = 2592,
-		.max_fps = {
-			.numerator = 10000,
-			.denominator = 140000,
-		},
-		.line_length_pix = 0x3d20,
-		.crop = {
-			.left = IMX708_PIXEL_ARRAY_LEFT,
-			.top = IMX708_PIXEL_ARRAY_TOP,
-			.width = 4608,
-			.height = 2592,
-		},
-		.vblank_min = 58,
-		.vblank_default = 58,
-		.reg_list = {
-			.num_of_regs = ARRAY_SIZE(mode_4608x2592_regs),
-			.regs = mode_4608x2592_regs,
-		},
-		.pixel_rate = 595200000,
-		.exposure_lines_min = 8,
-		.exposure_lines_step = 1,
-		.hdr_mode = NO_HDR,
-	},
-	{
-		.bus_fmt = MEDIA_BUS_FMT_SRGGB10_1X10,
-		/* regular 2x2 binned. */
-		.width = 1920,
-		.height = 1080,
-		.max_fps = {
-			.numerator = 10000,
-			.denominator = 660000,
-		},
-		.line_length_pix = 0x1e90,
-		.crop = {
-			.left = IMX708_PIXEL_ARRAY_LEFT,
-			.top = IMX708_PIXEL_ARRAY_TOP,
-			.width = 4608,
-			.height = 2592,
-		},
-		.vblank_min = 40,
-		.vblank_default = 1198,
-		.reg_list = {
-			.num_of_regs = ARRAY_SIZE(mode_2x2binned_regs),
-			.regs = mode_2x2binned_regs,
-		},
-		.pixel_rate = 585600000,
-		.exposure_lines_min = 4,
-		.exposure_lines_step = 2,
-		.hdr_mode = NO_HDR,
-	},
-	{
-		.bus_fmt = MEDIA_BUS_FMT_SRGGB10_1X10,
-		/* There's only one HDR mode, which is 2x2 downscaled */
-		.width = 1920,
-		.height = 1080,
-		.max_fps = {
-			.numerator = 10000,
-			.denominator = 310000,
-		},
-		.line_length_pix = 0x1460,
-		.crop = {
-			.left = IMX708_PIXEL_ARRAY_LEFT,
-			.top = IMX708_PIXEL_ARRAY_TOP,
-			.width = 4608,
-			.height = 2592,
-		},
-		.vblank_min = 3673,
-		.vblank_default = 3673,
-		.reg_list = {
-			.num_of_regs = ARRAY_SIZE(mode_hdr_regs),
-			.regs = mode_hdr_regs,
-		},
-		.pixel_rate = 777600000,
-		.exposure_lines_min = 8 * IMX708_HDR_EXPOSURE_RATIO * IMX708_HDR_EXPOSURE_RATIO,
-		.exposure_lines_step = 2 * IMX708_HDR_EXPOSURE_RATIO * IMX708_HDR_EXPOSURE_RATIO,
-		.hdr_mode = HDR_X3,
-	},
-	{
-		.bus_fmt = MEDIA_BUS_FMT_SRGGB10_1X10,
-		/* 2x2 binned and cropped for 720p. */
-		.width = 1536,
-		.height = 864,
-		.max_fps = {
-			.numerator = 10000,
-			.denominator = 1200000,
-		},
-		.line_length_pix = 0x1460,
-		.crop = {
-			.left = IMX708_PIXEL_ARRAY_LEFT  768,
-			.top = IMX708_PIXEL_ARRAY_TOP  432,
-			.width = 3072,
-			.height = 1728,
-		},
-		.vblank_min = 40,
-		.vblank_default = 2755,
-		.reg_list = {
-			.num_of_regs = ARRAY_SIZE(mode_2x2binned_720p_regs),
-			.regs = mode_2x2binned_720p_regs,
-		},
-		.pixel_rate = 566400000,
-		.exposure_lines_min = 4,
-		.exposure_lines_step = 2,
-		.hdr_mode = NO_HDR,
-	},
+    {
+        .bus_fmt = MEDIA_BUS_FMT_SRGGB10_1X10,
+        /* Full resolution. */
+        .width = 4608,
+        .height = 2592,
+        .max_fps = {
+            .numerator = 10000,
+            .denominator = 140000,
+        },
+        .line_length_pix = 0x3d20,
+        .crop = {
+            .left = IMX708_PIXEL_ARRAY_LEFT,
+            .top = IMX708_PIXEL_ARRAY_TOP,
+            .width = 4608,
+            .height = 2592,
+        },
+        .vblank_min = 58,
+        .vblank_default = 58,
+        .reg_list = {
+            .num_of_regs = ARRAY_SIZE(mode_4608x2592_regs),
+            .regs = mode_4608x2592_regs,
+        },
+        .pixel_rate = 595200000,
+        .exposure_lines_min = 8,
+        .exposure_lines_step = 1,
+        .hdr_mode = NO_HDR,
+    },
+    {
+        .bus_fmt = MEDIA_BUS_FMT_SRGGB10_1X10,
+        /* regular 2x2 binned. */
+        .width = 1920,
+        .height = 1080,
+        .max_fps = {
+            .numerator = 10000,
+            .denominator = 660000,
+        },
+        .line_length_pix = 0x1e90,
+        .crop = {
+            .left = IMX708_PIXEL_ARRAY_LEFT,
+            .top = IMX708_PIXEL_ARRAY_TOP,
+            .width = 1920, // Corrected width for this mode
+            .height = 1080, // Corrected height for this mode
+        },
+        .vblank_min = 40,
+        .vblank_default = 1198,
+        .reg_list = {
+            .num_of_regs = ARRAY_SIZE(mode_2x2binned_regs),
+            .regs = mode_2x2binned_regs,
+        },
+        .pixel_rate = 585600000,
+        .exposure_lines_min = 4,
+        .exposure_lines_step = 2,
+        .hdr_mode = NO_HDR,
+    },
+    {
+        .bus_fmt = MEDIA_BUS_FMT_SRGGB10_1X10,
+        /* There's only one HDR mode, which is 2x2 downscaled */
+        .width = 1920,
+        .height = 1080,
+        .max_fps = {
+            .numerator = 10000,
+            .denominator = 310000,
+        },
+        .line_length_pix = 0x1460,
+        .crop = {
+            .left = IMX708_PIXEL_ARRAY_LEFT,
+            .top = IMX708_PIXEL_ARRAY_TOP,
+            .width = 1920, // Corrected width for this mode
+            .height = 1080, // Corrected height for this mode
+        },
+        .vblank_min = 3673,
+        .vblank_default = 3673,
+        .reg_list = {
+            .num_of_regs = ARRAY_SIZE(mode_hdr_regs),
+            .regs = mode_hdr_regs,
+        },
+        .pixel_rate = 777600000,
+        .exposure_lines_min = 8 * IMX708_HDR_EXPOSURE_RATIO * IMX708_HDR_EXPOSURE_RATIO,
+        .exposure_lines_step = 2 * IMX708_HDR_EXPOSURE_RATIO * IMX708_HDR_EXPOSURE_RATIO,
+        .hdr_mode = HDR_X3,
+    },
+    {
+        .bus_fmt = MEDIA_BUS_FMT_SRGGB10_1X10,
+        /* 2x2 binned and cropped for 720p. */
+        .width = 1536,
+        .height = 864,
+        .max_fps = {
+            .numerator = 10000,
+            .denominator = 1200000,
+        },
+        .line_length_pix = 0x1460,
+        .crop = {
+            .left = IMX708_PIXEL_ARRAY_LEFT + 768,
+            .top = IMX708_PIXEL_ARRAY_TOP + 432,
+            .width = 3072,
+            .height = 1728,
+        },
+        .vblank_min = 40,
+        .vblank_default = 2755,
+        .reg_list = {
+            .num_of_regs = ARRAY_SIZE(mode_2x2binned_720p_regs),
+            .regs = mode_2x2binned_720p_regs,
+        },
+        .pixel_rate = 566400000,
+        .exposure_lines_min = 4,
+        .exposure_lines_step = 2,
+        .hdr_mode = NO_HDR,
+    },
 };
+
 
 
 static const char * const imx708_test_pattern_menu[] = {
