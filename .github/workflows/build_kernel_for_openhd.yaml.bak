@@ -1,0 +1,118 @@
+name: Build_Kernel_for_OpenHD
+
+on: [push]
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    env:
+      CLOUDSMITH_API_KEY: ${{ secrets.CLOUDSMITH_API_KEY }}
+    steps:
+    - name: Maximize build space
+      uses: easimon/maximize-build-space@master
+      with:
+        root-reserve-mb: 512
+        swap-size-mb: 1024
+        remove-dotnet: 'true'
+        remove-android: 'true'
+        remove-haskell: 'true'
+        overprovision-lvm: 'true'
+
+    #   run: |
+    #     echo $USER
+    #     wget https://dl.radxa.com/tools/linux/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu.tar.gz
+    #     sudo tar zxvf gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu.tar.gz -C /usr/local/
+    #     echo "debug"
+    #     echo 'export PATH="/usr/local/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu/linux-x86/aarch64/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu/bin:$PATH"' >> ~/.bashrc
+    #     echo "debug"
+    #     cat ~/.bashrc
+    #     sudo rm -Rf /usr/local/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu/linux-x86/aarch64/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu/bin/aarch64-rockchip1031*
+    #     ls /usr/local/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu/linux-x86/aarch64/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu/bin
+    # - name: clone drivers into kernel
+    #   run: |
+    #     mkdir workdir
+    #     cd workdir
+    #     git clone https://github.com/OpenHD/rtl8812au -b rockchip
+    #     cd rtl8812au
+    #     mkdir -p ../../drivers/net/wireless/rtl8812au
+    #     mv * ../../drivers/net/wireless/rtl8812au/
+    #     cd ../.. 
+    #     rm -Rf workdir
+    #     cd drivers/net/wireless/
+    #     echo 'obj-$(CONFIG_RTL8812AU) += rtl8812au/' >> Makefile
+    #     sed -i '1s/^/CONFIG_RTL8812AU=m\n/' ../../../arch/arm64/configs/rockchip_linux_defconfig
+    #     echo "debug on"
+    #     echo "$(cat Makefile)"
+    #     echo "debug off"
+    #     echo "debug on config"
+    #     cat ../../../arch/arm64/configs/rockchip_linux_defconfig
+    #     echo "debug off"
+    #     sed -i '52s/.*/source "drivers\/net\/wireless\/rtl8812au\/Kconfig"/' Kconfig
+    #     echo "debug on"
+    #     echo "$(cat Kconfig)"
+    #     echo "debug off"
+    #     cd ../../../
+    #     ls -a
+
+    - name: build legacy kernel
+      run: |
+        sudo apt update
+        sudo apt install -y git
+        git clone https://github.com/OpenHD/ChrootCompilationTest /opt/ChrootCompilationTest
+        mkdir -p /opt/ChrootCompilationTest/additionalFiles
+        git clone https://github.com/OpenHD/rk_kernel /opt/ChrootCompilationTest/additionalFiles/ --recursive
+        echo $CLOUDSMITH_API_KEY > /opt/ChrootCompilationTest/additionalFiles/cloudsmith_api_key.txt
+        echo "ubuntu" > /opt/ChrootCompilationTest/additionalFiles/distro.txt
+        echo "jammy" > /opt/ChrootCompilationTest/additionalFiles/flavor.txt
+        cd /opt/ChrootCompilationTest/
+        sudo apt update
+        sudo bash install_dep.sh
+        sudo bash build.sh rock5 $API_KEY debian bullseye
+
+    # - name: build kernel
+    #   run: |
+    #     dpkg-buildpackage -a "$(cat debian/arch)" -d -b -nc -uc
+    #     ls -a ../
+    #     cd .. 
+    #     cp *.deb RK_Kernel/
+  
+    - name: Upload to Github
+      uses: 'actions/upload-artifact@v2'
+      with:
+        name: "rock5-kernel-openhd"
+        path: |
+          *.deb
+          RK_Kernel/*.deb
+          
+    # - name: Push
+    #   id: push
+    #   uses: cloudsmith-io/action@master
+    #   with:
+    #     api-key: ${{ secrets.CLOUDSMITH_API_KEY }}
+    #     command: "push"
+    #     format: "deb"
+    #     owner: "openhd"
+    #     repo: "openhd-2-3-evo"
+    #     distro: "ubuntu"
+    #     release: "jammy"
+    #     republish: "true" # needed ONLY if version is not changing
+    #     file: "linux-image*.deb"
+
+    # - name: Push header
+    #   id: push_headers
+    #   uses: cloudsmith-io/action@master
+    #   with:
+    #     api-key: ${{ secrets.CLOUDSMITH_API_KEY }}
+    #     command: "push"
+    #     format: "deb"
+    #     owner: "openhd"
+    #     repo: "openhd-2-3-evo"
+    #     distro: "ubuntu"
+    #     release: "jammy"
+    #     republish: "true" # needed ONLY if version is not changing
+    #     file: "linux-header*.deb"
+

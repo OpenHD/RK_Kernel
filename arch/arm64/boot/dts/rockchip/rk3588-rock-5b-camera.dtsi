@@ -74,6 +74,53 @@
 			};
 		};
 	};
+
+	arducam_pivariety: arducam-pivariety@c {
+		status = "disabled";
+		compatible = "arducam,arducam-pivariety";
+		reg = <0x0c>;
+
+		clocks = <&clk_cam_24m>;
+		clock-names = "xclk";
+
+		rockchip,camera-module-index = <0>;
+		rockchip,camera-module-facing = "back";
+		rockchip,camera-module-name = "arducam-pivariety";
+		rockchip,camera-module-lens-name = "default";
+		// power-domains = <&power RK3588_PD_VI>;
+		// pwdn-gpios = <&gpio1 RK_PB0 GPIO_ACTIVE_HIGH>;
+		
+		port {
+			pivariety_out0: endpoint {
+				remote-endpoint = <&mipidphy0_in_ucam2>;
+				data-lanes = <1 2>;
+			};
+		};
+	};
+
+	imx477: imx477@1a {
+		status = "disabled";
+		compatible = "sony,imx477";
+		reg = <0x1a>;
+
+		clocks = <&clk_cam_24m>;
+		clock-names = "xclk";
+
+		rockchip,camera-module-index = <0>;
+		rockchip,camera-module-facing = "back";
+		rockchip,camera-module-name = "arducam-imx477";
+		rockchip,camera-module-lens-name = "default";
+		// power-domains = <&power RK3588_PD_VI>;
+		// pwdn-gpios = <&gpio1 RK_PB0 GPIO_ACTIVE_HIGH>;
+		
+		port {
+			imx477_out0: endpoint {
+				remote-endpoint = <&mipidphy0_in_ucam3>;
+				data-lanes = <1 2>;
+			};
+		};
+	};
+
 };
 
 &csi2_dphy0_hw {
@@ -101,6 +148,18 @@
 			mipidphy0_in_ucam1: endpoint@2 {
 				reg = <2>;
 				remote-endpoint = <&imx219_out0>;
+				data-lanes = <1 2>;
+			};
+
+			mipidphy0_in_ucam2: endpoint@3 {
+				reg = <3>;
+				remote-endpoint = <&pivariety_out0>;
+				data-lanes = <1 2>;
+			};
+
+			mipidphy0_in_ucam3: endpoint@4 {
+				reg = <4>;
+				remote-endpoint = <&imx477_out0>;
 				data-lanes = <1 2>;
 			};
 		};

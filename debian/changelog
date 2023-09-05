@@ -1,0 +1,54 @@
+linux-rockchip-5.10.160 (5.10.160-8) jammy; urgency=medium
+
+  * add 8812au,8812bu
+  * remove drivers which have issues when compiling the kernel
+
+ -- Raphael Scholle <raphael@openhdfpv.org>  Fri, 30 Jun 2023 01:39:07 -0400
+
+linux-rockchip-5.10.160 (5.10.160-5) jammy; urgency=medium
+
+  * revert "iwlwifi: pnvm: pretend to have loaded pnvm file on 5.10 bsp (#60)"
+
+ -- Joshua Riek <jjriek@verizon.net>  Tue, 27 Jun 2023 17:12:07 -0400
+
+linux-rockchip-5.10.160 (5.10.160-4) jammy; urgency=medium
+
+  * iwlwifi: pnvm: pretend to have loaded pnvm file on 5.10 bsp (#60)
+  * Upload build artefacts (#59)
+  * arm64: dts: rockchip: use rockchip,hdmi as hdmirx audio driver ref: commit 99edbfa6ee142e2968c2b9ebb041016aa0ba9c75
+  * media: rockchip: hdmirx: hdmirx_audio_startup always return 0 PulseAudio would fail to load alsa card if hdmirx_audio_startup return error
+  * arm64: dts: use mmclkout_i2sx for opi5plus, nanopct6, and 9tripod
+  * arm64: dts: remove unused 9tripod device tree files
+  * Switch away from organisation
+  * Add workflow_dispatch trigger (#52)
+  * Store caches at this repository (#50)
+  * arm64: dts: opi5: move dp0 in vp2
+  * sound: rockchip: fix dp sound issue
+
+ -- Joshua Riek <jjriek@verizon.net>  Tue, 27 Jun 2023 09:26:32 -0400
+
+linux-rockchip-5.10.160 (5.10.160-3) jammy; urgency=medium
+
+  * Enable action script for kernel recompilation on PR (#42)
+  * arm64: dts: add overlay for ap6275p
+  * arm64: dts: opi5b: enable wireless and bluetooth nodes
+  * arm64: dts: opi5: disable wireless and bluetooth nodes
+  * arm64: dts: enable hdmi ece nanopir6 and nanopct6
+  * arm64: dts: nanopct6: increase cma size to 256mb
+  * arm64: dts: nanopct6: add hdmi0 and hdmi1 to display subsystem node
+  * arm64: dts: fix cursor and display plane for nanopir6 and nanopct6
+
+ -- Joshua Riek <jjriek@verizon.net>  Wed, 14 Jun 2023 18:24:54 -0400
+
+linux-rockchip-5.10.160 (5.10.160-2) jammy; urgency=medium
+
+  * arm64: dts: opi5plus: enable hdmirx node
+  * media: rockchip: hdmirx: silence spam on opi5plus 
+
+ -- Joshua Riek <jjriek@verizon.net>  Fri, 09 Jun 2023 09:59:49 -0400
+
+linux-rockchip-5.10.160 (5.10.160-1) jammy; urgency=medium
+
+  * Initial release.
+
+ -- Joshua Riek <jjriek@verizon.net>  Wed, 07 Jun 2023 11:03:10 -0400
