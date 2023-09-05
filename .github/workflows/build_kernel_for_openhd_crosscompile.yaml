@@ -30,7 +30,6 @@ jobs:
           git clone --depth=1 https://github.com/openhd/RK_Kernel 
           cd RK_Kernel
           git apply patches/0001-arm64-dts-rock-5b-add-support-for-arducam-imx708.patch
-          echo "hello"
           wget -q https://releases.linaro.org/components/toolchain/binaries/7.3-2018.05/aarch64-linux-gnu/gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu.tar.xz
           tar xvf gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu.tar.xz  -C /usr/local/
           apt-get -y install gcc-aarch64-linux-gnu device-tree-compiler libncurses5 libncurses5-dev build-essential libssl-dev mtools
