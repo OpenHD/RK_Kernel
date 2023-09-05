@@ -69,7 +69,6 @@ dtbo-$(CONFIG_ARCH_ROCKCHIP) += \
 	rock-5b-arducam-pivariety.dtbo \
 	rock-5b-arducam-imx708.dtbo \
 	rock-5b-arducam-imx708-hdr.dtbo \
-	rock-5b-custom-imx477.dtbo \
 	rock-5b-sata.dtbo \
 
 dtbotxt-$(CONFIG_ARCH_ROCKCHIP) += \
