@@ -11,7 +11,7 @@
 		compatible = "radxa,rock-5a", "rockchip,rk3588";
 		category = "camera";
 		exclusive = "csi2_dphy0";
-		description = "Enable Arducam Camera IMX708 HDR on ROCK 5B.";
+		description = "Enable Arducam Camera IMX708 HDR on ROCK 5A.";
 	};
 
 
