@@ -5,6 +5,10 @@ SUBLEVEL = 110
 EXTRAVERSION =
 NAME = Dare mighty things
 
+# Ignore some warnings
+CFLAGS += -Wno-unused-value
+
+
 # *DOCUMENTATION*
 # To see a list of typical targets execute "make help"
 # More info can be located in ./README
