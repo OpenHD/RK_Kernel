@@ -90,6 +90,12 @@ dtbo-$(CONFIG_ARCH_ROCKCHIP) += \
 	radxa-cm3-io-dual-cameras-gc2053-gc2093.dtbo \
 	radxa-cm3-io-camera-v2-imx219-cam2.dtbo \
 	radxa-cm3-io-camera-v2-imx219-cam1.dtbo \
+	rock-5a-arducam-imx708-hdr.dtbo \
+	rock-5a-arducam-imx708.dtbo \
+	rock-5a-arducam-pivariety.dtbo \
+	rock-5b-arducam-imx708-hdr.dtbo \
+	rock-5b-arducam-imx708.dtbo \
+	rock-5b-arducam-pivariety.dtbo \
 
 dtbotxt-$(CONFIG_ARCH_ROCKCHIP) += \
 	README.rockchip-overlays
