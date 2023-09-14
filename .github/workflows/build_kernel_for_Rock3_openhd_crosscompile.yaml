@@ -36,12 +36,12 @@ jobs:
           cd ..
           mv RK_Kernel kernel
           export PATH="/usr/local/gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu/bin:$PATH"
-          git clone https://github.com/openhd/build_radxa_sdk build
+          git clone -b testing https://github.com/openhd/build_radxa_sdk build
           export ARCH=arm64
           export CROSS_COMPILE=aarch64-linux-gnu-
           cd build
           chmod +777 -R ../*
-          sudo ./pack-kernel.sh rk3566-radxa-cm3-raspcm4io -r 199 
+          sudo ./pack-kernel.sh -d rockchip_linux_defconfig -r 199 
 
       - name: Upload to Github
         uses: actions/upload-artifact@v2
