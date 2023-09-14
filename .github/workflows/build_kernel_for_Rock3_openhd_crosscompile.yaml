@@ -41,7 +41,7 @@ jobs:
           export CROSS_COMPILE=aarch64-linux-gnu-
           cd build
           chmod +777 -R ../*
-          sudo ./pack-kernel.sh rk3566-radxa-cm3-raspcm4io -d rockchip_linux_defconfig -r 199 
+          sudo ./pack-kernel.sh rk3566-radxa-cm3-raspcm4io -r 199 
 
       - name: Upload to Github
         uses: actions/upload-artifact@v2
