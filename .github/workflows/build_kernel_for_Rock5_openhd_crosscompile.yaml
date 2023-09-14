@@ -1,4 +1,4 @@
-name: Build_Kernel_for_OpenHD_crosscompile
+name: Rock5
 
 on: [push]
 
