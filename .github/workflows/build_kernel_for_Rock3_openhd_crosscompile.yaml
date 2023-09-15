@@ -1,9 +1,6 @@
 name: Release
-on:
-  workflow_dispatch:
-  push:
-    paths:
-      - 'VERSION'
+on: [push]
+
 
 permissions:
   contents: write
