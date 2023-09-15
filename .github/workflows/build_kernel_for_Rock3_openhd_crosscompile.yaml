@@ -24,3 +24,13 @@ jobs:
           target: linux
           edition: rk356x
           revision: ${{ env.revision }}
+      - name: debug
+        run: |
+          ls -a
+      - name: Upload to Github
+        uses: actions/upload-artifact@v2
+        with:
+          name: "rock5-kernel-openhd"
+          path: |
+            *.deb
+            RK_Kernel/*.deb
