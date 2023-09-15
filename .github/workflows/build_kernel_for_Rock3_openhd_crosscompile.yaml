@@ -19,7 +19,7 @@ jobs:
           echo "revision=${VERSION#*-}" >> $GITHUB_ENV
           echo "tag_name=${VERSION}" >> $GITHUB_ENV
       - name: Build
-        uses: radxa-repo/bsp@main
+        uses: OpenHD/bsp@main
         with:
           target: linux
           edition: rk356x
