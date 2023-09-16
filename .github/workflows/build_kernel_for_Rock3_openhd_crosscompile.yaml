@@ -23,10 +23,6 @@ jobs:
         run: |
           sudo apt-get install --no-install-recommends -y qemu-user-static binfmt-support
       
-      - name: clone bsp
-        run: |
-          git clone https://github.com/openhd/bsp
-
       - name: build kernel
         run: |
           git clone https://github.com/openhd/bsp
