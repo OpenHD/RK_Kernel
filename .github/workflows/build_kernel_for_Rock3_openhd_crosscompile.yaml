@@ -18,12 +18,7 @@ jobs:
           VERSION=$(cat VERSION)
           echo "revision=${VERSION#*-}" >> $GITHUB_ENV
           echo "tag_name=${VERSION}" >> $GITHUB_ENV
-      - name: Build
-        uses: OpenHD/bsp@main
-        with:
-          target: linux
-          edition: rk356x
-          revision: ${{ env.revision }}
+
       - name: install dependencies
         run: |
           sudo apt-get install --no-install-recommends -y qemu-user-static binfmt-support
