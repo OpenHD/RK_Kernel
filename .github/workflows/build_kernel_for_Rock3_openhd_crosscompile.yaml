@@ -24,9 +24,20 @@ jobs:
           target: linux
           edition: rk356x
           revision: ${{ env.revision }}
-      - name: debug
+      - name: install dependencies
         run: |
-          tree
+          sudo apt-get install --no-install-recommends -y qemu-user-static binfmt-support
+      
+      - name: clone bsp
+        run: |
+          git clone https://github.com/openhd/bsp
+
+      - name: build kernel
+        run: |
+          git clone https://github.com/openhd/bsp
+          cd bsp
+          bash bsp --long-version -r 1 linux rk356x
+
       - name: Upload to Github
         uses: actions/upload-artifact@v2
         with:
