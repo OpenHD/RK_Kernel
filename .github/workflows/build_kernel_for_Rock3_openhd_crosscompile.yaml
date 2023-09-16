@@ -27,6 +27,7 @@ jobs:
         run: |
           git clone https://github.com/openhd/bsp
           cd bsp
+          ls -a
           bash bsp --long-version -r 1 linux rk356x
 
       - name: Upload to Github
