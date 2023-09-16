@@ -9,23 +9,24 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
+      # - name: Checkout
+      #   uses: actions/checkout@v4
+      #   with:
+      #     submodules: recursive
       - name: Get revision
         run: |
           VERSION=$(cat VERSION)
           echo "revision=${VERSION#*-}" >> $GITHUB_ENV
           echo "tag_name=${VERSION}" >> $GITHUB_ENV
 
-      - name: install dependencies
-        run: |
-          sudo apt-get install --no-install-recommends -y qemu-user-static binfmt-support
+      # - name: install dependencies
+      #   run: |
+      #     sudo apt-get install --no-install-recommends -y qemu-user-static binfmt-support
       
       - name: build kernel
         run: |
-          git clone https://github.com/openhd/bsp
+          cd bsp
+          ls -a
           cd bsp
           ls -a
           bash bsp --long-version -r 1 linux rk356x
