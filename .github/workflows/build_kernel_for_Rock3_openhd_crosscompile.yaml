@@ -31,6 +31,7 @@ jobs:
           ./bsp --long-version -r 1 linux rk356x |& tee buildlog.log
           echo "------------------------------------------------------------"
           ls -a
+          echo $PWD
           echo "------------------------------------------------------------"
 
       - name: Upload to Github
