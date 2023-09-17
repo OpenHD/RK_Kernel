@@ -19,9 +19,9 @@ jobs:
           echo "revision=${VERSION#*-}" >> $GITHUB_ENV
           echo "tag_name=${VERSION}" >> $GITHUB_ENV
 
-      # - name: install dependencies
-      #   run: |
-      #     sudo apt-get install --no-install-recommends -y qemu-user-static binfmt-support
+      - name: install dependencies
+        run: |
+          sudo apt-get install --no-install-recommends -y qemu-user-static tee binfmt-support
       
       - name: build kernel
         run: |
@@ -29,12 +29,13 @@ jobs:
           cd bsp
           chmod +x bsp
           chmod +x scripts/basic/fixdep
-          ./bsp --long-version -r 1 linux rk356x
+          ./bsp --long-version -r 1 linux rk356x |& tee buildlog.log
 
       - name: Upload to Github
         uses: actions/upload-artifact@v2
         with:
           name: "rock5-kernel-openhd"
           path: |
-            *.deb
-            RK_Kernel/*.deb
+            *.log
+            RK_Kernel/*.log
+            RK_Kernel/bsp/*.deb
