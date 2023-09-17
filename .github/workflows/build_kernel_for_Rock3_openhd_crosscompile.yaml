@@ -29,7 +29,7 @@ jobs:
           cd bsp
           chmod +x bsp
           ls -a
-          echo "bsp"
+          echo "bsp--------------------------------------------------------------"
           ls -a ../
           chmod +x scripts/basic/fixdep
           ./bsp --long-version -r 1 linux rk356x |& tee buildlog.log
