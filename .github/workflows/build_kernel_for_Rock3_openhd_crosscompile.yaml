@@ -41,5 +41,6 @@ jobs:
           name: "rock5-kernel-openhd"
           path: |
             *.log
+            *.deb
             RK_Kernel/*.log
             RK_Kernel/bsp/*.deb
