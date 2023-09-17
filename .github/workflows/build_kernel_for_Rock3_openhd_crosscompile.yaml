@@ -29,6 +29,11 @@ jobs:
           cd bsp
           chmod +x bsp
           ./bsp --long-version -r 1 linux rk356x |& tee buildlog.log
+          echo "------------------------------------------------------------"
+          ls -a
+          echo "------------------------------------------------------------"
+          tree
+          echo "------------------------------------------------------------"
 
       - name: Upload to Github
         uses: actions/upload-artifact@v2
