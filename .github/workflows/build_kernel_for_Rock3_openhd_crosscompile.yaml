@@ -29,10 +29,6 @@ jobs:
           cd bsp
           chmod +x bsp
           ./bsp --long-version -r 1 linux rk356x |& tee buildlog.log
-          echo "------------------------------------------------------------"
-          ls -a
-          echo $PWD
-          echo "------------------------------------------------------------"
 
       - name: Upload to Github
         uses: actions/upload-artifact@v2
@@ -41,5 +37,5 @@ jobs:
           path: |
             /home/runner/work/RK_Kernel/RK_Kernel/*.log
             /home/runner/work/RK_Kernel/RK_Kernel/bsp/*.log
-            /home/runner/work/RK_Kernel/RK_Kernel/bsp*.deb
-            RK_Kernel/bsp/*.deb
+            /home/runner/work/RK_Kernel/RK_Kernel/bsp/*.deb
+            bsp/*.deb
