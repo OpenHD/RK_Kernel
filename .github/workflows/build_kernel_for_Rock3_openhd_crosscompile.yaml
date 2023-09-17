@@ -32,8 +32,6 @@ jobs:
           echo "------------------------------------------------------------"
           ls -a
           echo "------------------------------------------------------------"
-          tree
-          echo "------------------------------------------------------------"
 
       - name: Upload to Github
         uses: actions/upload-artifact@v2
@@ -42,5 +40,5 @@ jobs:
           path: |
             *.log
             *.deb
-            RK_Kernel/*.log
+            RK_Kernel/*.deb
             RK_Kernel/bsp/*.deb
