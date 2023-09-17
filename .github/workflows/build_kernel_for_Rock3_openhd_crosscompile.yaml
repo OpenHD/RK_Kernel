@@ -21,7 +21,7 @@ jobs:
 
       - name: install dependencies
         run: |
-          sudo apt-get install --no-install-recommends -y qemu-user-static tee binfmt-support
+          sudo apt-get install --no-install-recommends -y qemu-user-static binfmt-support
       
       - name: build kernel
         run: |
