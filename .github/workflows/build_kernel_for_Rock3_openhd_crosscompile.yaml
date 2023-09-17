@@ -28,9 +28,8 @@ jobs:
           git clone https://github.com/openhd/bsp
           cd bsp
           chmod +x bsp
-          ls -a
           echo "bsp--------------------------------------------------------------"
-          ls -a ../
+          ls -a ../scripts/basic/
           chmod +x scripts/basic/fixdep
           ./bsp --long-version -r 1 linux rk356x |& tee buildlog.log
 
