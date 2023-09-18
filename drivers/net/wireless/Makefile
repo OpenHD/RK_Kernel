@@ -15,8 +15,6 @@ obj-$(CONFIG_WLAN_VENDOR_MEDIATEK) += mediatek/
 obj-$(CONFIG_WLAN_VENDOR_MICROCHIP) += microchip/
 obj-$(CONFIG_WLAN_VENDOR_RALINK) += ralink/
 obj-$(CONFIG_WLAN_VENDOR_REALTEK) += realtek/
-obj-$(CONFIG_WLAN_VENDOR_REALTEK) += RTL8812AU/
-obj-$(CONFIG_WLAN_VENDOR_REALTEK) += RTL88X2BU/
 obj-$(CONFIG_WLAN_VENDOR_RSI) += rsi/
 obj-$(CONFIG_WLAN_VENDOR_ST) += st/
 obj-$(CONFIG_WLAN_VENDOR_TI) += ti/
@@ -33,3 +31,5 @@ obj-$(CONFIG_MAC80211_HWSIM)	+= mac80211_hwsim.o
 
 obj-$(CONFIG_VIRT_WIFI)	+= virt_wifi.o
 obj-$(CONFIG_WL_ROCKCHIP)	+= rockchip_wlan/
+obj-$(CONFIG_RTL8812AU) += rtl8812au/
+obj-$(CONFIG_RTL8822BU) += rtl8812bu/
