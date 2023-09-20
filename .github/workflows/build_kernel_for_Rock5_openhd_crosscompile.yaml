@@ -1,0 +1,41 @@
+name: Release Rock5
+on: [push]
+
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Get revision
+        run: |
+          VERSION=$(cat VERSION)
+          echo "revision=${VERSION#*-}" >> $GITHUB_ENV
+          echo "tag_name=${VERSION}" >> $GITHUB_ENV
+
+      - name: install dependencies
+        run: |
+          sudo apt-get install --no-install-recommends -y build-essential qemu-user-static coreutils binfmt-support
+      
+      - name: build kernel
+        run: |
+          git clone https://github.com/openhd/bsp
+          cd bsp
+          chmod +x bsp
+          ./bsp --long-version -r 16 linux rk3588 |& tee buildlog.log
+
+      - name: Upload to Github
+        uses: actions/upload-artifact@v2
+        with:
+          name: "rock5-kernel-openhd"
+          path: |
+            /home/runner/work/RK_Kernel/RK_Kernel/*.log
+            /home/runner/work/RK_Kernel/RK_Kernel/bsp/*.log
+            /home/runner/work/RK_Kernel/RK_Kernel/bsp/*.deb
+            bsp/*.deb
