@@ -39,3 +39,45 @@ jobs:
             /home/runner/work/RK_Kernel/RK_Kernel/bsp/*.log
             /home/runner/work/RK_Kernel/RK_Kernel/bsp/*.deb
             bsp/*.deb
+
+      - name: Push
+        id: push
+        uses: cloudsmith-io/action@master
+        with:
+          api-key: ${{ secrets.CLOUDSMITH_API_KEY }}
+          command: "push"
+          format: "deb"
+          owner: "openhd"
+          repo: "openhd-2-3-evo"
+          distro: "debian"
+          release: "bullseye"
+          republish: "true" # needed ONLY if version is not changing
+          file: "/home/runner/work/RK_Kernel/RK_Kernel/linux-image*.deb"
+
+      - name: Push header
+        id: push_headers
+        uses: cloudsmith-io/action@master
+        with:
+          api-key: ${{ secrets.CLOUDSMITH_API_KEY }}
+          command: "push"
+          format: "deb"
+          owner: "openhd"
+          repo: "openhd-2-3-evo"
+          distro: "debian"
+          release: "bullseye"
+          republish: "true" # needed ONLY if version is not changing
+          file: "/home/runner/work/RK_Kernel/RK_Kernel/linux-header*.deb"
+          
+      - name: Push libc
+        id: push_headers
+        uses: cloudsmith-io/action@master
+        with:
+          api-key: ${{ secrets.CLOUDSMITH_API_KEY }}
+          command: "push"
+          format: "deb"
+          owner: "openhd"
+          repo: "openhd-2-3-evo"
+          distro: "debian"
+          release: "bullseye"
+          republish: "true" # needed ONLY if version is not changing
+          file: "/home/runner/work/RK_Kernel/RK_Kernel/linux-libc-dev*.deb"
