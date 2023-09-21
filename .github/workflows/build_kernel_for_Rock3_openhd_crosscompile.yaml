@@ -30,15 +30,16 @@ jobs:
           chmod +x bsp
           ./bsp --long-version -r 16 linux rk356x |& tee buildlog.log
 
+      - name: little hack for github uploads
+        run: |
+          cp -r /home/runner/work/RK_Kernel/RK_Kernel/bsp/*.deb /home/runner/work/RK_Kernel/RK_Kernel/
+
       - name: Upload to Github
         uses: actions/upload-artifact@v2
         with:
           name: "rock5-kernel-openhd"
           path: |
-            /home/runner/work/RK_Kernel/RK_Kernel/*.log
-            /home/runner/work/RK_Kernel/RK_Kernel/bsp/*.log
-            /home/runner/work/RK_Kernel/RK_Kernel/bsp/*.deb
-            bsp/*.deb
+            *.deb
 
       - name: Push
         id: push
@@ -52,7 +53,7 @@ jobs:
           distro: "debian"
           release: "bullseye"
           republish: "true" # needed ONLY if version is not changing
-          file: "bsp/linux-image-5.10.160-16*.deb"
+          file: "linux-image-5.10.160-16*.deb"
 
       - name: Push header
         id: push_headers
@@ -66,7 +67,7 @@ jobs:
           distro: "debian"
           release: "bullseye"
           republish: "true" # needed ONLY if version is not changing
-          file: "bsp/linux-headers-5.10.160-16*.deb"
+          file: "linux-headers-5.10.160-16*.deb"
           
       - name: Push libc
         id: push_libc
@@ -80,4 +81,4 @@ jobs:
           distro: "debian"
           release: "bullseye"
           republish: "true" # needed ONLY if version is not changing
-          file: "bsp/linux-libc-dev-5.10.160-16-rk356x_5.10.160-16*.deb"
+          file: "linux-libc-dev-5.10.160-16-rk356x*.deb"
