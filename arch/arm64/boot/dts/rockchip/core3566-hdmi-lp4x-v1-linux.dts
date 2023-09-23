@@ -6,6 +6,6 @@
 /dts-v1/;
 
 #include "core3566-base.dtsi"
-#include "core3566-hdmi-screen.dtsi"
-#include "core3566-mipi-camera-imx219-cam0.dtsi"
-#include "core3566-mipi-camera-imx219-cam1.dtsi"
+#include "overlay/core3566-hdmi-screen.dtsi"
+#include "overlay/core3566-mipi-camera-imx219-cam0.dtsi"
+#include "overlay/core3566-mipi-camera-imx219-cam1.dtsi"
