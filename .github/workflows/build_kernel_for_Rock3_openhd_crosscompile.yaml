@@ -25,7 +25,7 @@ jobs:
       
       - name: build kernel
         run: |
-          git clone https://github.com/openhd/bsp
+          git clone -b rkr4.1-core3566 https://github.com/openhd/bsp
           cd bsp
           chmod +x bsp
           ./bsp --long-version -r 16 linux rk356x |& tee buildlog.log
