@@ -28,7 +28,7 @@ jobs:
           git clone -b rkr4.1-core3566 https://github.com/openhd/bsp
           cd bsp
           chmod +x bsp
-          ./bsp --long-version -r 18 linux rk356x |& tee buildlog.log
+          ./bsp --long-version -r 1337 linux rk356x |& tee buildlog.log
 
       - name: little hack for github uploads
         run: |
