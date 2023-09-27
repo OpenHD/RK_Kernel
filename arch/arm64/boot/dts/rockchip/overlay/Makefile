@@ -96,6 +96,10 @@ dtbo-$(CONFIG_ARCH_ROCKCHIP) += \
 	rock-5b-arducam-imx708-hdr.dtbo \
 	rock-5b-arducam-imx708.dtbo \
 	rock-5b-arducam-pivariety.dtbo \
+	core3566-mipi-touchscreen-800-480.dtbo \
+	core3566-hdmi-screen.dtbo \
+	core3566-mipi-camera-imx219-cam0 \
+	core3566-mipi-camera-imx219-cam1 \
 
 dtbotxt-$(CONFIG_ARCH_ROCKCHIP) += \
 	README.rockchip-overlays
