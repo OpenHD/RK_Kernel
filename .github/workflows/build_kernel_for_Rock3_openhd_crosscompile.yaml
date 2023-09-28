@@ -1,5 +1,17 @@
 name: Release
-on: [push]
+
+on:
+  push:
+   branches:
+      - "2.5-evo"
+      - "dev-release"
+      - "release"
+   paths-ignore:
+      - '**.md'
+      - '**.asciidoc'
+      - '**.adoc'
+      - '.gitignore'
+      - 'LICENSE'
 
 
 permissions:
@@ -49,11 +61,11 @@ jobs:
           command: "push"
           format: "deb"
           owner: "openhd"
-          repo: "openhd-2-3-evo"
+          repo: ${{ github.ref_name }}
           distro: "debian"
           release: "bullseye"
           republish: "true" # needed ONLY if version is not changing
-          file: "linux-image-5.10.160-1337*.deb"
+          file: "linux-image-5.10.160*.deb"
 
       - name: Push header
         id: push_headers
@@ -63,11 +75,11 @@ jobs:
           command: "push"
           format: "deb"
           owner: "openhd"
-          repo: "openhd-2-3-evo"
+          repo: ${{ github.ref_name }}
           distro: "debian"
           release: "bullseye"
           republish: "true" # needed ONLY if version is not changing
-          file: "linux-headers-5.10.160-1337*.deb"
+          file: "linux-headers-5.10.160*.deb"
           
       - name: Push libc
         id: push_libc
@@ -77,8 +89,8 @@ jobs:
           command: "push"
           format: "deb"
           owner: "openhd"
-          repo: "openhd-2-3-evo"
+          repo: ${{ github.ref_name }}
           distro: "debian"
           release: "bullseye"
           republish: "true" # needed ONLY if version is not changing
-          file: "linux-libc-dev-5.10.160-1337*.deb"
+          file: "linux-libc-dev-5.10.160*.deb"
