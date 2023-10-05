@@ -147,13 +147,16 @@
 
 &sdmmc0 {
 	max-frequency = <150000000>;
-	supports-sd;
 	bus-width = <4>;
 	cap-mmc-highspeed;
 	cap-sd-highspeed;
+	supports-sd;
+	card-detect-delay = <800>;
+	ignore-pm-notify;
 	disable-wp;
-	sd-uhs-sdr104;
-	vmmc-supply = <&vcc_sd>;
+	sd-uhs-sdr50;
+	sd-uhs-sdr25;
+	vmmc-supply = <&vcc3v3_sd>;
 	vqmmc-supply = <&vccio_sd>;
 	pinctrl-names = "default";
 	pinctrl-0 = <&sdmmc0_bus4 &sdmmc0_clk &sdmmc0_cmd &sdmmc0_det>;

@@ -646,8 +646,11 @@
 };
 
 &pcie2x1 {
-	status = "disabled";
+    reset-gpios = <&gpio1 RK_PB2 GPIO_ACTIVE_HIGH>;
+    vpcie3v3-supply = <&vcc3v3_sys>;
+    status = "okay";
 };
+
 
 &vdpu {
 	status = "okay";
