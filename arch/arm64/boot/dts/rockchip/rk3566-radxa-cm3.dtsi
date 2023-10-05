@@ -70,20 +70,15 @@
 	};
 
 	sdio_pwrseq: sdio-pwrseq {
-		compatible = "mmc-pwrseq-simple";
-		clocks = <&rk817 1>;
-		clock-names = "ext_clock";
-		pinctrl-names = "default";
-		pinctrl-0 = <&wifi_enable_h>;
-		/*
-		 * On the module itself this is one of these (depending
-		 * on the actual card populated):
-		 * - SDIO_RESET_L_WL_REG_ON
-		 * - PDN (power down when low)
-		 */
-		reset-gpios = <&gpio2 RK_PB7 GPIO_ACTIVE_LOW>;
-	};
-};
+        compatible = "mmc-pwrseq-simple";
+        clocks = <&rk809 1>;
+        clock-names = "ext_clock";
+        pinctrl-names = "default";
+        pinctrl-0 = <&wifi_enable_h>;
+        post-power-on-delay-ms = <200>;
+        reset-gpios = <&gpio3 RK_PD5 GPIO_ACTIVE_LOW>;
+    };
+
 
 &cpu0 {
 	cpu-supply = <&vdd_cpu>;
@@ -716,20 +711,20 @@
 	pinctrl-names = "default";
 	pinctrl-0 = <&uart1m0_xfer &uart1m0_ctsn &uart1m0_rtsn>;
 
-	bluetooth {
-		compatible = "brcm,bcm4345c5";
-		clocks = <&rk817 1>;
-		clock-names = "lpo";
-		device-wakeup-gpios = <&gpio2 RK_PB2 GPIO_ACTIVE_HIGH>;
-		host-wakeup-gpios = <&gpio2 RK_PB1 GPIO_ACTIVE_HIGH>;
-		shutdown-gpios = <&gpio2 RK_PC0 GPIO_ACTIVE_HIGH>;
-		max-speed = <1500000>;
-		pinctrl-names = "default";
-		pinctrl-0 = <&bt_host_wake_l &bt_wake_l &bt_enable_h>;
-		vbat-supply = <&vcc3v3_sys>;
-		vddio-supply = <&vcc_1v8>;
-	};
-};
+	    wireless_bluetooth: wireless-bluetooth {
+        compatible = "bluetooth-platdata";
+        clocks = <&rk809 1>;
+        clock-names = "ext_clock";
+        //wifi-bt-power-toggle;
+        //uart_rts_gpios = <&gpio2 RK_PB1 GPIO_ACTIVE_LOW>;
+        pinctrl-names = "default", "rts_gpio";
+        pinctrl-0 = <&uart8m0_rtsn>;
+        pinctrl-1 = <&uart8_gpios>;
+        //BT,reset_gpio    = <&gpio3 RK_PA0 GPIO_ACTIVE_HIGH>;
+        //BT,wake_gpio     = <&gpio3 RK_PA1 GPIO_ACTIVE_HIGH>;
+        //BT,wake_host_irq = <&gpio3 RK_PA2 GPIO_ACTIVE_HIGH>;
+        status = "okay";
+    };
 
 &pinctrl {
 	pmic {
