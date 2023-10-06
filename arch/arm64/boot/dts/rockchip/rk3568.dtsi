@@ -203,8 +203,8 @@
 			clock-latency-ns = <40000>;
 		};
 		opp-1416000000 {
-			opp-hz = /bits/ 64 <1416000000>;
-			opp-microvolt = <80000 800000 900000>;
+			opp-hz = /bits/ 64 <1104000000>;
+			opp-microvolt = <700000 700000 900000>;
 												
 											  
 											  
@@ -212,8 +212,8 @@
 			clock-latency-ns = <40000>;
 		};
 		opp-1608000000 {
-			opp-hz = /bits/ 64 <1608000000>;
-			opp-microvolt = <900000 900000 900000>;
+			opp-hz = /bits/ 64 <1416000000>;
+			opp-microvolt = <800000 800000 900000>;
 												
 												
 												
