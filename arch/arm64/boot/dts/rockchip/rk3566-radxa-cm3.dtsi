@@ -42,8 +42,8 @@
 		regulator-name = "vcc3v3_sys";
 		regulator-always-on;
 		regulator-boot-on;
-		regulator-min-microvolt = <3200000>;
-		regulator-max-microvolt = <3200000>;
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
 		vin-supply = <&vcc_sys>;
 	};
 
