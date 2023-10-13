@@ -24,29 +24,29 @@
 		vin-supply = <&vcc3v3_sys>;
 	};
 
-	hdmi_sound: hdmi-sound {
-		compatible = "simple-audio-card";
-		simple-audio-card,format = "i2s";
-		simple-audio-card,mclk-fs = <128>;
-		simple-audio-card,name = "rockchip-hdmi0";
+	// hdmi_sound: hdmi-sound {
+	// 	compatible = "simple-audio-card";
+	// 	simple-audio-card,format = "i2s";
+	// 	simple-audio-card,mclk-fs = <128>;
+	// 	simple-audio-card,name = "rockchip-hdmi0";
 
-		simple-audio-card,cpu {
-				sound-dai = <&i2s0_8ch>;
-		};
-		simple-audio-card,codec {
-				sound-dai = <&hdmi>;
-		};
-	};
+	// 	simple-audio-card,cpu {
+	// 			sound-dai = <&i2s0_8ch>;
+	// 	};
+	// 	simple-audio-card,codec {
+	// 			sound-dai = <&hdmi>;
+	// 	};
+	// };
 
 };
 
-&fiq_debugger {
-	status = "okay";
-};
+// &fiq_debugger {
+// 	status = "okay";
+// };
 
-&i2s0_8ch {
-	status = "okay";
-};
+// &i2s0_8ch {
+// 	status = "okay";
+// };
 
 &display_subsystem {
 	status = "okay";
@@ -56,38 +56,38 @@
 	status = "okay";
 };
 
-&hdmi_in_vp0 {
-	status = "okay";
-};
+// &hdmi_in_vp0 {
+// 	status = "okay";
+// };
 
-&hdmi_in_vp1 {
-	status = "disabled";
-};
+// &hdmi_in_vp1 {
+// 	status = "disabled";
+// };
 
-&hdmi_sound {
-	status = "okay";
-};
+// &hdmi_sound {
+// 	status = "okay";
+// };
 
 &route_hdmi {
 	status = "okay";
 	connect = <&vp0_out_hdmi>;
 };
 
-&gpio_leds {
-	pi-led-green {
-		gpios = <&gpio4 4 GPIO_ACTIVE_LOW>;
-		linux,default-trigger = "timer";
-		default-state = "on";
-		pinctrl-0 = <&pi_led>;
-	};
+// &gpio_leds {
+// 	pi-led-green {
+// 		gpios = <&gpio4 4 GPIO_ACTIVE_LOW>;
+// 		linux,default-trigger = "timer";
+// 		default-state = "on";
+// 		pinctrl-0 = <&pi_led>;
+// 	};
 
-	pwr-led-red {
-		gpios = <&gpio4 15 GPIO_ACTIVE_LOW>;
-		linux,default-trigger = "none";
-		default-state = "on";
-		pinctrl-0 = <&pwr_led>;
-	};
-};
+// 	pwr-led-red {
+// 		gpios = <&gpio4 15 GPIO_ACTIVE_LOW>;
+// 		linux,default-trigger = "none";
+// 		default-state = "on";
+// 		pinctrl-0 = <&pwr_led>;
+// 	};
+// };
 
 &sdmmc0 {
 	max-frequency = <150000000>;
@@ -107,67 +107,67 @@
 	status = "okay";
 };
 
-&pcie2x1 {
-	reset-gpios = <&gpio1 RK_PB2 GPIO_ACTIVE_HIGH>;
-	vpcie3v3-supply = <&vcc3v3_sys>;
-	status = "okay";
-};
+// &pcie2x1 {
+// 	reset-gpios = <&gpio1 RK_PB2 GPIO_ACTIVE_HIGH>;
+// 	vpcie3v3-supply = <&vcc3v3_sys>;
+// 	status = "okay";
+// };
 
-&i2c0 {
-	status = "okay";
-	pinctrl-name = "default";
-	pinctrl-0 = <&i2c0_xfer>;
-	#address-cells = <1>;
-	#size-cells = <0>;
+// &i2c0 {
+// 	status = "okay";
+// 	pinctrl-name = "default";
+// 	pinctrl-0 = <&i2c0_xfer>;
+// 	#address-cells = <1>;
+// 	#size-cells = <0>;
 
-	emc2301: emc2301@2f {
-		status = "okay";
-		compatible = "microchip,emc2301";
-		reg = <0x2f>;
-		#address-cells = <1>;
-		#size-cells = <0>;
-		#cooling-cells = <2>;
-		microchip,pwm-separate;
-		microchip,cooling-levels = <10>;
-		channel@0 {
-			reg = <0>;
-			pwm-min = <0>;
-		};
-	};
-};
+// 	emc2301: emc2301@2f {
+// 		status = "okay";
+// 		compatible = "microchip,emc2301";
+// 		reg = <0x2f>;
+// 		#address-cells = <1>;
+// 		#size-cells = <0>;
+// 		#cooling-cells = <2>;
+// 		microchip,pwm-separate;
+// 		microchip,cooling-levels = <10>;
+// 		channel@0 {
+// 			reg = <0>;
+// 			pwm-min = <0>;
+// 		};
+// 	};
+// };
 
-&threshold {
-	temperature = <60000>;
-};
+// &threshold {
+// 	temperature = <60000>;
+// };
 
-&soc_thermal {
-	cooling-maps {
-		sustainable-power = <5000>; /* milliwatts */
-		map2 {
-			trip = <&target>;
-			cooling-device =
-				<&emc2301 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-			contribution = <8192>;
-		};
-		map3 {
-			trip = <&threshold>;
-			cooling-device =
-				<&emc2301 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-			contribution = <8192>;
-		};
-	};
-};
+// &soc_thermal {
+// 	cooling-maps {
+// 		sustainable-power = <5000>; /* milliwatts */
+// 		map2 {
+// 			trip = <&target>;
+// 			cooling-device =
+// 				<&emc2301 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
+// 			contribution = <8192>;
+// 		};
+// 		map3 {
+// 			trip = <&threshold>;
+// 			cooling-device =
+// 				<&emc2301 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
+// 			contribution = <8192>;
+// 		};
+// 	};
+// };
 
 &pinctrl {
-	leds {
-		pi_led: pi-led {
-			rockchip,pins = <4 RK_PA4 RK_FUNC_GPIO &pcfg_pull_none>;
-		};
+	// leds {
+	// 	pi_led: pi-led {
+	// 		rockchip,pins = <4 RK_PA4 RK_FUNC_GPIO &pcfg_pull_none>;
+	// 	};
 
-		pwr_led: pwr-led {
-			rockchip,pins = <4 RK_PB7 RK_FUNC_GPIO &pcfg_pull_none>;
-		};
-	};
+	// 	pwr_led: pwr-led {
+	// 		rockchip,pins = <4 RK_PB7 RK_FUNC_GPIO &pcfg_pull_none>;
+	// 	};
+	// };
 
 	sdcard {
 		sdmmc_pwren: sdmmc-pwren {
