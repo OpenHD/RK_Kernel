@@ -37,18 +37,18 @@
 	};
 };
 
-&rkisp {
-	rockchip,iq-feature = /bits/ 64 <0x1BFBF7FE67FF>;
-};
+// &rkisp {
+// 	rockchip,iq-feature = /bits/ 64 <0x1BFBF7FE67FF>;
+// };
 
-&usbdrd_dwc3 {
-	phys = <&u2phy0_otg>;
-	phy-names = "usb2-phy";
-	extcon = <&usb2phy0>;
-	maximum-speed = "high-speed";
-	snps,dis_u2_susphy_quirk;
-	snps,usb2-lpm-disable;
-};
+// &usbdrd_dwc3 {
+// 	phys = <&u2phy0_otg>;
+// 	phy-names = "usb2-phy";
+// 	extcon = <&usb2phy0>;
+// 	maximum-speed = "high-speed";
+// 	snps,dis_u2_susphy_quirk;
+// 	snps,usb2-lpm-disable;
+// };
 
 /delete-node/ &combphy0_us;
 /delete-node/ &gmac0_clkin;
