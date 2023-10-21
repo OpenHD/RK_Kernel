@@ -54,7 +54,7 @@ jobs:
           distro: "debian"
           release: "bullseye"
           republish: "true" # needed ONLY if version is not changing
-          file: "linux-image-5.10.160-1337*.deb"
+          file: "linux-image-5.10.160-*.deb"
 
       - name: Push header
         id: push_headers
@@ -68,7 +68,7 @@ jobs:
           distro: "debian"
           release: "bullseye"
           republish: "true" # needed ONLY if version is not changing
-          file: "linux-headers-5.10.160-1337*.deb"
+          file: "linux-headers-5.10.160-*.deb"
           
       - name: Push libc
         id: push_libc
@@ -82,4 +82,4 @@ jobs:
           distro: "debian"
           release: "bullseye"
           republish: "true" # needed ONLY if version is not changing
-          file: "linux-libc-dev-5.10.160-1337*.deb"
+          file: "linux-libc-dev-5.10.160-*.deb"
