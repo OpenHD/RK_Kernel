@@ -6,7 +6,7 @@
 
 / {
 	model = "luckfox core3566";
-	compatible = "luckfox,core3566", "rockchip,rk3566";
+	compatible = "radxa,cm3", "rockchip,rk3566";
  
     leds: leds {
         compatible = "gpio-leds";
