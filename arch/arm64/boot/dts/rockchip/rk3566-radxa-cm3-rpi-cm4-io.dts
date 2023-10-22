@@ -7,7 +7,7 @@
 
 /dts-v1/;
 
-#include "rk3566-radxa-cm3.dtsi"
+#include "core3566-base.dtsi"
 
 / {
 	model = "Radxa CM3 RPI CM4 IO";
