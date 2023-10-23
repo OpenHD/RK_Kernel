@@ -116,7 +116,6 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-evb2-lp4x-v10-pdm-mic-array.dtb
 dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-evb3-ddr3-v10.dtb
 dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-evb3-ddr3-v10-linux.dtb
 dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-evb5-lp4x-v10.dtb
-dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-radxa-cm3-io.dtb
 dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-radxa-cm3-rpi-cm4-io.dtb
 dtb-$(CONFIG_ARCH_ROCKCHIP) += core3566-mipi-lp4x-v1-linux.dtb
 dtb-$(CONFIG_ARCH_ROCKCHIP) += core3566-hdmi-lp4x-v1-linux.dtb
