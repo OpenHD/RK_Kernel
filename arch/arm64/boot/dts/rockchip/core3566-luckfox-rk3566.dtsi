@@ -15,7 +15,7 @@
 #include "core3566-rk3566.dtsi"
 
 / {
-	compatible = "radxa,cm3", "rockchip,rk3566";
+	compatible = "luckfox,core3566", "rockchip,rk3566";
 
 	aliases {
 		mmc0 = &sdhci;
