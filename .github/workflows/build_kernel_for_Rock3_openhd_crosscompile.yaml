@@ -26,7 +26,8 @@ jobs:
       - name: debug dtsi
         run: |
           sudo apt-get install device-tree-compiler
-          dtc -I dts -O dtb -o rk3566-radxa-cm3.dtsi
+          cat arch/arm64/boot/dts/rockchip/rk3566-radxa-cm3.dtsi
+          dtc -I dts -O dtb -o arch/arm64/boot/dts/rockchip/rk3566-radxa-cm3.dtsi
       - name: build kernel
         run: |
           git clone -b rkr4.1-core3566 https://github.com/openhd/bsp
