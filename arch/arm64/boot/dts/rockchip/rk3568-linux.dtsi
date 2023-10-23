@@ -55,13 +55,7 @@
 		ftrace-size = <0x00000>;
 		pmsg-size = <0x50000>;
 	};
-};
-
-reserved_memory: reserved-memory {
-	#address-cells = <2>;
-	#size-cells = <2>;
-	ranges;
-
+	
 	rknpu_reserved: rknpu {
 		compatible = "shared-dma-pool";
 		inactive;
