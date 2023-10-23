@@ -23,7 +23,10 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install --no-install-recommends -y build-essential qemu-user-static coreutils binfmt-support
-      
+      - name: debug dtsi
+        run: |
+          sudo apt-get install device-tree-compiler
+          dtc -I dts -O dtb -o rk3566-radxa-cm3.dtsi debug.dts
       - name: build kernel
         run: |
           git clone -b rkr4.1-core3566 https://github.com/openhd/bsp
