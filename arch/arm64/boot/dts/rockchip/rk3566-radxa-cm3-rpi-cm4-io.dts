@@ -91,17 +91,19 @@
 
 &sdmmc0 {
 	max-frequency = <150000000>;
-	supports-sd;
 	bus-width = <4>;
 	cap-mmc-highspeed;
 	cap-sd-highspeed;
+	supports-sd;
+	card-detect-delay = <800>;
+	ignore-pm-notify;
 	disable-wp;
-	broken-cd;
-	sd-uhs-sdr104;
-	vmmc-supply = <&vcc_sd>;
+	sd-uhs-sdr50;
+	sd-uhs-sdr25;
+	vmmc-supply = <&vcc3v3_sd>;
 	vqmmc-supply = <&vccio_sd>;
 	pinctrl-names = "default";
-	pinctrl-0 = <&sdmmc0_bus4 &sdmmc0_clk &sdmmc0_cmd>;
+	pinctrl-0 = <&sdmmc0_bus4 &sdmmc0_clk &sdmmc0_cmd &sdmmc0_det>;
 	status = "okay";
 };
 
@@ -139,24 +141,45 @@
 	temperature = <60000>;
 };
 
-&soc_thermal {
-	cooling-maps {
-		sustainable-power = <5000>; /* milliwatts */
-		map2 {
-			trip = <&target>;
-			cooling-device =
-				<&emc2301 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-			contribution = <8192>;
-		};
-		map3 {
-			trip = <&threshold>;
-			cooling-device =
-				<&emc2301 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-			contribution = <8192>;
-		};
-	};
-};
+	thermal_zones: thermal-zones {
+		soc_thermal: soc-thermal {
+			polling-delay-passive = <20>; /* milliseconds */
+			polling-delay = <1000>; /* milliseconds */
+			sustainable-power = <1475>; /* milliwatts */
 
+			thermal-sensors = <&tsadc 0>;
+			trips {
+				threshold: trip-point-0 {
+					temperature = <70000>;
+					hysteresis = <2000>;
+					type = "passive";
+				};
+				target: trip-point-1 {
+					temperature = <85000>;
+					hysteresis = <2000>;
+					type = "passive";
+				};
+				soc_crit: soc-crit {
+					/* millicelsius */
+					temperature = <115000>;
+					/* millicelsius */
+					hysteresis = <2000>;
+					type = "critical";
+				};
+			};
+			cooling-maps {
+				map0 {
+					trip = <&target>;
+					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
+					contribution = <1024>;
+				};
+				map1 {
+					trip = <&target>;
+					cooling-device = <&gpu THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
+					contribution = <1024>;
+				};
+			};
+		};
 &pinctrl {
 	leds {
 		pi_led: pi-led {
