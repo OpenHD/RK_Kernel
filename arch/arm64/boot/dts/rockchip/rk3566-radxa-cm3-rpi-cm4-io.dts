@@ -141,13 +141,12 @@
 	temperature = <60000>;
 };
 
-	thermal_zones: thermal-zones {
-		soc_thermal: soc-thermal {
-			polling-delay-passive = <20>; /* milliseconds */
-			polling-delay = <1000>; /* milliseconds */
-			sustainable-power = <1475>; /* milliwatts */
+&soc_thermal: soc-thermal {
+	polling-delay-passive = <20>; /* milliseconds */
+	polling-delay = <1000>; /* milliseconds */
+	sustainable-power = <1475>; /* milliwatts */
 
-			thermal-sensors = <&tsadc 0>;
+		thermal-sensors = <&tsadc 0>;
 			trips {
 				threshold: trip-point-0 {
 					temperature = <70000>;
