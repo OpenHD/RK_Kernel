@@ -10,7 +10,7 @@
 #include "rk3566-radxa-cm3.dtsi"
 
 / {
-	model = "Radxa Compute Module 3(CM3) IO Board";
+	model = "Radxa CM3 IO Board";
 	compatible = "radxa,cm3-io", "radxa,cm3", "rockchip,rk3566";
 
 	hdmi_sound: hdmi-sound {
@@ -102,7 +102,6 @@
 	pwr-led-red {
 		gpios = <&gpio4 15 GPIO_ACTIVE_LOW>;
 		linux,default-trigger = "none";
-		default-state = "on";
 		pinctrl-0 = <&pwr_led>;
 	};
 };
@@ -126,6 +125,9 @@
 
 &hdmi {
 	status = "okay";
+	preset_max_hdisplay = <1920>;
+	preset_max_vdisplay = <1080>;
+	preset_as_preferred;
 };
 
 &hdmi_in_vp0 {
