@@ -29,7 +29,7 @@ jobs:
           git clone https://github.com/openhd/bsp
           cd bsp
           chmod +x bsp
-          ./bsp --long-version -r radxa-rk3566 linux rk356x | & tee buildlog.log
+          ./bsp --long-version -r radxa_rk356x linux rk356x | & tee buildlog.log
 
       - name: little hack for github uploads
         run: |
@@ -54,7 +54,7 @@ jobs:
           distro: "debian"
           release: "bullseye"
           republish: "true" # needed ONLY if version is not changing
-          file: "linux-image-5.10.160-radxa*.deb"
+          file: "linux-image-5.10.160*.deb"
 
       - name: Push header
         id: push_headers
