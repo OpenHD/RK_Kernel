@@ -33,6 +33,7 @@ jobs:
 
       - name: install dependencies
         run: |
+          sudo apt-get update
           sudo apt-get install --no-install-recommends -y build-essential qemu-user-static coreutils binfmt-support
       
       - name: build kernel
@@ -40,7 +41,7 @@ jobs:
           git clone https://github.com/openhd/bsp
           cd bsp
           chmod +x bsp
-          ./bsp --long-version -r 20 linux rk356x |& tee buildlog.log
+          ./bsp --long-version -r radxa linux rk356x |& tee buildlog.log
 
       - name: little hack for github uploads
         run: |
@@ -61,7 +62,7 @@ jobs:
           command: "push"
           format: "deb"
           owner: "openhd"
-          repo: ${{ github.ref_name }}
+          repo: "dev-release"
           distro: "debian"
           release: "bullseye"
           republish: "true" # needed ONLY if version is not changing
@@ -75,7 +76,7 @@ jobs:
           command: "push"
           format: "deb"
           owner: "openhd"
-          repo: ${{ github.ref_name }}
+          repo: "dev-release"
           distro: "debian"
           release: "bullseye"
           republish: "true" # needed ONLY if version is not changing
@@ -89,7 +90,7 @@ jobs:
           command: "push"
           format: "deb"
           owner: "openhd"
-          repo: ${{ github.ref_name }}
+          repo: "dev-release"
           distro: "debian"
           release: "bullseye"
           republish: "true" # needed ONLY if version is not changing

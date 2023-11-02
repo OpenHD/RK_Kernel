@@ -54,6 +54,9 @@
 
 &hdmi {
 	status = "okay";
+	preset_max_hdisplay = <1920>;
+	preset_max_vdisplay = <1080>;
+	preset_as_preferred;
 };
 
 &hdmi_in_vp0 {
@@ -132,6 +135,13 @@
 			reg = <0>;
 			pwm-min = <0>;
 		};
+	};
+
+	pcf85063: pcf85063@51 {
+		compatible = "nxp,pcf85063";
+		status = "okay";
+		reg = <0x51>;
+		quartz-load-femtofarads = <12500>;
 	};
 };
 
@@ -264,7 +274,7 @@
 		/* GPIO3_D0-D3 */
 		"PIN_35", "PIN_40", "PIN_38", "PIN_18",
 		/* GPIO3_D4-D7 */
-		"PIN_19", "PIN_7", "", "";
+		"PIN_16", "PIN_7", "", "";
 };
 
 &gpio4 {
