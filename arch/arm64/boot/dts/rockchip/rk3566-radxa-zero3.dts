@@ -633,10 +633,6 @@
 	status = "okay";
 };
 
-&usbdrd_dwc3 {
-	status = "okay";
-};
-
 &usbdrd30 {
 	status = "okay";
 };
@@ -654,7 +650,9 @@
 };
 
 &usbdrd_dwc3 {
-	status = "okay";
+	 dr_mode = "host";
+     extcon = <&usb2phy0>;
+     status = "okay";
 };
 
 &vdpu {
