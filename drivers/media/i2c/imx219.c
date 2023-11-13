@@ -252,7 +252,7 @@ static const struct imx219_mode supported_modes[] = {
 		.height = 1080,
 		.max_fps = {
 			.numerator = 10000,
-			.denominator = 900000,
+			.denominator = 300000,
 		},
 		.hts_def = 0x0d78 - IMX219_EXP_LINES_MARGIN,
 		.vts_def = 0x06E6,
