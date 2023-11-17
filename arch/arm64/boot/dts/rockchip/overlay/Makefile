@@ -74,6 +74,8 @@ dtbo-$(CONFIG_ARCH_ROCKCHIP) += \
 	radxa-cm3-rpi-cm4-io-disable-emc2301.dtbo \
 	radxa-cm3-rpi-cm4-camera-v2-imx219-cam1.dtbo \
 	radxa-cm3-rpi-cm4-camera-v2-imx219-cam0.dtbo \
+	radxa-cm3-rpi-cm4-arducam-imx708-cam1.dtbo \
+	radxa-cm3-rpi-cm4-arducam-imx708-cam0.dtbo \
 	radxa-cm3-rpi-cm4-7inch-touchscreen-disp1.dtbo \
 	radxa-cm3-rpi-cm4-7inch-touchscreen-disp0.dtbo \
 	radxa-cm3-raspcm4io-pcie2x1.dtbo \
