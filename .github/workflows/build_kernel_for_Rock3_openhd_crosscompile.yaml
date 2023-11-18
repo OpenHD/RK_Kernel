@@ -29,7 +29,7 @@ jobs:
           git clone -b latest https://github.com/openhd/bsp
           cd bsp
           chmod +x bsp
-          ./bsp --long-version -r radxa linux rk356x |& tee buildlog.log
+          ./bsp --long-version -r radxa linux rk356x
 
       - name: little hack for github uploads
         run: |
