@@ -27,12 +27,12 @@ jobs:
       - name: build kernel
         run: |
           cd ../
-          git clone -b latest https://github.com/openhd/bsp
-          # mkdir -p bsp/.src/linux/
-          # sudo rsync -a --remove-source-files RK_Kernel bsp/.src/
+          git clone -b latest_tests https://github.com/openhd/bsp
+          mkdir -p bsp/.src/linux/
+          sudo rsync -a --remove-source-files RK_Kernel bsp/.src/
           cd bsp
           chmod +x bsp
-          ./bsp --long-version -r radxa linux rk356x
+          ./bsp --dirty --long-version -r radxa linux rk356x
 
       - name: little hack for github uploads
         run: |
