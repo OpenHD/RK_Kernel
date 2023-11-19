@@ -26,6 +26,8 @@ jobs:
 
       - name: build kernel
         run: |
+          ls -a
+          cd ../
           git clone -b latest_tests https://github.com/openhd/bsp
           cd bsp
           chmod +x bsp
