@@ -26,8 +26,8 @@ jobs:
 
       - name: build kernel
         run: |
-          ls -a
           cd ../
+          ls -a
           git clone -b latest_tests https://github.com/openhd/bsp
           mkdir -p bsp/.src/linux/
           mv RK_Kernel/* bsp/.src/linux/
