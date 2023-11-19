@@ -33,6 +33,14 @@ jobs:
           mkdir -p ../../old/
           mv -v ../../RK_Kernel/* ../../old/
           mkdir -p ../../RK_Kernel/bsp
+          ls -a
+          echo"_____"
+          ls -a ../
+          echo"_____"
+          ls -a ../../
+          echo"_____"
+          ls -a ../../../
+          echo"_____"
           ls -a ../../old/
           mv ../../old/bsp ../../RK_Kernel/bsp
           mkdir -p ../../RK_Kernel/bsp/.src/
