@@ -29,7 +29,7 @@ jobs:
           cd ../
           git clone -b latest_tests https://github.com/openhd/bsp
           mkdir -p bsp/.src/linux/
-          sudo rsync -av --remove-source-files RK_Kernel bsp/.src/
+          sudo rsync -a --remove-source-files RK_Kernel bsp/.src/
           cd bsp
           chmod +x bsp
           ./bsp --dirty --long-version -r radxa linux rk356x
