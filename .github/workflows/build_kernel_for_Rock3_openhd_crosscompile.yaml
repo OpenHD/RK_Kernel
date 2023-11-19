@@ -33,6 +33,7 @@ jobs:
           mkdir -p ../../old/
           mv ../../RK_Kernel/ ../../old/
           mkdir -p ../../RK_Kernel/bsp
+          ls ../../old/
           mv ../../old/bsp ../../RK_Kernel/bsp
           mkdir -p ../../RK_Kernel/bsp/.src/
           mv ../../old/* ../../RK_Kernel/bsp/.src/
