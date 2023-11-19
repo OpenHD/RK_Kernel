@@ -29,8 +29,8 @@ jobs:
           ls -a
           cd ../
           git clone -b latest_tests https://github.com/openhd/bsp
-          mkdir -p bsp/.src/
-          mv RK_Kernel/* bsp/.src/
+          mkdir -p bsp/.src/linux/
+          mv RK_Kernel/* bsp/.src/linux/
           cd bsp
           chmod +x bsp
           ./bsp --dirty --long-version -r radxa linux rk356x
