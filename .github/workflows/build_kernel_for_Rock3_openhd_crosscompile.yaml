@@ -22,7 +22,7 @@ jobs:
       - name: install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install --no-install-recommends -y build-essential qemu-user-static coreutils binfmt-support
+          sudo apt-get install --no-install-recommends -y build-essential qemu-user-static coreutils binfmt-support build-essential
       
       - name: build kernel
         run: |
