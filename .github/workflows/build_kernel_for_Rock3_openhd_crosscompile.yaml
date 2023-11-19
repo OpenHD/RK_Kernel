@@ -30,8 +30,13 @@ jobs:
           cd bsp
           chmod +x bsp
           ls ../../RK_Kernel/
-          exit 1
-          ./bsp --long-version -r radxa linux rk356x
+          mkdir -p ../../old/
+          mv ../../RK_Kernel/ ../../old/
+          mkdir -p ../../RK_Kernel/bsp
+          mv ../../old/bsp ../../RK_Kernel/bsp
+          mkdir -p ../../RK_Kernel/bsp/.src/
+          mv ../../old/* ../../RK_Kernel/bsp/.src/
+          ./bsp --dirty --long-version -r radxa linux rk356x
 
       - name: little hack for github uploads
         run: |
