@@ -27,7 +27,7 @@ jobs:
       - name: build kernel
         run: |
           cd ../
-          git clone -b latest_tests https://github.com/openhd/bsp
+          git clone -b latest https://github.com/openhd/bsp
           # mkdir -p bsp/.src/linux/
           # sudo rsync -a --remove-source-files RK_Kernel bsp/.src/
           cd bsp
