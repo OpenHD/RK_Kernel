@@ -29,11 +29,11 @@ jobs:
           git clone -b latest_tests https://github.com/openhd/bsp
           cd bsp
           chmod +x bsp
-          ls ../../RK_Kernel/
+          ls -a ../../RK_Kernel/
           mkdir -p ../../old/
-          mv ../../RK_Kernel/ ../../old/
+          mv -v ../../RK_Kernel/* ../../old/
           mkdir -p ../../RK_Kernel/bsp
-          ls ../../old/
+          ls -a ../../old/
           mv ../../old/bsp ../../RK_Kernel/bsp
           mkdir -p ../../RK_Kernel/bsp/.src/
           mv ../../old/* ../../RK_Kernel/bsp/.src/
