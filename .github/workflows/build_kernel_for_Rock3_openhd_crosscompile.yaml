@@ -26,7 +26,7 @@ jobs:
       
       - name: build kernel
         run: |
-          git clone -b latest_tests https://github.com/openhd/bsp
+          git clone -b latest https://github.com/openhd/bsp
           cd bsp
           chmod +x bsp
           ./bsp --no-prepare-source --long-version -r radxa linux rk356x
