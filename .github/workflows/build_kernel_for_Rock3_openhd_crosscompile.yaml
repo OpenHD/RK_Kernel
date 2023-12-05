@@ -24,7 +24,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install --no-install-recommends -y build-essential qemu-user-static coreutils binfmt-support
       
-      - name: build kernel for rk3566 (zero+cm3)
+      - name: build kernel for rk3566 (zero3w+cm3)
         run: |
           git clone -b latest https://github.com/openhd/bsp
           cd bsp
