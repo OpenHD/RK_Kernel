@@ -935,4 +935,15 @@
 			rockchip,pins = <3 RK_PC7 RK_FUNC_GPIO &pcfg_pull_up>;
 		};
 	};
+
+	gpio-keys {
+			compatible = "gpio-keys";
+			autorepeat;
+
+			up {
+				label = "GPIO Key UP";
+				linux,code = <101>;
+				gpios = <&gpio1 0 1>;
+			};
+
 };
