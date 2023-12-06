@@ -945,5 +945,6 @@
 				linux,code = <101>;
 				gpios = <&gpio1 0 1>;
 			};
+	};
 
 };
