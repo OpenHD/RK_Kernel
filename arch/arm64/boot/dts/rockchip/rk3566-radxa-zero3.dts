@@ -936,15 +936,4 @@
 		};
 	};
 
-	gpio-keys {
-			compatible = "gpio-keys";
-			autorepeat;
-
-			up {
-				label = "GPIO Key UP";
-				linux,code = <101>;
-				gpios = <&gpio1 0 1>;
-			};
-	};
-
 };
