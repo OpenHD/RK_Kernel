@@ -689,6 +689,23 @@
 	status = "okay";
 };
 
+gpio-keys {
+			compatible = "gpio-keys";
+			autorepeat;
+
+			up {
+				label = "GPIO Key UP";
+				linux,code = <103>;
+				gpios = <&gpio1 0 1>;
+			};
+
+			down {
+				label = "GPIO Key DOWN";
+				linux,code = <108>;
+				interrupts = <1 IRQ_TYPE_LEVEL_HIGH 7>;
+			};
+};
+
 &gpio0 {
 	gpio-line-names =
 		/* GPIO0_A0-A3 */
