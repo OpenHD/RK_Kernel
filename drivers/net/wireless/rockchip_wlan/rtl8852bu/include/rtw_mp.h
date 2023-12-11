@@ -309,6 +309,8 @@ enum {
 	MP_PHL_RFK,
 	MP_PHL_BTC_PATH,
 	MP_GET_HE,
+	MP_BAND,
+	MP_UUID,
 	MP_NULL,
 #ifdef CONFIG_APPEND_VENDOR_IE_ENABLE
 	VENDOR_IE_SET ,
@@ -327,6 +329,9 @@ enum {
 #endif
 	MP_SD_IREAD,
 	MP_SD_IWRITE,
+#ifdef CONFIG_FPGA_INCLUDED
+	FPGA_SET,
+#endif
 };
 
 struct rtw_plcp_user {
@@ -372,6 +377,7 @@ struct mp_priv {
 	BOOLEAN brx_filter_beacon;
 
 	/* RF/BB relative */
+	u8 band;
 	u8 channel;
 	u8 bandwidth;
 	u8 prime_channel_offset;
@@ -430,10 +436,13 @@ struct mp_priv {
 	BOOLEAN mplink_btx;
 
 	bool tssitrk_on;
+	u8 tssi_mode;
 	u8 rtw_mp_cur_phy;
 	u8 rtw_mp_dbcc;
 	s16 path_pwr_offset[4];	/* rf-A, rf-B*/
 	u8 rtw_mp_tx_method;
+	u16 rtw_mp_tx_time;
+	u8 rtw_mp_tx_state;
 	u8 rtw_mp_pmact_patt_idx;
 	u8 rtw_mp_pmact_ppdu_type;
 	u8 rtw_mp_data_bandwidth;
@@ -459,6 +468,10 @@ struct mp_priv {
 
 	u8 keep_ips_status;
 	u8 keep_lps_status;
+	u8 is_tmac_mode;
+
+	_thread_hdl_ rx_cal_thread;
+	u8 rx_cal_stop;
 };
 
 #define PPDU_TYPE_STR(idx)\
@@ -751,11 +764,10 @@ enum rtw_mp_tx_cmd {
 	RTW_MP_TX_CMD_PHY_OK,
 	RTW_MP_TX_CONFIG_PLCP_PATTERN,
 	RTW_MP_TX_CONFIG_PLCP_USER_INFO,
-	RTW_MP_TX_MODE_SWITCH,
-	RTW_MP_TX_F2P,
 	RTW_MP_TX_TB_TEST,
 	RTW_MP_TX_DPD_BYPASS,
 	RTW_MP_TX_CHECK_TX_IDLE,
+	RTW_MP_TX_CMD_BB_LOOPBCK,
 	RTW_MP_TX_CMD_MAX,
 };
 
@@ -807,8 +819,8 @@ enum rtw_mp_rx_cmd {
 	RTW_MP_RX_CMD_GET_PHYSTS = 8,
 	RTW_MP_RX_CMD_TRIGGER_RXEVM = 9,
 	RTW_MP_RX_CMD_SET_GAIN_OFFSET = 10,
+	RTW_MP_RX_CMD_GET_RSSI_EX = 11,
 	RTW_MP_RX_CMD_MAX,
-
 };
 
 /* mp config command */
@@ -820,6 +832,7 @@ enum rtw_mp_config_cmdid {
 	RTW_MP_CONFIG_CMD_SET_RESET_PHY_COUNT,
 	RTW_MP_CONFIG_CMD_SET_RESET_MAC_COUNT,
 	RTW_MP_CONFIG_CMD_SET_RESET_DRV_COUNT,
+	RTW_MP_CONFIG_CMD_SET_TXRX_MODE,
 	RTW_MP_CONFIG_CMD_PBC,
 	RTW_MP_CONFIG_CMD_START_DUT,
 	RTW_MP_CONFIG_CMD_STOP_DUT,
@@ -840,6 +853,8 @@ enum rtw_mp_config_cmdid {
 	RTW_MP_CONFIG_CMD_GET_RFE_TYPE,
 	RTW_MP_CONFIG_CMD_GET_DEV_IDX,
 	RTW_MP_CONFIG_CMD_TRIGGER_FW_CONFLICT,
+	RTW_MP_CONFIG_CMD_GET_UUID,
+	RTW_MP_CONFIG_CMD_SET_REGULATION,
 	RTW_MP_CONFIG_CMD_MAX,
 };
 
@@ -887,7 +902,9 @@ struct rtw_mp_config_arg {
 	u8 bandwidth;
 	u8 rate_idx;
 	u8 ant_tx;
+	u8 tx_rfpath;
 	u8 ant_rx;
+	u8 rx_rfpath;
 	u8 rf_path;
 	u8 get_rfstats;
 	u8 modulation;
@@ -902,6 +919,13 @@ struct rtw_mp_config_arg {
 	u8 dev_id;
 	u32 offset;
 	u8 voltag;
+	u8 band;
+	u32 uuid;
+	u8 regulation;
+	u8 frc_switch;
+	u8 is_tmac_mode;
+	u32 drv_ver;
+	u8 phy_idx;
 };
 
 struct rtw_mp_tx_arg {
@@ -995,222 +1019,13 @@ struct rtw_mp_tx_arg {
 	u8 bSS_id_addr5;
 	u8 is_link_mode;
 
-	/* f2p cmd */
-	u32 pref_AC_0;
-	u32 aid12_0;
-	u32 ul_mcs_0;
-	u32 macid_0;
-	u32 ru_pos_0;
-	u32 ul_fec_code_0;
-	u32 ul_dcm_0;
-	u32 ss_alloc_0;
-	u32 ul_tgt_rssi_0;
-	u32 pref_AC_1;
-	u32 aid12_1;
-	u32 ul_mcs_1;
-	u32 macid_1;
-	u32 ru_pos_1;
-	u32 ul_fec_code_1;
-	u32 ul_dcm_1;
-	u32 ss_alloc_1;
-	u32 ul_tgt_rssi_1;
-	u32 pref_AC_2;
-	u32 aid12_2;
-	u32 ul_mcs_2;
-	u32 macid_2;
-	u32 ru_pos_2;
-	u32 ul_fec_code_2;
-	u32 ul_dcm_2;
-	u32 ss_alloc_2;
-	u32 ul_tgt_rssi_2;
-	u32 pref_AC_3;
-	u32 aid12_3;
-	u32 ul_mcs_3;
-	u32 macid_3;
-	u32 ru_pos_3;
-	u32 ul_fec_code_3;
-	u32 ul_dcm_3;
-	u32 ss_alloc_3;
-	u32 ul_tgt_rssi_3;
-	u32 ul_bw;
-	u32 gi_ltf;
-	u32 num_he_ltf;
-	u32 ul_stbc;
-	u32 pkt_doppler;
-	u32 ap_tx_power;
-	u32 user_num;
-	u32 pktnum;
-	u32 pri20_bitmap;
-	u32 datarate;
-	u32 mulport_id;
-	u32 pwr_ofset;
-	u32 f2p_mode;
-	u32 frexch_type;
-	u32 sigb_len;
-	/* dword 0 */
-	u32 cmd_qsel;
-	u32 ls;
-	u32 fs;
-	u32 total_number;
-	u32 seq;
-	u32 length;
-	/* dword 1 */
-	/* dword 0 */
-	u32 cmd_type;
-	u32 cmd_sub_type;
-	u32 dl_user_num;
-	u32 bw;
-	u32 tx_power;
-	/* dword 1 */
-	u32 fw_define;
-	u32 ss_sel_mode;
-	u32 next_qsel;
-	u32 twt_group;
-	u32 dis_chk_slp;
-	u32 ru_mu_2_su;
-	u32 dl_t_pe;
-	/* dword 2 */
-	u32 sigb_ch1_len;
-	u32 sigb_ch2_len;
-	u32 sigb_sym_num;
-	u32 sigb_ch2_ofs;
-	u32 dis_htp_ack;
-	u32 tx_time_ref;
-	u32 pri_user_idx;
-	/* dword 3 */
-	u32 ampdu_max_txtime;
-	u32 d3_group_id;
-	u32 twt_chk_en;
-	u32 twt_port_id;
-	/* dword 4 */
-	u32 twt_start_time;
-	/* dword 5 */
-	u32 twt_end_time;
-	/* dword 6 */
-	u32 apep_len;
-	u32 tri_pad;
-	u32 ul_t_pe;
-	u32 rf_gain_idx;
-	u32 fixed_gain_en;
-	u32 ul_gi_ltf;
-	u32 ul_doppler;
-	u32 d6_ul_stbc;
-	/* dword 7 */
-	u32 ul_mid_per;
-	u32 ul_cqi_rrp_tri;
-	u32 sigb_dcm;
-	u32 sigb_comp;
-	u32 d7_doppler;
-	u32 d7_stbc;
-	u32 mid_per;
-	u32 gi_ltf_size;
-	u32 sigb_mcs;
-	/* dword 8 */
-	u32 macid_u0;
-	u32 ac_type_u0;
-	u32 mu_sta_pos_u0;
-	u32 dl_rate_idx_u0;
-	u32 dl_dcm_en_u0;
-	u32 ru_alo_idx_u0;
-	/* dword 9 */
-	u32 pwr_boost_u0;
-	u32 agg_bmp_alo_u0;
-	u32 ampdu_max_txnum_u0;
-	u32 user_define_u0;
-	u32 user_define_ext_u0;
-	/* dword 10 */
-	u32 ul_addr_idx_u0;
-	u32 ul_dcm_u0;
-	u32 ul_fec_cod_u0;
-	u32 ul_ru_rate_u0;
-	u32 ul_ru_alo_idx_u0;
-	/* dword 11 */
-	/* dword 12 */
-	u32 macid_u1;
-	u32 ac_type_u1;
-	u32 mu_sta_pos_u1;
-	u32 dl_rate_idx_u1;
-	u32 dl_dcm_en_u1;
-	u32 ru_alo_idx_u1;
-	/* dword 13 */
-	u32 pwr_boost_u1;
-	u32 agg_bmp_alo_u1;
-	u32 ampdu_max_txnum_u1;
-	u32 user_define_u1;
-	u32 user_define_ext_u1;
-	/* dword 14 */
-	u32 ul_addr_idx_u1;
-	u32 ul_dcm_u1;
-	u32 ul_fec_cod_u1;
-	u32 ul_ru_rate_u1;
-	u32 ul_ru_alo_idx_u1;
-	/* dword 15 */
-	/* dword 16 */
-	u32 macid_u2;
-	u32 ac_type_u2;
-	u32 mu_sta_pos_u2;
-	u32 dl_rate_idx_u2;
-	u32 dl_dcm_en_u2;
-	u32 ru_alo_idx_u2;
-	/* dword 17 */
-	u32 pwr_boost_u2;
-	u32 agg_bmp_alo_u2;
-	u32 ampdu_max_txnum_u2;
-	u32 user_define_u2;
-	u32 user_define_ext_u2;
-	/* dword 18 */
-	u32 ul_addr_idx_u2;
-	u32 ul_dcm_u2;
-	u32 ul_fec_cod_u2;
-	u32 ul_ru_rate_u2;
-	u32 ul_ru_alo_idx_u2;
-	/* dword 19 */
-	/* dword 20 */
-	u32 macid_u3;
-	u32 ac_type_u3;
-	u32 mu_sta_pos_u3;
-	u32 dl_rate_idx_u3;
-	u32 dl_dcm_en_u3;
-	u32 ru_alo_idx_u3;
-	/* dword 21 */
-	u32 pwr_boost_u3;
-	u32 agg_bmp_alo_u3;
-	u32 ampdu_max_txnum_u3;
-	u32 user_define_u3;
-	u32 user_define_ext_u3;
-	/* dword 22 */
-	u32 ul_addr_idx_u3;
-	u32 ul_dcm_u3;
-	u32 ul_fec_cod_u3;
-	u32 ul_ru_rate_u3;
-	u32 ul_ru_alo_idx_u3;
-	/* dword 23 */
-	/* dword 24 */
-	u32 pkt_id_0;
-	u32 valid_0;
-	u32 ul_user_num_0;
-	/* dword 25 */
-	u32 pkt_id_1;
-	u32 valid_1;
-	u32 ul_user_num_1;
-	/* dword 26 */
-	u32 pkt_id_2;
-	u32 valid_2;
-	u32 ul_user_num_2;
-	/* dword 27 */
-	u32 pkt_id_3;
-	u32 valid_3;
-	u32 ul_user_num_3;
-	/* dword 28 */
-	u32 pkt_id_4;
-	u32 valid_4;
-	u32 ul_user_num_4;
-	/* dword 29 */
-	u32 pkt_id_5;
-	u32 valid_5;
-	u32 ul_user_num_5;
 	/* tx state*/
 	u8 tx_state;
+
+	/* bb loop back*/
+	u8 enable;
+	u8 is_dgt;
+	u8 cck_lbk_en;
 };
 
 
@@ -1228,18 +1043,15 @@ struct rtw_mp_rx_arg {
 	u8 strm;
 	u8 rxevm_table;
 	u8 enable;
-	u32 phy0_user0_rxevm;
-	u32 phy0_user1_rxevm;
-	u32 phy0_user2_rxevm;
-	u32 phy0_user3_rxevm;
-	u32 phy1_user0_rxevm;
-	u32 phy1_user1_rxevm;
-	u32 phy1_user2_rxevm;
-	u32 phy1_user3_rxevm;
+	u32 phy_user0_rxevm;
+	u32 phy_user1_rxevm;
+	u32 phy_user2_rxevm;
+	u32 phy_user3_rxevm;
 	s8 offset;
 	u8 rf_path;
 	u8 iscck;
-	s16 rssi_ex;
+	s8 rssi_ex[4];
+	u8 rx_phy_idx;
 };
 
 /* mp tx power command */
@@ -1301,6 +1113,7 @@ struct rtw_mp_txpwr_arg {
 	s32 online_tssi_de;
 	bool pwr_lmt_en;
 	u8 sharp_id;
+	u8 cur_phy;
 };
 
 /* mp reg command */
@@ -1354,7 +1167,9 @@ struct rtw_mp_cal_arg {
 	u32 start_point;
 	u32 stop_point;
 	u32 buf;
-	u32 outbuf[450];
+	u32 outbuf[400];
+	u8 event;
+	u8 func;
 };
 
 enum rtw_mp_cal_cmd {
@@ -1370,6 +1185,8 @@ enum rtw_mp_cal_cmd {
 	RTW_MP_CAL_CMD_PSD_RESTORE = 9,
 	RTW_MP_CAL_CMD_PSD_GET_POINT_DATA = 10,
 	RTW_MP_CAL_CMD_PSD_QUERY = 11,
+	RTW_MP_CAL_CMD_EVENT_TRIGGER = 12,
+	RTW_MP_CAL_CMD_TRIGGER_WATCHDOG_CAL = 13,
 	RTW_MP_CAL_CMD_MAX,
 };
 
@@ -1402,8 +1219,8 @@ struct rtw_test_module_info {
 #define RTW_MAX_TEST_CMD_BUF 2000
 struct rtw_mp_test_cmdbuf {
 	u8 type;
-	u8 buf[RTW_MAX_TEST_CMD_BUF];
 	u16 len;
+	u8 buf[RTW_MAX_TEST_CMD_BUF];
 };
 
 enum rtw_mp_nss
@@ -1482,6 +1299,7 @@ void rtw_mp_phl_query_rx(_adapter *padapter, struct rtw_mp_rx_arg *rx_arg ,u8 rx
 u8 rtw_mp_phl_txpower(_adapter *padapter, struct rtw_mp_txpwr_arg	*ptxpwr_arg, u8 cmdid);
 void rtw_mp_set_crystal_cap(_adapter *padapter, u32 xcapvalue);
 u8 rtw_mp_phl_calibration(_adapter *padapter, struct rtw_mp_cal_arg	*pcal_arg, u8 cmdid);
+u8 rtw_mp_phl_reg(_adapter *padapter, struct rtw_mp_reg_arg	*reg_arg, u8 cmdid);
 
 
 u8 rtw_update_giltf(_adapter *padapter);
@@ -1515,6 +1333,7 @@ void	SetAntenna(_adapter *adapter);
 void	SetDataRate(_adapter *adapter);
 s32	SetThermalMeter(_adapter *adapter, u8 target_ther);
 void	GetThermalMeter(_adapter *adapter, u8 rfpath ,u8 *value);
+void	GetUuid(_adapter *adapter, u32 *uuid);
 void	rtw_mp_continuous_tx(_adapter *adapter, u8 bstart);
 void	rtw_mp_singlecarrier_tx(_adapter *adapter, u8 bstart);
 void	rtw_mp_singletone_tx(_adapter *adapter, u8 bstart);
@@ -1522,6 +1341,8 @@ void	rtw_mp_carriersuppr_tx(_adapter *adapter, u8 bstart);
 void	rtw_mp_txpwr_level(_adapter *adapter);
 void	fill_txdesc_for_mp(_adapter *padapter, u8 *ptxdesc);
 void	rtw_set_phl_packet_tx(_adapter *padapter, u8 bStart);
+void rtw_pre_phl_packet_tx(_adapter *padapter, u8 bStart);
+
 u8	rtw_phl_mp_tx_cmd(_adapter *padapter, enum rtw_mp_tx_cmd cmdid,
 						enum rtw_mp_tx_method tx_method, boolean bstart);
 
@@ -1560,6 +1381,8 @@ u8 rtw_mp_get_tssi_pwrtrk(_adapter *padapter);
 
 void rtw_mp_cal_trigger(_adapter *padapter, u8 cal_tye);
 void rtw_mp_cal_capab(_adapter *padapter, u8 cal_tye, u8 benable);
+
+void rtw_mp_rx_phl_cal_timer(_adapter *padapter);
 
 void
 PMAC_Get_Pkt_Param(
@@ -1665,6 +1488,9 @@ int rtw_mp_psd(struct net_device *dev,
 		struct iw_request_info *info,
 		struct iw_point *wrqu, char *extra);
 int rtw_mp_thermal(struct net_device *dev,
+		struct iw_request_info *info,
+		struct iw_point *wrqu, char *extra);
+int rtw_mp_UUID(struct net_device *dev,
 		struct iw_request_info *info,
 		struct iw_point *wrqu, char *extra);
 int rtw_mp_reset_stats(struct net_device *dev,
@@ -1797,5 +1623,7 @@ int rtw_mp_phl_btc_path(struct net_device *dev,
 int rtw_mp_get_he(struct net_device *dev,
 			 struct iw_request_info *info,
 			 union iwreq_data *wrqu, char *extra);
-
+int rtw_mp_band(struct net_device *dev,
+			 struct iw_request_info *info,
+			 union iwreq_data *wrqu, char *extra);
 #endif /* _RTW_MP_H_ */

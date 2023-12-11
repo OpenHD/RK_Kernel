@@ -16,10 +16,13 @@
 #define _PHL_CUSTOM_DEF_H_
 
 #define PRIVATE_EVT_START (BIT15)
+#define MAX_DATA_SIZE	(512)
 
 enum rtw_customer_feature_id {
 	CUS_ID_NONE = 0,
 	CUS_ID_FB = 1,
+	CUS_ID_XH = 2,
+	CUS_ID_VR = 3,
 	CUS_ID_MAX
 };
 
@@ -55,6 +58,15 @@ enum rtw_msg_custom_evt_id {
 	MSG_EVT_SET_AP_START_CHNL = PRIVATE_EVT_START + 23,
 	MSG_EVT_SET_CUS_CHNL_LIST = PRIVATE_EVT_START + 24,
 	MSG_EVT_GET_CUS_CHNL_LIST = PRIVATE_EVT_START + 25,
+	MSG_EVT_ACS_GET_PREF_CHNL = PRIVATE_EVT_START + 26,
+	MSG_EVT_AMSDU_CFG = PRIVATE_EVT_START + 27,
+	MSG_EVT_AMSDU_QUERY = PRIVATE_EVT_START + 28,
+	MSG_EVT_SET_USB_SWITCH_MODE = PRIVATE_EVT_START + 29,
+	MSG_EVT_GET_USB_SWITCH_MODE = PRIVATE_EVT_START + 30,
+	MSG_EVT_SET_ROLE_CAP = PRIVATE_EVT_START + 31,
+	MSG_EVT_GET_ROLE_CAP = PRIVATE_EVT_START + 32,
+	MSG_EVT_SET_TX_RATE_MASKING = PRIVATE_EVT_START + 33,
+	MSG_EVT_GET_TX_RATE_MASKING = PRIVATE_EVT_START + 34,
 };
 
 enum custom_type {
@@ -72,8 +84,20 @@ struct rtw_custom_decrpt {
 	u32 customer_id;
 	enum custom_type type;
 	u32 len;
+	u8 data[MAX_DATA_SIZE];
 };
 #pragma pack()
+
+enum rtw_phl_vr_test_mode {
+	VR_TEST_MODE_USE_STA_MAC = BIT1,
+	VR_TEST_MODE_MAX = BIT16
+};
+
+enum rtw_phl_fb_test_mode {
+	FB_TEST_MODE_FAKE_TX_CYCLE = BIT0,
+	FB_TEST_MODE_MAX = BIT16
+};
+
 
 struct rtw_phl_custom_ampdu_cfg {
 	u32 max_agg_time_32us;

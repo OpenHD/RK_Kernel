@@ -53,6 +53,7 @@ enum rtw_hal_status rtw_hal_mp_tx_pmac_packet(
 						   arg->tx_cnt,
 						   arg->period,
 						   arg->tx_time,
+						   arg->cck_lbk_en,
 						   mp->cur_phy);
 	PHL_INFO("%s: status = %d\n", __FUNCTION__, hal_status);
 
@@ -123,10 +124,15 @@ enum rtw_hal_status rtw_hal_mp_tx_carrier_suppression(
 	struct mp_context *mp, struct mp_tx_arg *arg)
 {
 	enum rtw_hal_status hal_status = RTW_HAL_STATUS_FAILURE;
+	struct hal_info_t *hal_info = (struct hal_info_t *)mp->hal;
 
 	PHL_INFO("%s\n", __FUNCTION__);
 
-	hal_status = rtw_hal_rf_set_suppression_tx(mp->hal);
+	hal_status = rtw_hal_bb_set_pmac_carrier_suppression_tx
+					(hal_info->hal_com,
+					arg->start_tx,
+					arg->is_cck,
+					mp->cur_phy);
 	PHL_INFO("%s: status = %d\n", __FUNCTION__, hal_status);
 
 	return hal_status;
@@ -145,42 +151,6 @@ enum rtw_hal_status rtw_hal_mp_tx_phy_ok_cnt(
 	hal_status = RTW_HAL_STATUS_SUCCESS;
 	PHL_INFO("%s: status = %d\n", __FUNCTION__, hal_status);
 	PHL_INFO("%s: phy ok cnt = %d\n", __FUNCTION__, arg->tx_ok);
-
-	return hal_status;
-}
-
-enum rtw_hal_status rtw_hal_mp_tx_mode_switch(
-	struct mp_context *mp, struct mp_tx_arg *arg)
-{
-	enum rtw_hal_status hal_status = RTW_HAL_STATUS_FAILURE;
-	struct hal_info_t *hal_info = (struct hal_info_t *)mp->hal;
-	
-	PHL_INFO("%s\n", __FUNCTION__);
-	
-	/* mode: 0 = tmac, 1 = pmac */
-	hal_status = rtw_hal_bb_tx_mode_switch(hal_info->hal_com, mp->cur_phy, arg->tx_mode);
-	
-	hal_status = RTW_HAL_STATUS_SUCCESS;
-	PHL_INFO("%s: status = %d\n", __FUNCTION__, hal_status);
-	PHL_INFO("%s: tx_mode = %d\n", __FUNCTION__, arg->tx_mode);
-	PHL_INFO("%s: phy index = %d\n", __FUNCTION__, mp->cur_phy);
-	return hal_status;
-}
-
-enum rtw_hal_status rtw_hal_mp_tx_f2p_cmd(
-	struct mp_context *mp, struct mp_tx_arg *arg, struct mp_mac_ax_f2p_test_para *f2p_para_struct,
-	struct mp_mac_ax_f2p_wd *f2p_wd_struct, struct mp_mac_ax_f2p_tx_cmd *f2p_tx_cmd_struct
-	)
-{
-	enum rtw_hal_status hal_status = RTW_HAL_STATUS_FAILURE;
-	struct hal_info_t *hal_info = (struct hal_info_t *)mp->hal;
-	u8 psigb_addr[64] = {0};
-
-	PHL_INFO("%s\n", __FUNCTION__);
-
-	hal_status = rtw_hal_mac_f2p_test_cmd(hal_info, f2p_para_struct, f2p_wd_struct, f2p_tx_cmd_struct, psigb_addr);
-
-	hal_status = RTW_HAL_STATUS_SUCCESS;
 
 	return hal_status;
 }
@@ -207,5 +177,29 @@ void rtw_hal_mp_check_tx_idle(struct mp_context *mp, struct mp_tx_arg *arg)
 {
 	arg->tx_state = rtw_hal_bb_check_tx_idle(mp->hal, mp->cur_phy);
 }
+
+
+enum rtw_hal_status rtw_hal_mp_bb_loop_bck(struct mp_context *mp, struct mp_tx_arg *arg)
+{
+	enum rtw_hal_status hal_status = RTW_HAL_STATUS_FAILURE;
+	u8 tx_path;
+	u8 rx_path;
+
+	PHL_INFO("%s\n", __FUNCTION__);
+
+	if (arg->tx_path == RF_PATH_A) {
+		tx_path = RF_PATH_A;
+		rx_path = RF_PATH_B;
+	} else {
+		tx_path = RF_PATH_B;
+		rx_path = RF_PATH_A;
+	}
+
+	hal_status = rtw_hal_bb_loop_bck_en(mp->hal, arg->enable, arg->is_dgt,
+										tx_path, rx_path, arg->dbw, mp->cur_phy, arg->is_cck);
+
+	return hal_status;
+}
+
 
 #endif /* CONFIG_HAL_TEST_MP */

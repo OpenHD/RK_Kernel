@@ -32,6 +32,10 @@
 
 #define SER_ENABLE 0XFFFFFFFF
 #define SER_DISABLE 0X00000000
+#define SEC_DBG_SEL 0x8B
+#define SEC_DBG_PORT_NUM 0x10
+#define SEC_DBG_PORT_FIELD_MSK 0xf
+#define SEC_DBG_PORT_FIELD_SH 16
 
 #if defined(PHL_FEATURE_AP)
 /*--------------------CMAC ERROR ----------------------------------------*/
@@ -671,21 +675,21 @@
 
 //BBRPT_CHINFO_ERR_IMR_ISR 0x962C
 //bit[0]
-#define DMAC_BBPRT_CHIF_BB_TO_ERR_SER_EN SER_ENABLE
+#define DMAC_BBPRT_CHIF_BB_TO_ERR_SER_EN SER_DISABLE
 //bit[1]
-#define DMAC_BBPRT_CHIF_OVF_ERR_SER_EN SER_ENABLE
+#define DMAC_BBPRT_CHIF_OVF_ERR_SER_EN SER_DISABLE
 //bit[2]
-#define DMAC_BBPRT_CHIF_BOVF_ERR_SER_EN SER_ENABLE
+#define DMAC_BBPRT_CHIF_BOVF_ERR_SER_EN SER_DISABLE
 //bit[3]
-#define DMAC_BBPRT_CHIF_HDRL_ERR_SER_EN SER_ENABLE
+#define DMAC_BBPRT_CHIF_HDRL_ERR_SER_EN SER_DISABLE
 //bit[4]
-#define DMAC_BBPRT_CHIF_LEFT1_ERR_SER_EN SER_ENABLE
+#define DMAC_BBPRT_CHIF_LEFT1_ERR_SER_EN SER_DISABLE
 //bit[5]
-#define DMAC_BBPRT_CHIF_LEFT2_ERR_SER_EN SER_ENABLE
+#define DMAC_BBPRT_CHIF_LEFT2_ERR_SER_EN SER_DISABLE
 //bit[6]
-#define DMAC_BBPRT_CHIF_NULL_ERR_SER_EN SER_ENABLE
+#define DMAC_BBPRT_CHIF_NULL_ERR_SER_EN SER_DISABLE
 //bit[7]
-#define DMAC_BBPRT_CHIF_TO_ERR_SER_EN SER_ENABLE
+#define DMAC_BBPRT_CHIF_TO_ERR_SER_EN SER_DISABLE
 
 //BBRPT_DFS_ERR_IMR_ISR 0x963C
 //bit[0]
@@ -743,5 +747,9 @@ u32 mac_lv1_rcvy(struct mac_ax_adapter *adapter,
 
 u32 mac_err_imr_ctrl(struct mac_ax_adapter *adapter, enum mac_ax_func_sw sw);
 u32 mac_ser_ctrl(struct mac_ax_adapter *adapter, enum mac_ax_func_sw sw);
+u32 mac_chk_err_status(struct mac_ax_adapter *adapter, u8 *ser_status);
+u32 mac_dbg_log_dump(struct mac_ax_adapter *adapter);
+u32 mac_dbg_log_lvl_adjust(struct mac_ax_adapter *adapter, struct mac_debug_log_lvl *lvl);
+u32 mac_dump_ser_cnt(struct mac_ax_adapter *adapter, struct mac_ser_status *status);
 
 #endif

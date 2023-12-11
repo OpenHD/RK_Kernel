@@ -155,7 +155,26 @@ static struct usb_device_id rtw_usb_id_tbl[] = {
 	{USB_DEVICE_AND_INTERFACE_INFO(USB_VENDER_ID_REALTEK, 0xB852, 0xff, 0xff, 0xff), .driver_info = RTL8852B},
 	{USB_DEVICE_AND_INTERFACE_INFO(USB_VENDER_ID_REALTEK, 0xB85A, 0xff, 0xff, 0xff), .driver_info = RTL8852B},
 	{USB_DEVICE_AND_INTERFACE_INFO(USB_VENDER_ID_REALTEK, 0xA85B, 0xff, 0xff, 0xff), .driver_info = RTL8852B},
+	{USB_DEVICE_AND_INTERFACE_INFO(0x0586, 0x3428, 0xff, 0xff, 0xff), .driver_info = RTL8852B},
+	{USB_DEVICE_AND_INTERFACE_INFO(0x0b05, 0x1a62, 0xff, 0xff, 0xff), .driver_info = RTL8852B},	
+	{USB_DEVICE_AND_INTERFACE_INFO(0x3574, 0x6121, 0xff, 0xff, 0xff), .driver_info = RTL8852B},
 #endif /* CONFIG_RTL8852B */
+
+#ifdef CONFIG_RTL8852BP
+	/*=== Realtek demoboard ===*/
+	{USB_DEVICE_AND_INTERFACE_INFO(USB_VENDER_ID_REALTEK, 0xA85C, 0xff, 0xff, 0xff), .driver_info = RTL8852BP},
+#endif /* CONFIG_RTL8852BP */
+#ifdef CONFIG_RTL8851B
+	/*=== Realtek demoboard ===*/
+	{USB_DEVICE_AND_INTERFACE_INFO(USB_VENDER_ID_REALTEK, 0xB851, 0xff, 0xff, 0xff), .driver_info = RTL8851B},
+#endif /* CONFIG_RTL8851B */
+
+#ifdef CONFIG_RTL8852C
+	/*=== Realtek demoboard ===*/
+	{USB_DEVICE_AND_INTERFACE_INFO(USB_VENDER_ID_REALTEK, 0xC85A, 0xff, 0xff, 0xff), .driver_info = RTL8852C},
+	{USB_DEVICE_AND_INTERFACE_INFO(USB_VENDER_ID_REALTEK, 0xC832, 0xff, 0xff, 0xff), .driver_info = RTL8852C},
+	{USB_DEVICE_AND_INTERFACE_INFO(USB_VENDER_ID_REALTEK, 0xC85D, 0xff, 0xff, 0xff), .driver_info = RTL8852C},
+#endif /* CONFIG_RTL8852C */
 
 	{}	/* Terminating entry */
 };
@@ -853,6 +872,9 @@ static int rtw_dev_probe(struct usb_interface *pusb_intf, const struct usb_devic
 		goto free_if_vir;
 #endif
 
+	if (rtw_adapter_link_init(dvobj) != _SUCCESS)
+		goto free_adapter_link;
+
 	/*init data of dvobj from registary and ic spec*/
 	if (devobj_data_init(dvobj) == _FAIL) {
 		RTW_ERR("devobj_data_init Failed!\n");
@@ -872,17 +894,25 @@ static int rtw_dev_probe(struct usb_interface *pusb_intf, const struct usb_devic
 		goto free_devobj_data;
 	}
 
+	/* Update link_mlme_priv's ht/vht/he priv from padapter->mlmepriv */
+	rtw_init_link_capab(dvobj);
+
 #ifdef CONFIG_HOSTAPD_MLME
 	hostapd_mode_init(padapter);
 #endif
+	rtw_hw_dump_hal_spec(RTW_DBGDUMP, dvobj);
+
 	RTW_INFO("-%s success\n", __func__);
 	return 0; /*_SUCCESS*/
 
 free_devobj_data:
 	devobj_data_deinit(dvobj);
 
+free_adapter_link:
+	rtw_adapter_link_deinit(dvobj);
+
 #ifdef CONFIG_CONCURRENT_MODE
-free_if_vir:	
+free_if_vir:
 	rtw_drv_stop_vir_ifaces(dvobj);
 	rtw_drv_free_vir_ifaces(dvobj);
 #endif
@@ -930,14 +960,6 @@ static void rtw_dev_remove(struct usb_interface *pusb_intf)
 #if defined(CONFIG_HAS_EARLYSUSPEND) || defined(CONFIG_ANDROID_POWER)
 	rtw_unregister_early_suspend(pwrctl);
 #endif
-#if 0 /*GEORGIA_TODO_FIXIT*/
-	if (GET_PHL_COM(dvobj)->fw_ready == _TRUE) {
-		rtw_pm_set_ips(padapter, IPS_NONE);
-		rtw_pm_set_lps(padapter, PM_PS_MODE_ACTIVE);
-
-		LeaveAllPowerSaveMode(padapter);
-	}
-#endif
 	dev_set_drv_stopped(adapter_to_dvobj(padapter));	/*for stop thread*/
 #if 0 /*#ifdef CONFIG_CORE_CMD_THREAD*/
 	rtw_stop_cmd_thread(padapter);
@@ -953,6 +975,8 @@ static void rtw_dev_remove(struct usb_interface *pusb_intf)
 	dev_set_surprise_removed(dvobj);
 
 	rtw_usb_drop_all_phl_rx_pkt(dvobj);
+
+	rtw_adapter_link_deinit(dvobj);
 
 	rtw_usb_primary_adapter_deinit(padapter);
 
@@ -982,6 +1006,15 @@ static int __init rtw_drv_entry(void)
 #ifdef BTCOEXVERSION
 	RTW_PRINT(DRV_NAME" BT-Coex version = %s\n", BTCOEXVERSION);
 #endif /* BTCOEXVERSION */
+
+#if (defined(CONFIG_RTKM) && defined(CONFIG_RTKM_BUILT_IN))
+	ret = rtkm_prealloc_init();
+	if (ret) {
+		RTW_INFO("%s: pre-allocate memory failed!!(%d)\n", __FUNCTION__,
+			 ret);
+		goto exit;
+	}
+#endif /* CONFIG_RTKM */
 
 	ret = platform_wifi_power_on();
 	if (ret != 0) {
@@ -1036,6 +1069,12 @@ static void __exit rtw_drv_halt(void)
 	RTW_PRINT("module exit success\n");
 
 	rtw_mstat_dump(RTW_DBGDUMP);
+
+#if (defined(CONFIG_RTKM) && defined(CONFIG_RTKM_BUILT_IN))
+	rtkm_prealloc_destroy();
+#elif (defined(CONFIG_RTKM) && defined(CONFIG_RTKM_STANDALONE))
+	rtkm_dump_mstatus(RTW_DBGDUMP);
+#endif /* CONFIG_RTKM */
 }
 
 module_init(rtw_drv_entry);

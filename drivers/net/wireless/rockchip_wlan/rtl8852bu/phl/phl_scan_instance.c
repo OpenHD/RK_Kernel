@@ -86,7 +86,7 @@ static void _pick_active_channels(struct rtw_pickup_chplan_group *group,
 {
 	struct instance_channel *dest = NULL;
 	struct rtw_pickup_channel *src = NULL;
-	u32 i = 0;
+	u8 i = 0;
 
 	dest = &inst->ch[inst->cnt];
 
@@ -115,7 +115,7 @@ static void _pick_the_rest_channels(struct rtw_pickup_chplan_group *group,
 {
 	struct instance_channel *dest = NULL;
 	struct rtw_pickup_channel *src = NULL;
-	u32 i = 0;
+	u8 i = 0;
 
 	dest = &inst->ch[inst->cnt];
 
@@ -172,8 +172,12 @@ static void _pick_6ghz_channels(struct rtw_pickup_chplan_group *group,
 					struct instance_strategy *strategy,
 					struct instance *inst)
 {
-	_pick_the_rest_channels(&group[FREQ_GROUP_6GHZ_PSC],
-					strategy, inst);
+	u32 i = 0;
+
+	for (i = FREQ_GROUP_6GHZ_UNII5;
+		i <= FREQ_GROUP_6GHZ_UNII8; i++) {
+		_pick_the_rest_channels(&group[i], strategy, inst);
+	}
 }
 
 static void _generate_instance(
@@ -184,6 +188,7 @@ static void _generate_instance(
 	u8 order = strategy->order;
 
 	inst->cnt = 0;
+
 	if (order & ORDER_5GHZ_PRIOR) {
 		_pick_5ghz_channels(group, strategy, inst);
 		_pick_2ghz_channels(group, strategy, inst);
@@ -202,7 +207,7 @@ static void _select_channels_by_group(struct instance_strategy *strategy,
 	u8 skip = strategy->skip;
 	u8 chnl = 0, property = 0, gpidx = 0, keep = 0;
 	enum band_type band = BAND_ON_24G;
-	u32 i = 0;
+	u8 i = 0;
 
 	for (i = 0; i < plan->cnt; i++) {
 		band = plan->ch[i].band;
@@ -234,7 +239,16 @@ static void _select_channels_by_group(struct instance_strategy *strategy,
 				continue;
 			keep = 1;
 		} else if ((BAND_6GHZ(band)) && !(skip & SKIP_6GHZ)) {
-			gpidx = FREQ_GROUP_6GHZ_PSC;
+			if (CH_6GHZ_UNII5(chnl))
+				gpidx = FREQ_GROUP_6GHZ_UNII5;
+			else if (CH_6GHZ_UNII6(chnl))
+				gpidx = FREQ_GROUP_6GHZ_UNII6;
+			else if (CH_6GHZ_UNII7(chnl))
+				gpidx = FREQ_GROUP_6GHZ_UNII7;
+			else if (CH_6GHZ_UNII8(chnl))
+				gpidx = FREQ_GROUP_6GHZ_UNII8;
+			else
+				continue;
 			keep = 1;
 		}
 
@@ -255,7 +269,7 @@ bool rtw_phl_generate_scan_instance(struct instance_strategy *strategy,
 					struct instance *inst)
 {
 	struct rtw_pickup_chplan_group group[FREQ_GROUP_MAX] = {0};
-	u32 i = 0;
+	u8 i = 0;
 
 	if (!strategy || !inst || !chplan)
 		return false;

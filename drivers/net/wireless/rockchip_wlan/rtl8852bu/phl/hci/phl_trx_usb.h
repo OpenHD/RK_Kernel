@@ -44,6 +44,10 @@ struct phl_usb_tx_buf_resource  {
 	struct phl_queue h2c_txbuf_list;
 };
 
+#ifdef CONFIG_PHL_USB_RX_AGGREGATION
+enum rtw_phl_status
+phl_cmd_usb_rx_agg_cfg_hdl(struct phl_info_t *phl_info, u8 *cmd);
+#endif
 
 enum rtw_phl_status
 phl_hook_trx_ops_usb(struct phl_info_t *phl_info);

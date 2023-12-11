@@ -101,7 +101,7 @@ struct bb_rpt_cr_info {
 	u32 sts_keeper_addr; 	
 	u32 sts_keeper_addr_m;		
 	u32 sts_keeper_data; 	
-	u32 sts_keeper_data_m;
+	u32 sts_keeper_data_m;		
 	u32 pw_dbm_rx0;
 	u32 pw_dbm_rx0_m;
 	u32 path0_rssi_at_agc_rdy;
@@ -110,6 +110,8 @@ struct bb_rpt_cr_info {
 	u32 path1_rssi_at_agc_rdy_m;
 	u32 sts_user_sel;
 	u32 sts_user_sel_m;
+	u32 path1_g_lna6;
+	u32 path1_g_lna6_m;
 };
 
 struct bb_rpt_info {
@@ -125,7 +127,6 @@ struct rxevm_usr {
 
 struct rxevm_info {
 	struct rxevm_usr rxevm_user[MAX_USER_NUM];
-	bool rxevm_valid;
 };
 
 struct rxevm_physts {
@@ -199,10 +200,12 @@ struct halbb_mp {
 };
 
 /*@--------------------------[Prptotype]-------------------------------------*/
+void halbb_mp_bt_cfg(struct bb_info *bb, bool bt_connect);
 u16 halbb_mp_get_tx_ok(struct bb_info *bb, u32 rate_index,
 			enum phl_phy_idx phy_idx);
 u32 halbb_mp_get_rx_crc_ok(struct bb_info *bb, enum phl_phy_idx phy_idx);
 u32 halbb_mp_get_rx_crc_err(struct bb_info *bb, enum phl_phy_idx phy_idx);
+void halbb_mp_cnt_reset(struct bb_info *bb);
 void halbb_mp_reset_cnt(struct bb_info *bb);
 u8 halbb_mp_get_rxevm(struct bb_info *bb, u8 user, u8 strm, bool rxevm_table);
 struct rxevm_physts halbb_mp_get_rxevm_physts(struct bb_info *bb,
@@ -211,7 +214,14 @@ struct rxevm_physts halbb_mp_get_rxevm_physts(struct bb_info *bb,
 u8 halbb_mp_get_rssi(struct bb_info *bb, enum rf_path path);
 struct rssi_physts halbb_get_mp_rssi_physts(struct bb_info *bb, enum rf_path path, enum phl_phy_idx phy_idx);
 void halbb_mp_get_psts(struct bb_info *bb , struct bb_mp_psts *bb_mp_physts);
+void halbb_cvrt_2_mp(struct bb_info *bb);
+u16 halbb_mp_get_rpl(struct bb_info *bb, enum rf_path path, enum phl_phy_idx phy_idx);
+u32 halbb_mp_get_dc_lvl(struct bb_info *bb, enum rf_path path, bool i_ch, enum phl_phy_idx phy_idx);
+u16 halbb_mp_get_pwdbm(struct bb_info *bb, enum rf_path path, enum phl_phy_idx phy_idx);
+u16 halbb_mp_get_cfo(struct bb_info *bb, enum phl_phy_idx phy_idx);
 void halbb_mp_dbg(struct bb_info *bb, char input[][16], u32 *_used,
 		  char *output, u32 *_out_len);
 void halbb_cr_cfg_mp_init(struct bb_info *bb);
+void halbb_dbg_port_sel(struct bb_info *bb, u16 dbg_port_sel, u8 dbg_port_ip_sel,
+			bool dbg_port_ref_clk_en, bool dbg_port_en);
 #endif

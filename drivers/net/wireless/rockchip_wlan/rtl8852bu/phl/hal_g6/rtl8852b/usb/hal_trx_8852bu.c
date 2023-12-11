@@ -13,7 +13,6 @@
  *
  *****************************************************************************/
 #define _HAL_TRX_8852BU_C_
-#include "../../hal_headers.h"
 #include "../rtl8852b_hal.h"
 #include "hal_trx_8852bu.h"
 
@@ -175,8 +174,8 @@ static void hal_trx_deinit_8852bu(struct hal_info_t *hal)
 {
 }
 
-static u8 hal_mapping_hw_tx_chnl_8852bu(u16 macid, enum rtw_phl_ring_cat cat,
-					u8 band)
+static u8 hal_mapping_hw_tx_chnl_8852bu(struct hal_info_t *hal,
+		u16 macid, enum rtw_phl_ring_cat cat, u8 band)
 {
 	u8 dma_ch = 0;
 
@@ -256,54 +255,30 @@ u8 hal_get_max_bulkout_wd_num_8852bu(struct hal_info_t *hal)
 	return hal_mac_usb_get_max_bulkout_wd_num(hal);
 }
 
+u32
+hal_get_wd_len_8852bu(struct hal_info_t *hal, struct rtw_xmit_req *tx_req)
+{
+	return rtw_hal_mac_get_txdesc_len(hal->mac, tx_req);
+}
+
 /**
  * the function update wd page, including wd info, wd body, seq info
  * @hal: see struct hal_info_t
  * @phl_pkt_req: see struct rtw_phl_pkt_req
  */
 enum rtw_hal_status
-hal_fill_wd_8852bu(struct hal_info_t *hal, struct rtw_xmit_req *tx_req,
-			u8 *wd_buf, u32 *wd_len)
+hal_fill_wd_8852bu(struct hal_info_t *hal,
+                   struct rtw_xmit_req *tx_req,
+                   u8 *wd_buf,
+                   u32 *wd_len)
 {
-	return rtw_hal_mac_ax_fill_txdesc(hal->mac, tx_req, wd_buf, wd_len);
+	return rtw_hal_mac_fill_txdesc(hal->mac, tx_req, wd_buf, wd_len);
 }
 
 enum rtw_hal_status
 hal_usb_tx_agg_cfg_8852bu(struct hal_info_t *hal, u8* wd_buf, u8 agg_num)
 {
 	return hal_mac_usb_tx_agg_cfg(hal, wd_buf, agg_num);
-}
-
-enum rtw_hal_status
-hal_usb_rx_agg_cfg_8852bu(struct hal_info_t *hal, u8 mode, u8 agg_mode,
-	u8 drv_define, u8 timeout, u8 size, u8 pkt_num)
-{
-	enum rtw_hal_status hstatus = RTW_HAL_STATUS_FAILURE;
-	/*u8 drv_define, u8 timeout, u8 size, u8 pkt_num*/
-	/*mode 0: disable*/
-	/*mode 1: default (0x2005)*/
-	/*mode 2: 0x0101*/
-	switch (mode){
-		case PHL_RX_AGG_DISABLE:
-			hstatus = hal_mac_usb_rx_agg_cfg(hal, 0, 0, 0, 0, 0);
-			break;
-		case PHL_RX_AGG_DEFAULT:
-			hstatus = hal_mac_usb_rx_agg_cfg(hal, MAC_AX_RX_AGG_MODE_USB,
-				0, 0, 0, 0);
-			break;
-		case PHL_RX_AGG_SMALL_PKT:
-			hstatus = hal_mac_usb_rx_agg_cfg(hal, MAC_AX_RX_AGG_MODE_USB,
-				1, 0x01, 0x01, 0);
-			break;
-		case PHL_RX_AGG_USER_DEFINE:
-			hstatus = hal_mac_usb_rx_agg_cfg(hal, agg_mode,
-				drv_define, timeout, size, pkt_num);
-			break;
-		default:
-			hstatus = RTW_HAL_STATUS_FAILURE;
-			break;
-	}
-	return hstatus;
 }
 
 static void _hal_show_tx_failure_rsn_8852bu(u8 txsts)
@@ -379,11 +354,12 @@ static struct hal_trx_ops ops= {
 	.deinit = hal_trx_deinit_8852bu,
 	.map_hw_tx_chnl = hal_mapping_hw_tx_chnl_8852bu,
 	.get_bulkout_id = hal_get_bulkout_id_8852bu,
+	.hal_get_wd_len = hal_get_wd_len_8852bu,
 	.hal_fill_wd = hal_fill_wd_8852bu,
 	.handle_rx_buffer = hal_handle_rx_buffer_8852b,
 	.query_hal_info = hal_query_info_8852bu,
 	.usb_tx_agg_cfg = hal_usb_tx_agg_cfg_8852bu,
-	.usb_rx_agg_cfg = hal_usb_rx_agg_cfg_8852bu,
+	.usb_rx_agg_cfg = hal_usb_rx_agg_cfg,
 	.get_fwcmd_queue_idx = hal_get_fwcmd_queue_idx_8852bu,
 	.get_max_bulkout_wd_num = hal_get_max_bulkout_wd_num_8852bu,
 	.handle_wp_rpt = hal_handle_rx_report_8852bu,

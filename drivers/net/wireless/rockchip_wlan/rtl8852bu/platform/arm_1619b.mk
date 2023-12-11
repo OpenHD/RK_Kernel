@@ -14,7 +14,6 @@ endif
 
 ifeq ($(shell test $(CONFIG_RTW_ANDROID) -ge 11; echo $$?), 0)
 EXTRA_CFLAGS += -DCONFIG_IFACE_NUMBER=3
-EXTRA_CFLAGS += -DCONFIG_SEL_P2P_IFACE=1
 endif
 
 ARCH ?= arm
@@ -27,10 +26,14 @@ EXTRA_CFLAGS += -DCONFIG_PLATFORM_OPS
 _PLATFORM_FILES := platform/platform_linux_pc_pci.o
 OBJS += $(_PLATFORM_FILES)
 # Core Config
+# CONFIG_RTKM - n/m/y for not support / standalone / built-in
+CONFIG_RTKM = m
+CONFIG_MSG_NUM = 128
+EXTRA_CFLAGS += -DCONFIG_MSG_NUM=$(CONFIG_MSG_NUM)
 EXTRA_CFLAGS += -DCONFIG_RXBUF_NUM_1024
 EXTRA_CFLAGS += -DCONFIG_TX_SKB_ORPHAN
 # PHL Config
 EXTRA_CFLAGS += -DRTW_WKARD_98D_RXTAG
 endif
-
+_PLATFORM_FILES += platform/platform_ops.o
 endif

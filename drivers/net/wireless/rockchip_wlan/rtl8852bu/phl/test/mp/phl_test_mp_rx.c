@@ -311,7 +311,7 @@ enum rtw_phl_status mp_rx(struct mp_context *mp, struct mp_rx_arg *arg)
 		break;
 	case MP_RX_CMD_GET_RSSI_EX:
 		PHL_INFO("%s: CMD = MP_RX_CMD_GET_RSSI\n", __FUNCTION__);
-		phl_status = phl_mp_rx_get_rssi(mp, arg);
+		phl_status = phl_mp_rx_get_rssi_ex(mp, arg);
 		break;
 	default:
 		PHL_WARN("%s: CMD NOT RECOGNIZED\n", __FUNCTION__);

@@ -355,7 +355,7 @@ u32 rtw_usb_write_port(void *d, u8 *phl_tx_buf_ptr,
 
 	int status;
 	unsigned int pipe;
-	u32 ret = _FAIL;
+	u32 ret = RTW_PHL_STATUS_FAILURE;
 	struct dvobj_priv *pdvobj = (struct dvobj_priv *)d;
 	struct usb_device *pusbd = dvobj_to_usb(pdvobj)->pusbdev;
 	struct lite_data_buf *litexmitbuf = NULL;
@@ -417,18 +417,13 @@ u32 rtw_usb_write_port(void *d, u8 *phl_tx_buf_ptr,
 		goto exit;
 	}
 
-	ret = _SUCCESS;
+	ret = RTW_PHL_STATUS_SUCCESS;
 
 exit:
-	if (ret != _SUCCESS) {
+	if (ret != RTW_PHL_STATUS_SUCCESS) {
 		rtw_free_litedatabuf(&pdvobj->litexmitbuf_q, litexmitbuf);
 		rtw_free_dataurb(&pdvobj->xmit_urb_q, xmiturb);
 	}
-
-	if (ret == _SUCCESS)
-		ret = RTW_PHL_STATUS_SUCCESS;
-	else
-		ret = RTW_PHL_STATUS_FAILURE;
 
 	return ret;
 
@@ -472,8 +467,12 @@ static void rtw_usb_read_port_complete(struct urb *urb, struct pt_regs *regs)
 	u8 bulk_id = recvurb->bulk_id;
 	u8 minlen = recvurb->minlen;
 	unsigned long sp_flags;
-	u8 status = _SUCCESS;
-
+	u8 status = RTW_PHL_STATUS_SUCCESS;
+#ifdef RTW_DETECT_HANG
+	struct debug_priv *pdbgpriv = &dvobj->drv_dbg;
+	struct hang_info *phang_info = &pdbgpriv->dbg_hang_info;
+	struct rxff_hang_info *prxff_hang_info = &phang_info->dbg_rxff_hang_info;
+#endif
 
 	if (bulk_id == REALTEK_USB_BULK_IN_EP_IDX) {
 		rx_data_buf_q = &dvobj->literecvbuf_q;
@@ -492,7 +491,7 @@ static void rtw_usb_read_port_complete(struct urb *urb, struct pt_regs *regs)
 			, dev_is_drv_stopped(dvobj) ? "True" : "False"
 			, dev_is_surprise_removed(dvobj) ? "True" : "False");
 
-		status = _FAIL;
+		status = RTW_PHL_STATUS_FAILURE;
 		goto exit;
 	}
 
@@ -501,21 +500,24 @@ static void rtw_usb_read_port_complete(struct urb *urb, struct pt_regs *regs)
 			RTW_INFO("%s()-%d: actual_length:%u, transfer_buffer_length:%u, minlen:%u\n"
 				, __FUNCTION__, __LINE__, actual_length, transfer_buffer_length, minlen);
 
-			status = _FAIL;
+			status = RTW_PHL_STATUS_INVALID_PARAM;
 			goto exit;
 		} else {
+#ifdef RTW_DETECT_HANG
+			prxff_hang_info->rx_cnt++;
+#endif
 			rtw_reset_continual_io_error(dvobj);
-			status = _SUCCESS;
+			status = RTW_PHL_STATUS_SUCCESS;
 			goto exit;
 		}
 	} if (urb->status == -ENOENT) {
 		/*use usb_kill_urb urb status code = -ENOENT*/
-		status = _FAIL;
+		status = RTW_PHL_STATUS_FAILURE;
 		goto exit;
 	} else {
 
 		RTW_INFO("###=> %s => urb.status(%d)\n", __func__, urb->status);
-		status = _FAIL;
+		status = RTW_PHL_STATUS_FAILURE;
 
 		if (rtw_inc_and_chk_continual_io_error(dvobj) == _TRUE)
 			dev_set_surprise_removed(dvobj);
@@ -544,11 +546,6 @@ static void rtw_usb_read_port_complete(struct urb *urb, struct pt_regs *regs)
 
 exit:
 
-	if (status == _SUCCESS)
-		status = RTW_PHL_STATUS_SUCCESS;
-	else
-		status = RTW_PHL_STATUS_FAILURE;
-
 	rtw_phl_post_in_complete(dvobj->phl, literecvbuf->phl_buf_ptr, actual_length, status);
 	rtw_free_litedatabuf(rx_data_buf_q, literecvbuf);
 	rtw_free_dataurb(rx_urb_q, recvurb);
@@ -559,7 +556,7 @@ u32 rtw_usb_read_port(void *d, void *rxobj,
 {
 	int err;
 	unsigned int pipe;
-	u32 ret = _FAIL;
+	u32 ret = RTW_PHL_STATUS_FAILURE;
 	struct dvobj_priv *dvobj = (struct dvobj_priv *)d;
 	struct usb_device *usbd = dvobj_to_usb(dvobj)->pusbdev;
 	struct lite_data_buf *literecvbuf = NULL;
@@ -585,7 +582,7 @@ u32 rtw_usb_read_port(void *d, void *rxobj,
 	} else {
 		RTW_INFO("%s,%d Unkown bulk id:%d\n",
 			__func__, __LINE__, bulk_id);
-		ret = _FAIL;
+		ret = RTW_PHL_STATUS_FAILURE;
 		goto exit;
 	}
 
@@ -638,7 +635,7 @@ u32 rtw_usb_read_port(void *d, void *rxobj,
 	err = usb_submit_urb(recvurb->urb, GFP_ATOMIC);
 	if ((err) && (err != (-EPERM))) {
 		RTW_INFO("cannot submit rx in-token(err = 0x%08x),urb_status = %d\n", err, recvurb->urb->status);
-		ret = _FAIL;
+		ret = RTW_PHL_STATUS_FAILURE;
 		goto exit;
 	}
 
@@ -646,17 +643,12 @@ u32 rtw_usb_read_port(void *d, void *rxobj,
 	if (bulk_id == REALTEK_USB_BULK_IN_EP_IDX)
 		ATOMIC_INC(&(dvobj->rx_pending_cnt));
 
-	ret = _SUCCESS;
+	ret = RTW_PHL_STATUS_SUCCESS;
 exit:
-	if (ret != _SUCCESS) {
+	if (ret != RTW_PHL_STATUS_SUCCESS) {
 		rtw_free_litedatabuf(rx_data_buf_q, literecvbuf);
 		rtw_free_dataurb(rx_urb_q, recvurb);
 	}
-
-	if (ret == _SUCCESS)
-		ret = RTW_PHL_STATUS_SUCCESS;
-	else
-		ret = RTW_PHL_STATUS_FAILURE;
 
 	return ret;
 }

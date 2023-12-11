@@ -27,10 +27,6 @@ enum dbcc_cmd_status {
 /* dbcc command class */
 enum dbcc_class {
 	DBCC_CLASS_CONFIG = 0,
-	DBCC_CLASS_TX = 1,
-	DBCC_CLASS_TX_ST,
-	DBCC_CLASS_RX,
-	DBCC_CLASS_RX_ST,
 	DBCC_CLASS_MAX,
 };
 
@@ -80,7 +76,6 @@ struct dbcc_config_arg {
 	u8 arg_class;
 	u8 cmd;
 	u8 dbcc_en;
-	u8 action;
 	u8 macid;
 };
 

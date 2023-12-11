@@ -276,6 +276,9 @@ u8 mp_start(void *priv)
 void mp_change_mode(struct mp_context *mp_ctx, enum rtw_drv_mode driver_mode)
 {
 	struct phl_info_t *phl_info = mp_ctx->phl;
+	#ifdef RTW_WKARD_AP_MP
+	struct hal_info_t *hal_info = mp_ctx->hal;
+	#endif
 	PHL_INFO("%s Change to %x\n", __FUNCTION__, driver_mode);
 
 	/* Need PHL stop function later */
@@ -293,18 +296,20 @@ void mp_change_mode(struct mp_context *mp_ctx, enum rtw_drv_mode driver_mode)
 		rtw_hal_mp_efuse_bt_shadow_reload(mp_ctx);
 
 		rtw_hal_acpt_crc_err_pkt(mp_ctx->hal,mp_ctx->cur_phy,true);
+		#ifdef RTW_WKARD_AP_MP
+		rtw_hal_bb_rx_ndp_mp(mp_ctx->hal);
+		/* RSSI flow process under MP mode */
+		rtw_hal_bb_dm_init_mp(mp_ctx->hal);
+		rtw_hal_rf_dm_init_mp(mp_ctx->hal);
+		rtw_hal_mac_set_rxfltr_mp_mode(hal_info, 0, 0x1c00);
+		#endif
 	}
 	else {
 		rtw_hal_acpt_crc_err_pkt(mp_ctx->hal,mp_ctx->cur_phy,false);
 	}
-#ifdef CONFIG_DBCC_SUPPORT
-	if (phl_info->phl_com->dev_cap.dbcc_sup)
-		rtw_hal_dbcc_cfg(mp_ctx->hal, phl_info->phl_com, true);
-#endif
-	rtw_hal_mp_ic_hw_setting_init(mp_ctx);
-	rtw_hal_mp_cfg(phl_info->phl_com ,mp_ctx->hal);
 
 	rtw_hal_mp_ic_hw_setting_init(mp_ctx);
+	rtw_hal_mp_cfg(phl_info->phl_com ,mp_ctx->hal);
 }
 
 enum rtw_phl_status phl_test_mp_alloc(struct phl_info_t *phl_info, void *hal, void **mp)
@@ -353,6 +358,7 @@ void phl_test_mp_init(void *mp)
 {
 	struct mp_context *mp_ctx = NULL;
 	struct test_obj_ctrl_interface *pctrl = NULL;
+	u8 status = false;
 
 	if(mp == NULL)
 		return;
@@ -360,6 +366,7 @@ void phl_test_mp_init(void *mp)
 	mp_ctx = (struct mp_context *)mp;
 	pctrl = &(mp_ctx->mp_test_ctrl);
 
+	mp_ctx->max_para = 2000;
 	mp_ctx->status = MP_STATUS_WAIT_CMD;
 	mp_ctx->is_mp_test_end = false;
 	pctrl->bp_handler = mp_bp_handler;
@@ -367,7 +374,7 @@ void phl_test_mp_init(void *mp)
 	pctrl->is_test_end = mp_is_test_end;
 	pctrl->is_test_pass = mp_is_test_pass;
 	pctrl->start_test = mp_start;
-	rtw_phl_test_add_new_test_obj(mp_ctx->phl_com,
+	status = rtw_phl_test_add_new_test_obj(mp_ctx->phl_com,
 	                              "mp_test",
 	                              mp_ctx,
 	                              TEST_LVL_LOW,
@@ -403,6 +410,9 @@ void phl_test_mp_start(void *mp, u8 tm_mode)
 	mp_ctx = (struct mp_context *)mp;
 
 	mp_change_mode(mp_ctx, tm_mode);
+
+	/* stop phl watchdog */
+	rtw_phl_watchdog_stop(mp_ctx->phl);
 }
 
 void phl_test_mp_stop(void *mp, u8 tm_mode)
@@ -417,6 +427,8 @@ void phl_test_mp_stop(void *mp, u8 tm_mode)
 		return;
 
 	mp_change_mode(mp_ctx, tm_mode);
+	/* start phl watchdog */
+	rtw_phl_watchdog_start(mp_ctx->phl);
 }
 
 
@@ -433,7 +445,7 @@ void phl_test_mp_cmd_process(void *mp, void *buf, u32 buf_len, u8 submdid)
 	mp_ctx = (struct mp_context *)mp;
 	phl_com = mp_ctx->phl_com;
 
-	if((buf == NULL) || (buf_len <= 0)) {
+	if((buf == NULL) || (buf_len > mp_ctx->max_para)) {
 		PHL_ERR("%s: Invalid buffer content!\n", __func__);
 		return;
 	}

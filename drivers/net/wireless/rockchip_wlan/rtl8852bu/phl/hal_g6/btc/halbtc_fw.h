@@ -56,6 +56,8 @@ enum btf_set {
 	SET_BT_IGNORE_WLAN_ACT,
 	SET_BT_TX_PWR,
 	SET_BT_LNA_CONSTRAIN,
+	SET_BT_QUERY_DEV_LIST,
+	SET_BT_QUERY_DEV_INFO,
 	SET_BT_GOLDEN_RX_RANGE,
 	SET_BT_PSD_REPORT,
 	SET_H2C_TEST,
@@ -69,12 +71,11 @@ enum btf_set_report_en {
 	RPT_EN_MREG = BIT2,
 	RPT_EN_BT_VER_INFO = BIT3, /* FW, Coex, Feature*/
 	RPT_EN_BT_SCAN_INFO = BIT4,  /* BT scan parameter */
-	RPT_EN_BT_AFH_MAP = BIT5, /* AFH map H/M/L */
-	RPT_EN_BT_DEVICE_INFO = BIT6, /* vendor id, device name, flush-val*/
-	RPT_EN_FW_STEP_INFO = BIT7,
-	RPT_EN_WL_ALL = 0x7,
-	RPT_EN_BT_ALL = 0x78,
-	RPT_EN_ALL = 0x7f
+	RPT_EN_BT_DEVICE_INFO = BIT5, /* vendor id, device name, flush-val*/
+	RPT_EN_BT_AFH_MAP = BIT6, /* AFH map H/M/L */
+	RPT_EN_BT_AFH_MAP_LE = BIT7, /* AFH map L/M */
+	RPT_EN_FW_STEP_INFO = BIT8,
+	RPT_EN_ALL = 0x1ff
 };
 
 /* SET_SLOT_TABLE function 0x1 -> sub-function */
@@ -122,6 +123,9 @@ enum {
 	CXDRVINFO_RUN,  /* wl run reason */
 	CXDRVINFO_CTRL, /* ctrl info */
 	CXDRVINFO_SCAN, /* scan info */
+	CXDRVINFO_TRX,  /* WL traffic to WL fw */
+	CXDRVINFO_TXPWR, /* Set WL tx pwr in WL fw */
+	CXDRVINFO_FDDT, /* FDD train info  */
 	CXDRVINFO_MAX
 };
 
@@ -150,6 +154,7 @@ enum btf_fw_event {
 	BTF_EVNT_BT_REG = 3,
 	BTF_EVNT_CX_RUNINFO = 4,
 	BTF_EVNT_BT_PSD = 5,
+	BTF_EVNT_BT_DEV_INFO = 6,
 	BTF_EVNT_BUF_OVERFLOW,
 	BTF_EVNT_C2H_LOOPBACK,
 	BTF_EVNT_MAX

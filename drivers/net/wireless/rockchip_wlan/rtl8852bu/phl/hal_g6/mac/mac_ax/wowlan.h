@@ -30,6 +30,8 @@
 
 #define WOW_STOPTRX_H2CREG_DW_SIZE 1 /* mapping to struct wow_stoptrx_h2creg */
 
+#define PROXY_MDNS_DUMP	0
+
 /**
  * @struct keep_alive
  * @brief keep_alive
@@ -160,7 +162,8 @@ struct gtk_ofld {
 	u32 tkip_en:1;
 	u32 ieee80211w_en:1;
 	u32 pairwise_wakeup:1;
-	u32 rsvd0:4;
+	u32 norekey_wakeup:1;
+	u32 rsvd0:3;
 	u32 aoac_rep_id:8;
 	u32 mac_id:8;
 	u32 gtk_rsp_id:8;
@@ -821,15 +824,128 @@ u32 mac_wow_stop_trx(struct mac_ax_adapter *adapter);
 u32 mac_wow_get_stoptrx_st(struct mac_ax_adapter *adapter);
 
 /**
- * @brief free_aoac_report
+ * @brief mac_cfg_wow_auto_test
  *
  * @param *adapter
+ * @param rxtest
  * @return Please Place Description here.
  * @retval u32
  */
-u32 free_aoac_report(struct mac_ax_adapter *adapter);
+u32 mac_cfg_wow_auto_test(struct mac_ax_adapter *adapter, u8 rxtest);
 /**
  * @}
+ */
+
+/**
+ * @addtogroup WakeOnWlan
+ * @{
+ */
+
+/**
+ * @brief mac_proxyofld
+ *
+ * @param *adapter
+ * @param cfg
+ * @return Please Place Description here.
+ * @retval u32
+ */
+u32 mac_proxyofld(struct mac_ax_adapter *adapter, struct rtw_hal_mac_proxyofld *pcfg);
+/**
+ * @}
+ */
+
+/**
+ * @addtogroup WakeOnWlan
+ * @{
+ */
+
+/**
+ * @brief mac_proxy_mdns_serv_pktofld
+ *
+ * @param *adapter
+ * @param serv
+ * @param pktid
+ * @return Please Place Description here.
+ * @retval u32
+ */
+u32 mac_proxy_mdns_serv_pktofld(struct mac_ax_adapter *adapter,
+				struct rtw_hal_mac_proxy_mdns_service *pserv, u8 *pktid);
+/**
+ * @}
+ */
+
+/**
+ * @addtogroup WakeOnWlan
+ * @{
+ */
+
+/**
+ * @brief mac_proxy_mdns_txt_pktofld
+ *
+ * @param *adapter
+ * @param txt
+ * @param pktid
+ * @return Please Place Description here.
+ * @retval u32
+ */
+u32 mac_proxy_mdns_txt_pktofld(struct mac_ax_adapter *adapter,
+			       struct rtw_hal_mac_proxy_mdns_txt *ptxt, u8 *pktid);
+/**
+ * @}
+ */
+
+/**
+ * @addtogroup WakeOnWlan
+ * @{
+ */
+
+/**
+ * @brief mac_proxy_mdns
+ *
+ * @param *adapter
+ * @param mdns
+ * @return Please Place Description here.
+ * @retval u32
+ */
+u32 mac_proxy_mdns(struct mac_ax_adapter *adapter, struct rtw_hal_mac_proxy_mdns *pmdns);
+/**
+ * @}
+ */
+
+/**
+ * @addtogroup WakeOnWlan
+ * @{
+ */
+
+/**
+ * @brief mac_proxy_ptcl_pattern
+ *
+ * @param *adapter
+ * @param cfg
+ * @return Please Place Description here.
+ * @retval u32
+ */
+u32 mac_proxy_ptcl_pattern(struct mac_ax_adapter *adapter,
+			   struct rtw_hal_mac_proxy_ptcl_pattern *cfg);
+/**
+ * @}
+ */
+
+/**
+ * @addtogroup WakeOnWlan
+ * @{
+ */
+
+/**
+ * @brief mac_check_proxy_done
+ *
+ * @param *adapter
+ * @param *fw_ret
+ * @return Please Place Description here.
+ * @retval u32
+ */
+u32 mac_check_proxy_done(struct mac_ax_adapter *adapter, u8 *fw_ret);
+/**
  * @}
  */
 

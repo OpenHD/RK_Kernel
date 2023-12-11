@@ -222,8 +222,8 @@ int rm_get_tx_power(_adapter *adapter, enum rf_path path, enum MGN_RATE rate, s8
 u8 rm_gen_dialog_token(_adapter *padapter)
 {
 	struct rm_priv *prmpriv = &(padapter->rmpriv);
-	struct mlme_ext_priv *pmlmeext = &padapter->mlmeextpriv;
-	struct mlme_ext_info *pmlmeinfo = &pmlmeext->mlmext_info;
+	struct mlme_ext_priv *pmlmeext = &(padapter->mlmeextpriv);
+	struct mlme_ext_info *pmlmeinfo = &(pmlmeext->mlmext_info);
 
 	do {
 		pmlmeinfo->dialogToken++;

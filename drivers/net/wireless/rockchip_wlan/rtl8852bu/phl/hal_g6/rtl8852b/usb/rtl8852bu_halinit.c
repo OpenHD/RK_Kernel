@@ -13,7 +13,6 @@
  *
  *****************************************************************************/
 #define _RTL8852BU_HALINIT_C_
-#include "../../hal_headers.h"
 #include "../rtl8852b_hal.h"
 
 static void _hal_pre_init_8852bu(struct rtw_phl_com_t *phl_com,
@@ -28,10 +27,10 @@ static void _hal_pre_init_8852bu(struct rtw_phl_com_t *phl_com,
 	else
 		trx_info->trx_mode = MAC_AX_TRX_HW_MODE;
 
-	if (hal_info->hal_com->dbcc_en == false)
-		trx_info->qta_mode = MAC_AX_QTA_SCC;
+	if (phl_com->dev_cap.quota_turbo == true)
+		trx_info->qta_mode = MAC_AX_QTA_SCC_TURBO;
 	else
-		trx_info->qta_mode = MAC_AX_QTA_DBCC;
+		trx_info->qta_mode = MAC_AX_QTA_SCC;
 
 	#ifdef RTW_WKARD_LAMODE
 	PHL_INFO("%s : la_mode %d\n", __func__, phl_com->dev_cap.la_mode);
@@ -47,7 +46,7 @@ static void _hal_pre_init_8852bu(struct rtw_phl_com_t *phl_com,
 	}
 
 	rpr_cfg->tmr_def = 1;
-	#ifdef CONFIG_PHL_USB_RELEASE_RPT_ENABLE
+	#ifdef CONFIG_PHL_RELEASE_RPT_ENABLE
 	rpr_cfg->txok_en = MAC_AX_FUNC_EN;
 	rpr_cfg->rty_lmt_en = MAC_AX_FUNC_EN;
 	rpr_cfg->lft_drop_en = MAC_AX_FUNC_EN;
@@ -57,7 +56,7 @@ static void _hal_pre_init_8852bu(struct rtw_phl_com_t *phl_com,
 	rpr_cfg->rty_lmt_en = MAC_AX_FUNC_DEF;
 	rpr_cfg->lft_drop_en = MAC_AX_FUNC_DEF;
 	rpr_cfg->macid_drop_en = MAC_AX_FUNC_DEF;
-	#endif /* CONFIG_PHL_USB_RELEASE_RPT_ENABLE */
+	#endif /* CONFIG_PHL_RELEASE_RPT_ENABLE */
 	trx_info->rpr_cfg = rpr_cfg;
 
 	init_52bu->ic_name = "rtl8852bu";
@@ -81,6 +80,8 @@ void init_hal_spec_8852bu(struct rtw_phl_com_t *phl_com,
 	bus_hw_cap->in_token_num = 6;
 
 	hal->hal_com->dev_hw_cap.ps_cap.lps_pause_tx = true;
+	phl_com->hal_spec.ser_cfg_int = false;
+	phl_com->hal_spec.ps_cfg_int = false;
 }
 
 enum rtw_hal_status hal_get_efuse_8852bu(struct rtw_phl_com_t *phl_com,
@@ -151,7 +152,11 @@ hal_wow_init_8852bu(struct rtw_phl_com_t *phl_com, struct hal_info_t *hal_info,
 		trx_info->trx_mode = MAC_AX_TRX_SW_MODE;
 	else
 		trx_info->trx_mode = MAC_AX_TRX_HW_MODE;
-	trx_info->qta_mode = MAC_AX_QTA_SCC;
+
+	if (phl_com->dev_cap.quota_turbo == true)
+		trx_info->qta_mode = MAC_AX_QTA_SCC_TURBO;
+	else
+		trx_info->qta_mode = MAC_AX_QTA_SCC;
 
 	init_52bu.ic_name = "rtl8852bu";
 
@@ -170,7 +175,11 @@ hal_wow_deinit_8852bu(struct rtw_phl_com_t *phl_com, struct hal_info_t *hal_info
 		trx_info->trx_mode = MAC_AX_TRX_SW_MODE;
 	else
 		trx_info->trx_mode = MAC_AX_TRX_HW_MODE;
-	trx_info->qta_mode = MAC_AX_QTA_SCC;
+
+	if (phl_com->dev_cap.quota_turbo == true)
+		trx_info->qta_mode = MAC_AX_QTA_SCC_TURBO;
+	else
+		trx_info->qta_mode = MAC_AX_QTA_SCC;
 
 	init_52bu.ic_name = "rtl8852bu";
 
@@ -338,4 +347,11 @@ hal_mp_deinit_8852bu(struct rtw_phl_com_t *phl_com, struct hal_info_t *hal_info)
 	return hal_status;
 }
 
-
+bool
+hal_mp_path_chk_8852bu(struct rtw_phl_com_t *phl_com, u8 ant_tx, u8 cur_phy)
+{
+	if (phl_com->phy_cap[cur_phy].txss == 1 && ant_tx != RF_PATH_B)
+		return false;
+	else
+		return true;
+}

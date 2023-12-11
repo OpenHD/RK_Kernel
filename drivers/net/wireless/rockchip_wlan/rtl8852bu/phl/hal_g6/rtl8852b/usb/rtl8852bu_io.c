@@ -13,8 +13,7 @@
  *
  *****************************************************************************/
 #define _RTL8852BU_IO_C_
-#include "../../hal_headers.h"
-#include "../../hal_usb.h" 
+#include "../rtl8852b_hal.h"
 
 void hal_usb_set_io_ops_8852bu(struct hal_info_t *hal, struct hal_io_ops *ops)
 {

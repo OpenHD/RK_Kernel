@@ -55,6 +55,7 @@ struct verify_context {
 	struct rtw_phl_com_t *phl_com;
 	void *hal;
 	struct s_handler *handler;
+	u32 max_para;
 };
 #endif /* CONFIG_PHL_TEST_VERIFY */
 #endif /* _PHL_TEST_VERIFY_DEF_H_ */

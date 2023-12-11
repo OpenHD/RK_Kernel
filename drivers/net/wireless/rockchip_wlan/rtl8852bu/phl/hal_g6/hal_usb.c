@@ -265,27 +265,4 @@ u32 rtwl_hal_get_usb_support_ability(void *h)
 	*/
 	return hal_mac_get_usb_support_ability(hal);
 }
-
-enum rtw_rx_status rtw_hal_get_usb_status(void *h)
-{
-	struct hal_info_t *hal = (struct hal_info_t *)h;
-	struct mac_ax_adapter *mac = hal_to_mac(hal);
-	struct mac_ax_ops *hal_mac_ops = mac->ops;
-	u32 mac_usb_sts;
-	u32 val;
-
-	mac_usb_sts = hal_mac_ops->get_hw_value(mac, MAC_AX_HW_GET_USB_STS, &val);
-
-	switch (mac_usb_sts) {
-	case MACSUCCESS:
-	case MACNOITEM:
-		return RTW_STATUS_RX_OK;
-	case MACRXDMAHANG:
-		return RTW_STATUS_RXDMA_HANG;
-	case MACUSBRXHANG:
-		return RTW_STATUS_RXFIFO_HANG;
-	default:
-		return RTW_STATUS_RX_OK;
-	}
-}
 #endif /*CONFIG_USB_HCI*/

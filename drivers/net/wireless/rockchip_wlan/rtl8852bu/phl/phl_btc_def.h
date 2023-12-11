@@ -16,7 +16,7 @@
 #define __PHL_BTC_DEF_H__
 
 #define RTW_PHL_BTC_CTRL_BUF 40
-#define RTW_PHL_BTC_FWINFO_BUF 1280
+#define RTW_PHL_BTC_FWINFO_BUF 1800
 
 
 /*****************************************
@@ -45,6 +45,7 @@ enum {
 	BTC_HMSG_SET_BT_REQ_SLOT = 0x2,
 	BTC_HMSG_FW_EV = 0x3,
 	BTC_HMSG_BT_LINK_CHG = 0x4,
+	BTC_HMSG_SET_BT_REQ_STBC = 0x5,
 	BTC_HMSG_MAX
 };
 
@@ -103,6 +104,7 @@ enum {
 	BTC_MODE_WL,
 	BTC_MODE_BT,
 	BTC_MODE_WLOFF,
+	BTC_MODE_COTX,
 	BTC_MODE_MAX
 };
 

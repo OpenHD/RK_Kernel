@@ -35,6 +35,7 @@ enum rtw_hal_status hal_stop_8852bu(struct rtw_phl_com_t *phl_com,
 
 enum rtw_hal_status hal_mp_init_8852bu(struct rtw_phl_com_t *phl_com, struct hal_info_t *hal);
 enum rtw_hal_status hal_mp_deinit_8852bu(struct rtw_phl_com_t *phl_com, struct hal_info_t *hal);
+bool hal_mp_path_chk_8852bu(struct rtw_phl_com_t *phl_com, u8 ant_tx, u8 cur_phy);
 
 u32 hal_hci_cfg_8852bu(struct rtw_phl_com_t *phl_com,
 		struct hal_info_t *hal, struct rtw_ic_info *ic_info);

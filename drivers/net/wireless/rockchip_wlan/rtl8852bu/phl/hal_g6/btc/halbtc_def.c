@@ -60,6 +60,14 @@
 	case RTW_DATA_RATE_##src: return #src
 #define case_polut(src) \
 	case BTC_PLT_##src: return #src
+#define case_band(src) \
+	case BAND_ON_##src: return #src
+#define case_cxstate(src) \
+	case BTC_##src: return #src
+#define case_fddt_state(src) \
+	case BTC_FDDT_STATE_##src: return #src
+#define case_fddt_type(src) \
+	case BTC_FDDT_TYPE_##src: return #src
 
 const char *id_to_str(u8 type, u32 id)
 {
@@ -181,6 +189,7 @@ const char *id_to_str(u8 type, u32 id)
 		case_antpath(W5G);
 		case_antpath(W25G);
 		case_antpath(FREERUN);
+		case_antpath(FDDTRAIN);
 		case_antpath(WRFK);
 		case_antpath(BRFK);
 		}
@@ -225,6 +234,12 @@ const char *id_to_str(u8 type, u32 id)
 		case_chip(WIFI6_8852A);
 		case_chip(WIFI6_8852B);
 		case_chip(WIFI6_8852C);
+#ifdef BTC_8852BP_SUPPORT
+		case_chip(WIFI6_8852BP);
+#endif
+#ifdef BTC_8851B_SUPPORT
+		case_chip(WIFI6_8851B);
+#endif
 		}
 		break;
 	case BTC_STR_POLUT:
@@ -264,6 +279,7 @@ const char *id_to_str(u8 type, u32 id)
 		case_event(BT_CHANGE);
 		case_event(EBT_EXTEND);
 		case_event(E2G_NULL1);
+		case_event(B1FDD_TMR);
 		}
 		break;
 	case BTC_STR_WLMODE:
@@ -325,6 +341,7 @@ const char *id_to_str(u8 type, u32 id)
 		case_cxp(OFF_BWB0);
 		case_cxp(OFF_BWB1);
 		case_cxp(OFF_BWB2);
+		case_cxp(OFF_BWB3);
 		case_cxp(OFFB_BWB0);
 		case_cxp(OFFE_2GBWISOB);
 		case_cxp(OFFE_2GISOB);
@@ -341,6 +358,8 @@ const char *id_to_str(u8 type, u32 id)
 		case_cxp(FIX_TD2080);
 		case_cxp(FIX_TDW1B1);
 		case_cxp(FIX_TD4010ISO);
+		case_cxp(FIX_TD4010ISO_DL);
+		case_cxp(FIX_TD4010ISO_UL);
 		case_cxp(PFIX_TD3030);
 		case_cxp(PFIX_TD5050);
 		case_cxp(PFIX_TD2030);
@@ -356,6 +375,7 @@ const char *id_to_str(u8 type, u32 id)
 		case_cxp(PAUTO_TD60B1);
 		case_cxp(PAUTO_TD20B1);
 		case_cxp(PAUTO_TDW1B1);
+		case_cxp(PAUTO_FDDT1);
 		case_cxp(AUTO2_TD3050);
 		case_cxp(AUTO2_TD3070);
 		case_cxp(AUTO2_TD5050);
@@ -512,6 +532,40 @@ const char *id_to_str(u8 type, u32 id)
 		case_rate(HE_NSS4_MCS10);
 		case_rate(HE_NSS4_MCS11);
 		case_rate(MAX);
+		}
+		break;
+	case BTC_STR_BAND:
+		switch(id) {
+		case_band(24G);
+		case_band(5G);
+		case_band(6G);
+		}
+		break;
+	case BTC_STR_CXSTATE:
+		switch(id) {
+		case_cxstate(WIDLE);
+		case_cxstate(WBUSY_BNOSCAN);
+		case_cxstate(WBUSY_BSCAN);
+		case_cxstate(WSCAN_BNOSCAN);
+		case_cxstate(WSCAN_BSCAN);
+		case_cxstate(WLINKING);
+		case_cxstate(WIDLE_BSCAN);
+		}
+		break;
+	case BTC_STR_FDDT_TYPE:
+		switch(id) {
+		case_fddt_type(STOP);
+		case_fddt_type(AUTO);
+		case_fddt_type(FIX_TDD);
+		case_fddt_type(FIX_FULL_FDD);
+		}
+		break;
+	case BTC_STR_FDDT_STATE:
+		switch(id) {
+		case_fddt_state(STOP);
+		case_fddt_state(RUN);
+		case_fddt_state(PENDING);
+		case_fddt_state(DEBUG);
 		}
 		break;
 	}

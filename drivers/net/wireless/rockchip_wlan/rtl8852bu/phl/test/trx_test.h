@@ -189,7 +189,7 @@ enum rtw_phl_status rtw_phl_trx_testsuite(void *phl,
 					struct rtw_trx_test_param *test_param);
 
 #else /*!CONFIG_PHL_TEST_SUITE*/
-#define phl_trx_test_init(phl)
+#define phl_trx_test_init(phl) RTW_PHL_STATUS_SUCCESS
 #define phl_trx_test_deinit(phl)
 #define rtw_phl_trx_default_param(phl, test_param)
 #define rtw_phl_trx_testsuite(phl, test_param) RTW_PHL_STATUS_SUCCESS

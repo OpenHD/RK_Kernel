@@ -1,6 +1,6 @@
 /******************************************************************************
  *
- * Copyright(c) 2015 - 2019 Realtek Corporation.
+ * Copyright(c) 2015 - 2021 Realtek Corporation.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of version 2 of the GNU General Public License as
@@ -16,6 +16,8 @@
 /***** temporarily flag *******/
 /*#define CONFIG_NO_FW*/
 /*#define CONFIG_DISABLE_ODM*/
+#define SCAN_PER_CH_EX_TIME 100
+#define CONFIG_MSG_NUM 128
 
 #define RTW_WKARD_CORE_RSSI_V1
 #ifdef RTW_WKARD_CORE_RSSI_V1
@@ -26,19 +28,23 @@
 #endif
 
 
-#ifndef DBG_MEM_ALLOC
-#define DBG_MEM_ALLOC
+// nrm #ifndef DBG_MEM_ALLOC
+// nrm #define DBG_MEM_ALLOC
 
-#define DBG_PHL_MEM_ALLOC
-#define DBG_HAL_MAC_MEM_MOINTOR
-#define DBG_HAL_MEM_MOINTOR
-#endif
+// nrm #define DBG_PHL_MEM_ALLOC
+// nrm #define DBG_HAL_MAC_MEM_MOINTOR
+// nrm #define DBG_HAL_MEM_MOINTOR
+// nrm #endif
 /*#define CONFIG_PHL_USE_KMEM_ALLOC*/
 
 /*
  * Work around Config
  */
 #define RTW_WKARD_DIS_PROBE_REQ_RPT_TO_HOSTAPD
+
+#ifdef CONFIG_BTC
+#define RTK_WKARD_CORE_BTC_STBC_CAP
+#endif
 
 /*
  * Public  General Config
@@ -106,9 +112,15 @@
 #endif
 /* #define CONFIG_FILE_FWIMG */
 
-/*#define CONFIG_XMIT_ACK*/
+#define CONFIG_XMIT_ACK
 #ifdef CONFIG_XMIT_ACK
+	#define CONFIG_XMIT_ACK_BY_CCX_RPT
+	#ifdef CONFIG_XMIT_ACK_BY_CCX_RPT
+		#define RTW_WKARD_CCX_RPT_LIMIT_CTRL
+		#define CONFIG_PHL_DEFAULT_MGNT_Q_RPT_EN
+	#endif
 	#define CONFIG_ACTIVE_KEEP_ALIVE_CHECK
+	#define RTW_WKARD_TX_NULL_WD_RP
 #endif
 
 /*#define CONFIG_RECV_REORDERING_CTRL*/
@@ -117,39 +129,16 @@
 
 /* #define CONFIG_SIGNAL_STAT_PROCESS */
 
-#ifdef CONFIG_POWER_SAVING
-	#define CONFIG_IPS
-	#ifdef CONFIG_IPS
-	#define CONFIG_IPS_CHECK_IN_WD /* Do IPS Check in WatchDog.	*/
-	/* #define CONFIG_FWLPS_IN_IPS */
-	#endif
-
-	#define CONFIG_LPS
-	#if defined(CONFIG_LPS)
-		#define CONFIG_LPS_LCLK
-	#endif
-
-	#ifdef CONFIG_LPS_LCLK
-		#ifdef CONFIG_POWER_SAVING
-			/* #define CONFIG_XMIT_THREAD_MODE */
-		#endif /* CONFIG_POWER_SAVING */
-		#ifndef CONFIG_SUPPORT_USB_INT
-			#define LPS_RPWM_WAIT_MS 300
-			#define CONFIG_DETECT_CPWM_BY_POLLING
-		#endif /* !CONFIG_SUPPORT_USB_INT */
-		/* #define DBG_CHECK_FW_PS_STATE */
-	#endif /* CONFIG_LPS_LCLK */
-
-	#ifdef CONFIG_LPS
-		/*#define CONFIG_WMMPS_STA*/
-	#endif /* CONFIG_LPS */
-
-#endif /*CONFIG_POWER_SAVING*/
-
 #ifdef CONFIG_POWER_SAVE
-	/*#define CONFIG_RTW_IPS*/
-	/*#define CONFIG_RTW_LPS*/
-#endif
+	/* #define CONFIG_RTW_IPS */
+	/* #define CONFIG_RTW_LPS */
+	#ifdef CONFIG_RTW_IPS
+		#define CONFIG_FWIPS
+	#endif
+	#if defined(CONFIG_RTW_IPS) || defined(CONFIG_RTW_LPS)
+		#define CONFIG_PS_FW_DBG
+	#endif
+#endif /* CONFIG_POWER_SAVE */
 
 #ifdef CONFIG_WOWLAN
 	#define CONFIG_GTK_OL
@@ -190,6 +179,7 @@
 	#ifndef CONFIG_NATIVEAP_MLME
 		#define CONFIG_HOSTAPD_MLME
 	#endif
+	/*#define CONFIG_RTW_HOSTAPD_ACS*/
 	/*#define CONFIG_FIND_BEST_CHANNEL*/
 #endif
 
@@ -219,13 +209,13 @@
 */
 	/* #define CONFIG_TDLS_AUTOSETUP */
 	#define CONFIG_TDLS_AUTOCHECKALIVE
-	#define CONFIG_TDLS_CH_SW		/* Enable "CONFIG_TDLS_CH_SW" by default, however limit it to only work in wifi logo test mode but not in normal mode currently */
+	/* #define CONFIG_TDLS_CH_SW */ /* Not support yet */
 #endif
 
 
 #define CONFIG_SKB_COPY /* amsdu */
 
-/*#define CONFIG_RTW_LED*/
+/* #define CONFIG_RTW_LED */
 #ifdef CONFIG_RTW_LED
 	#define CONFIG_RTW_SW_LED
 	#ifdef CONFIG_RTW_SW_LED
@@ -246,6 +236,7 @@
 /* #define CONFIG_BACKGROUND_NOISE_MONITOR */
 #endif
 
+#define CONFIG_SCAN_BACKOP_STA
 
 
 /*
@@ -285,7 +276,14 @@
  * If bus rate is lower than Wi-Fi phy rate, it probably causes unstable
  * throughput for rx. So disable AMSDU may be suggested by SD1.
  */
-/* #define CONFIG_DISBALE_RX_AMSDU_FOR_BUS_LOW_SPEED */
+#define CONFIG_DISBALE_RX_AMSDU_FOR_BUS_LOW_SPEED
+
+/*
+ * The CONFIG_QUOTA_TURBO_ENABLE flag to decide that whether halmac
+ * configures a part of the shared buffer to some fw features or not. If
+ * this flag is defined, it means the shared buffer doesn't allocate to fw.
+ */
+#define CONFIG_QUOTA_TURBO_ENABLE
 
 /*
  * HAL  Related Config
@@ -330,6 +328,33 @@
 #define MAX_RECVBUF_SZ 32768
 #define NR_RECVBUFF 128
 #define NR_RECV_URB 8
+
+#define CONFIG_RTW_REDUCE_MEM
+#ifdef CONFIG_RTW_REDUCE_MEM
+	#define MAX_PHL_TX_RING_ENTRY_NUM 512
+	#define MAX_PHL_RX_RING_ENTRY_NUM 1024
+	#define MAX_TX_RING_NUM MAX_PHL_TX_RING_ENTRY_NUM
+	#define NR_XMITFRAME MAX_PHL_TX_RING_ENTRY_NUM
+	#define RTW_MAX_FRAG_NUM 1
+	/*
+	 * Reduce FW code size
+	*/
+	#define RTW_MAX_FW_SIZE 0x80000
+
+	#define CONFIG_FW_SPECIFY_FROM_CORE
+	#ifdef CONFIG_FW_SPECIFY_FROM_CORE
+		#define MAC_FW_8852B_U2
+		#define MAC_FW_8852B_U3
+		/* #define MAC_FW_CATEGORY_NIC */	/* with pwr gating */
+		#define MAC_FW_CATEGORY_NICCE		/* with clock gating */
+		/* #define MAC_FW_CATEGORY_NIC_PLE */
+		#ifdef CONFIG_WOWLAN
+			#define MAC_FW_CATEGORY_WOWLAN
+		#endif /* CONFIG_WOWLAN */
+	#endif
+#endif
+
+#define CONFIG_FW_IO_OFLD_SUPPORT
 
 /*
  * Debug Related Config
