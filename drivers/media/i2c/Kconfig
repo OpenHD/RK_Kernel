@@ -1322,6 +1322,18 @@ config VIDEO_IMX708
 	  To compile this driver as a module, choose M here: the
 	  module will be called imx708.
 
+config VIDEO_VEYECAM2M
+	tristate "veye 2m pixel camera support."
+	depends on VIDEO_V4L2 && I2C
+	help
+		Driver for veyecam camera.
+
+config VIDEO_VEYEMVCAM
+	tristate "veye mv and raw series camera support."
+	depends on VIDEO_V4L2 && I2C
+	help
+		Driver for veye mvcam camera.
+
 config VIDEO_IMX464
 	tristate "Sony IMX464 sensor support"
 	depends on I2C && VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API
