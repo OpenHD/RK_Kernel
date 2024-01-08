@@ -32,14 +32,6 @@ jobs:
           cd drivers/net/wireless/
           rm -Rf rtl8812au
           rm -Rf rtl8812bu
-          git clone https://github.com/openhd/rtl8812au
-          cd rtl8812au
-          sed -i '306d;305d;304d;302d' Makefile
-          sed -i 's/CONFIG_PLATFORM_I386_PC = y/CONFIG_PLATFORM_I386_PC = n/g' Makefile
-          sed -i 's/CONFIG_PLATFORM_ARM_RPI = n/CONFIG_PLATFORM_ARM_RPI = y/g' Makefile
-          cd ..
-          git clone https://github.com/OpenHD/rtl88x2bu
-          mv rtl88x2bu rtl8812bu
 
       - name: build kernel for rk3566 (zero3w+cm3)
         run: |
