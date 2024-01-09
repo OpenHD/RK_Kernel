@@ -2937,7 +2937,7 @@ int drm_atomic_helper_update_plane(struct drm_plane *plane,
 	if (plane == crtc->cursor)
 		state->legacy_cursor_update = true;
 
-	ret = drm_atomic_async_commit(state);
+	ret = drm_atomic_nonblocking_commit(state);
 fail:
 	drm_atomic_state_put(state);
 	return ret;
