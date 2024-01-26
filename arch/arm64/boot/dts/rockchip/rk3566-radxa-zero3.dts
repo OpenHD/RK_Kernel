@@ -814,10 +814,7 @@
 
 &hdmi {
 	status = "okay";
-	// preset_as_preferred;
-	// dirty fixing to 720p for now
-	preset_max_hdisplay = <1280>;
-	preset_max_vdisplay = <720>;
+	preset_as_preferred;
 };
 
 &hdmi_in_vp0 {
