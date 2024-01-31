@@ -487,8 +487,12 @@
 
 &sdhci {
 	bus-width = <8>;
+	no-sdio;
+	no-sd;
 	non-removable;
-	max-frequency = <150000000>;
+	max-frequency = <200000000>;
+	mmc-hs400-1_8v;
+	mmc-hs400-enhanced-strobe;
 	mmc-hs200-1_8v;
 	status = "okay";
 };
@@ -796,6 +800,8 @@
 			data-role = "dual";
 			power-role = "sink";
 			try-power-role = "sink";
+			fixed-typec-miss-data;
+			disable-clean-disconnection;
 			op-sink-microwatt = <1000000>;
 			sink-pdos =
 				<PDO_FIXED(5000, 3000, PDO_FIXED_USB_COMM)
