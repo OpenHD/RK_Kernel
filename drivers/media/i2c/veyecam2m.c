@@ -31,8 +31,8 @@
 #include <linux/of_gpio.h>
 
 
-#define DRIVER_VERSION			KERNEL_VERSION(0, 0x01, 0x00)
-
+#define DRIVER_VERSION			KERNEL_VERSION(0, 0x01, 0x01)
+#define VEYECAM2M_MEDIA_BUS_FMT MEDIA_BUS_FMT_UYVY8_2X8 //MEDIA_BUS_FMT_YUYV8_2X8
 //#define DEBUG_PRINTK
 #ifndef DEBUG_PRINTK
 #define debug_printk(s , ... )
@@ -48,7 +48,7 @@
 
 /* Pixel rate is fixed at 74.25M for all the modes */
 #define VEYECAM2M_PIXEL_RATE		74250000
-/*mipi clk is 297Mhz */
+/*mipi clk is 297Mhz */ 
 #define VEYECAM2M_DEFAULT_LINK_FREQ	297000000
 
 
@@ -104,6 +104,7 @@ struct veyecam2m_reg_list {
 
 /* Mode : resolution and related config&values */
 struct veyecam2m_mode {
+    u32 bus_fmt;
 	/* Frame width */
 	u32 width;
 	/* Frame height */
@@ -114,6 +115,7 @@ struct veyecam2m_mode {
 	//u32 vts_def;
 	/* Default register values */
 	struct veyecam2m_reg_list reg_list;
+    u32 vc[PAD_MAX];
 };
 
 static const struct veyecam2m_reg mode_1920_1080_regs[] = {
@@ -130,11 +132,13 @@ static const struct veyecam2m_mode supported_modes[] = {
 				.numerator = 10000,
 				.denominator = 300000,
 		},
+        .bus_fmt = VEYECAM2M_MEDIA_BUS_FMT,
 		//.vts_def = veyecam2m_VTS_30FPS_1080P,
 		.reg_list = {
 			.num_of_regs = ARRAY_SIZE(mode_1920_1080_regs),
 			.regs = mode_1920_1080_regs,
 		},
+        .vc[PAD0] = V4L2_MBUS_CSI2_CHANNEL_0,
 	},
 };
 
@@ -262,7 +266,7 @@ static void veyecam2m_set_default_format(struct veyecam2m *veyecam2m)
 	struct v4l2_mbus_framefmt *fmt;
     VEYE_TRACE
 	fmt = &veyecam2m->fmt;
-	fmt->code = MEDIA_BUS_FMT_UYVY8_2X8;
+	fmt->code = supported_modes[0].bus_fmt;
 	fmt->colorspace = V4L2_COLORSPACE_SRGB;
 /*	fmt->ycbcr_enc = V4L2_MAP_YCBCR_ENC_DEFAULT(fmt->colorspace);
 	fmt->quantization = V4L2_MAP_QUANTIZATION_DEFAULT(true,
@@ -301,7 +305,7 @@ static int veyecam2m_set_pad_format(struct v4l2_subdev *sd,
            goto error;
          }
 
-	fmt->format.code = MEDIA_BUS_FMT_UYVY8_2X8;
+	fmt->format.code = new_mode->bus_fmt;
 	fmt->format.width = new_mode->width;
 	fmt->format.height = new_mode->height;
 	fmt->format.field = V4L2_FIELD_NONE;
@@ -337,7 +341,7 @@ static int __veyecam2m_get_pad_format(struct veyecam2m *veyecam2m,
 	} else {
 		fmt->format.width = mode->width;
         fmt->format.height = mode->height;
-        fmt->format.code = MEDIA_BUS_FMT_UYVY8_2X8;
+        fmt->format.code = mode->bus_fmt;
 		fmt->format.field = V4L2_FIELD_NONE;
 	}
 	return 0;
@@ -362,7 +366,7 @@ static int veyecam2m_enum_mbus_code(struct v4l2_subdev *sd,
     VEYE_TRACE
 	if (code->index != 0)
 		return -EINVAL;
-	code->code = MEDIA_BUS_FMT_UYVY8_2X8;//MEDIA_BUS_FMT_UYVY8_2X8;
+	code->code = VEYECAM2M_MEDIA_BUS_FMT;//MEDIA_BUS_FMT_UYVY8_2X8;
 	return 0;
 }
 
@@ -374,7 +378,7 @@ static int veyecam2m_enum_frame_sizes(struct v4l2_subdev *sd,
 	if (fse->index >= ARRAY_SIZE(supported_modes))
 		return -EINVAL;
 
-	if (fse->code != MEDIA_BUS_FMT_UYVY8_2X8/*MEDIA_BUS_FMT_UYVY8_2X8*/)
+	if (fse->code != VEYECAM2M_MEDIA_BUS_FMT/*MEDIA_BUS_FMT_UYVY8_2X8*/)
 		return -EINVAL;
 
 	fse->min_width  = supported_modes[fse->index].width;
@@ -398,6 +402,7 @@ static int veyecam2m_g_frame_interval(struct v4l2_subdev *sd,
 }
 
 //#define veyecam2m_LANES 2
+//Please note that depending on the kernel version differences, this function may need to be either disabled or enabled.
 static int veyecam2m_g_mbus_config(struct v4l2_subdev *sd,
                                  struct v4l2_mbus_config *config)
 {
@@ -428,14 +433,30 @@ static void veyecam2m_get_module_inf(struct veyecam2m *veyecam2m,
 	strlcpy(inf->base.lens, veyecam2m->len_name, sizeof(inf->base.lens));
 }
 
+static int veyecam2m_get_channel_info(struct veyecam2m *veyecam2m, struct rkmodule_channel_info *ch_info)
+{
+       if (ch_info->index < PAD0 || ch_info->index >= PAD_MAX)
+               return -EINVAL;
+       ch_info->vc = veyecam2m->cur_mode->vc[ch_info->index];
+       ch_info->width = veyecam2m->cur_mode->width;
+       ch_info->height = veyecam2m->cur_mode->height;
+       ch_info->bus_fmt = veyecam2m->cur_mode->bus_fmt;
+       return 0;
+}
+
 static long veyecam2m_ioctl(struct v4l2_subdev *sd, unsigned int cmd, void *arg)
 {
 	struct veyecam2m *veyecam2m = to_veyecam2m(sd);
 	long ret = 0;
+    struct rkmodule_channel_info *ch_info;
     VEYE_TRACE
 	switch (cmd) {
 	case RKMODULE_GET_MODULE_INFO:
 		veyecam2m_get_module_inf(veyecam2m, (struct rkmodule_inf *)arg);
+		break;
+    case RKMODULE_GET_CHANNEL_INFO:
+		ch_info = (struct rkmodule_channel_info *)arg;
+		ret = veyecam2m_get_channel_info(veyecam2m, ch_info);
 		break;
 	default:
 		ret = -ENOIOCTLCMD;
@@ -451,7 +472,7 @@ static long veyecam2m_compat_ioctl32(struct v4l2_subdev *sd,
 {
 	void __user *up = compat_ptr(arg);
 	struct rkmodule_inf *inf;
-	struct rkmodule_awb_cfg *cfg;
+	struct rkmodule_channel_info *ch_info;
 	long ret;
     VEYE_TRACE
 	switch (cmd) {
@@ -464,9 +485,11 @@ static long veyecam2m_compat_ioctl32(struct v4l2_subdev *sd,
 		ret = veyecam2m_ioctl(sd, cmd, inf);
 		if (!ret)
 			ret = copy_to_user(up, inf, sizeof(*inf));
+        if (ret)
+            ret = -EFAULT;
 		kfree(inf);
 		break;
-	case RKMODULE_AWB_CFG:
+	/*case RKMODULE_AWB_CFG:
 		cfg = kzalloc(sizeof(*cfg), GFP_KERNEL);
 		if (!cfg) {
 			ret = -ENOMEM;
@@ -476,7 +499,21 @@ static long veyecam2m_compat_ioctl32(struct v4l2_subdev *sd,
 		if (!ret)
 			ret = veyecam2m_ioctl(sd, cmd, cfg);
 		kfree(cfg);
-		break;
+		break;*/
+    case RKMODULE_GET_CHANNEL_INFO:
+		ch_info = kzalloc(sizeof(*ch_info), GFP_KERNEL);
+		if (!ch_info) {
+			ret = -ENOMEM;
+			return ret;
+		}
+		ret = veyecam2m_ioctl(sd, cmd, ch_info);
+		if (!ret) {
+			ret = copy_to_user(up, ch_info, sizeof(*ch_info));
+			if (ret)
+				ret = -EFAULT;
+		}
+		kfree(ch_info);
+        break;
 	default:
 		ret = -ENOIOCTLCMD;
 		break;
@@ -529,6 +566,12 @@ static int veyecam2m_s_stream(struct v4l2_subdev *sd, int on)
 	//struct i2c_client *client = veyecam2m->client;
 	int ret = 0;
     VEYE_TRACE
+    	/* export gpio */
+	if (!IS_ERR(veyecam2m->reset_gpio))
+		gpiod_export(veyecam2m->reset_gpio, false);
+	if (!IS_ERR(veyecam2m->pwdn_gpio))
+		gpiod_export(veyecam2m->pwdn_gpio, false);
+    
 	mutex_lock(&veyecam2m->mutex);
 	on = !!on;
 	if (on == veyecam2m->streaming){
@@ -727,6 +770,8 @@ static int __veyecam2m_power_on(struct veyecam2m *veyecam2m)
 		gpiod_set_value_cansleep(veyecam2m->pwdn_gpio, 1);
 
     usleep_range(500, 1000);
+    //do not output data when power on , because the mipi rx is not ready.
+    veyecam2m_stop_streaming(veyecam2m);
 	return 0;
 
 disable_clk:
@@ -795,7 +840,7 @@ static int veyecam2m_enum_frame_interval(struct v4l2_subdev *sd,
 	if (fie->index >= ARRAY_SIZE(supported_modes))
 		return -EINVAL;
 
-	if (fie->code != MEDIA_BUS_FMT_UYVY8_2X8)
+	if (fie->code != VEYECAM2M_MEDIA_BUS_FMT)
 		return -EINVAL;
 
 	fie->width = supported_modes[fie->index].width;
@@ -815,7 +860,7 @@ static int veyecam2m_open(struct v4l2_subdev *sd, struct v4l2_subdev_fh *fh)
 	/* Initialize try_fmt */
 	try_fmt->width = supported_modes[0].width;
 	try_fmt->height = supported_modes[0].height;
-	try_fmt->code = MEDIA_BUS_FMT_UYVY8_2X8;
+	try_fmt->code = supported_modes[0].bus_fmt;
 	try_fmt->field = V4L2_FIELD_NONE;
     
 	mutex_unlock(&veyecam2m->mutex);
@@ -866,7 +911,7 @@ static const struct v4l2_subdev_ops veyecam2m_subdev_ops = {
 	.video	= &veyecam2m_video_ops,
 	.pad	= &veyecam2m_pad_ops,
 };
-
+#if 0
 static int veyecam2m_set_ctrl(struct v4l2_ctrl *ctrl)
 {
     VEYE_TRACE
@@ -887,6 +932,8 @@ static int veyecam2m_set_ctrl(struct v4l2_ctrl *ctrl)
 					 veyecam2m->exposure->step,
 					 veyecam2m->exposure->default_value);
 		break;
+	default:
+		break;
 	}
 	if (pm_runtime_get(&client->dev) <= 0)
 		return 0;
@@ -899,7 +946,7 @@ static int veyecam2m_set_ctrl(struct v4l2_ctrl *ctrl)
 static const struct v4l2_ctrl_ops veyecam2m_ctrl_ops = {
 	.s_ctrl = veyecam2m_set_ctrl,
 };
-
+#endif
 static int veyecam2m_initialize_controls(struct veyecam2m *veyecam2m)
 {
 	const struct veyecam2m_mode *mode;
@@ -921,7 +968,7 @@ static int veyecam2m_initialize_controls(struct veyecam2m *veyecam2m)
     veyecam2m->link_freq->flags |= V4L2_CTRL_FLAG_READ_ONLY;
 
 	/* By default, PIXEL_RATE is read only */
-	veyecam2m->pixel_rate = v4l2_ctrl_new_std(handler, &veyecam2m_ctrl_ops,
+	veyecam2m->pixel_rate = v4l2_ctrl_new_std(handler, NULL,
 					       V4L2_CID_PIXEL_RATE,
 					       VEYECAM2M_PIXEL_RATE,
 					       VEYECAM2M_PIXEL_RATE, 1,
@@ -972,7 +1019,7 @@ static int veyecam2m_probe(struct i2c_client *client,
 	struct device *dev = &client->dev;
 	struct device_node *node = dev->of_node;
 	struct device_node *endpoint_node = NULL;
-	struct v4l2_fwnode_endpoint vep;
+	struct v4l2_fwnode_endpoint vep = {0};
 	struct veyecam2m *veyecam2m;
 	struct v4l2_subdev *sd;
 	char facing[2];
@@ -1019,7 +1066,7 @@ static int veyecam2m_probe(struct i2c_client *client,
 			dev_warn(dev, "xvclk mismatched, modes are based on 24MHz\n");
 	}
 
-	veyecam2m->mipi_pwr_gpio = devm_gpiod_get(dev, "mipi-pwr", GPIOD_OUT_LOW);
+	veyecam2m->mipi_pwr_gpio = devm_gpiod_get(dev, "power", GPIOD_OUT_LOW);
 	if (IS_ERR(veyecam2m->mipi_pwr_gpio))
 		dev_warn(dev, "Failed to get power-gpios, maybe no use\n");
 
@@ -1090,9 +1137,11 @@ static int veyecam2m_probe(struct i2c_client *client,
     ret = veyecam2m_identify_module(veyecam2m);
 	if (ret)
 		goto err_power_off;
-
+    
     //clk discontinues mode
     veyecam2m_write_reg(veyecam2m,0x000b, 0xfe);
+    veyecam2m_stop_streaming(veyecam2m);
+    
     /* Initialize default format */
 	veyecam2m_set_default_format(veyecam2m);
 #ifdef CONFIG_VIDEO_V4L2_SUBDEV_API
@@ -1198,7 +1247,7 @@ static void __exit sensor_mod_exit(void)
 	i2c_del_driver(&veyecam2m_i2c_driver);
 }
 
-late_initcall_sync(sensor_mod_init);
+device_initcall_sync(sensor_mod_init);
 module_exit(sensor_mod_exit);
 
 MODULE_AUTHOR("xumm <www.veye.cc>");
