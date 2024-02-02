@@ -403,24 +403,24 @@ static int veyecam2m_g_frame_interval(struct v4l2_subdev *sd,
 
 //#define veyecam2m_LANES 2
 //Please note that depending on the kernel version differences, this function may need to be either disabled or enabled.
-static int veyecam2m_g_mbus_config(struct v4l2_subdev *sd,
-                                 struct v4l2_mbus_config *config)
-{
-        u32 val = 0;
-		u32 veyecam2m_lanes = 0;
-		struct veyecam2m *veyecam2m = to_veyecam2m(sd);
-        VEYE_TRACE
-        //debug_printk("veye data lan num %d",veyecam2m->lane_data_num);
-		veyecam2m_lanes = veyecam2m->lane_data_num;
-        val = 1 << (veyecam2m_lanes - 1) |
-        V4L2_MBUS_CSI2_CHANNEL_0 |
-        V4L2_MBUS_CSI2_NONCONTINUOUS_CLOCK ;//discontinues mode
+// static int veyecam2m_g_mbus_config(struct v4l2_subdev *sd,
+//                                  struct v4l2_mbus_config *config)
+// {
+//         u32 val = 0;
+// 		u32 veyecam2m_lanes = 0;
+// 		struct veyecam2m *veyecam2m = to_veyecam2m(sd);
+//         VEYE_TRACE
+//         //debug_printk("veye data lan num %d",veyecam2m->lane_data_num);
+// 		veyecam2m_lanes = veyecam2m->lane_data_num;
+//         val = 1 << (veyecam2m_lanes - 1) |
+//         V4L2_MBUS_CSI2_CHANNEL_0 |
+//         V4L2_MBUS_CSI2_NONCONTINUOUS_CLOCK ;//discontinues mode
 
-        config->type = V4L2_MBUS_CSI2;
-        config->flags = val;
+//         config->type = V4L2_MBUS_CSI2;
+//         config->flags = val;
 
-        return 0;
-}
+//         return 0;
+// }
 
 static void veyecam2m_get_module_inf(struct veyecam2m *veyecam2m,
 				   struct rkmodule_inf *inf)
