@@ -408,10 +408,10 @@ static int veyecam2m_g_mbus_config(struct v4l2_subdev *sd,
         //debug_printk("veye data lan num %d",veyecam2m->lane_data_num);
 		veyecam2m_lanes = veyecam2m->lane_data_num;
         val = 1 << (veyecam2m_lanes - 1) |
-        V4L2_MBUS_CSI2_CHANNEL_0 |
-        V4L2_MBUS_CSI2_NONCONTINUOUS_CLOCK ;//discontinues mode
+        V4L2_MBUS_CSI1_CHANNEL_0 |
+        V4L2_MBUS_CSI1_NONCONTINUOUS_CLOCK ;//discontinues mode
 
-        config->type = V4L2_MBUS_CSI2;
+        config->type = V4L2_MBUS_CSI1;
         config->flags = val;
 
         return 0;
