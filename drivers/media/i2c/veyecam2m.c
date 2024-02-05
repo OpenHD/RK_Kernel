@@ -850,7 +850,6 @@ static const struct v4l2_subdev_core_ops veyecam2m_core_ops = {
 static const struct v4l2_subdev_video_ops veyecam2m_video_ops = {
 	.s_stream = veyecam2m_s_stream,
 	.g_frame_interval = veyecam2m_g_frame_interval,
-	.g_mbus_config = veyecam2m_g_mbus_config,
 };
 
 static const struct v4l2_subdev_pad_ops veyecam2m_pad_ops = {
