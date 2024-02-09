@@ -411,7 +411,7 @@ static int veyecam2m_g_mbus_config(struct v4l2_subdev *sd,
         V4L2_MBUS_CSI2_CHANNEL_0 |
         V4L2_MBUS_CSI2_NONCONTINUOUS_CLOCK ;//discontinues mode
 
-        config->type = V4L2_MBUS_CSI2;
+        config->type = V4L2_MBUS_CSI1;
         config->flags = val;
 
         return 0;
@@ -850,7 +850,6 @@ static const struct v4l2_subdev_core_ops veyecam2m_core_ops = {
 static const struct v4l2_subdev_video_ops veyecam2m_video_ops = {
 	.s_stream = veyecam2m_s_stream,
 	.g_frame_interval = veyecam2m_g_frame_interval,
-	.g_mbus_config = veyecam2m_g_mbus_config,
 };
 
 static const struct v4l2_subdev_pad_ops veyecam2m_pad_ops = {
