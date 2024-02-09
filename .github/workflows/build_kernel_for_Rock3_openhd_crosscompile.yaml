@@ -35,7 +35,7 @@ jobs:
 
       - name: build kernel for rk3566 (zero3w+cm3)
         run: |
-          git clone -b latest https://github.com/openhd/bsp
+          git clone -b stable https://github.com/openhd/bsp
           cd bsp
           chmod +x bsp
           ./bsp --long-version -r radxa linux rk356x
