@@ -34,4 +34,4 @@ obj-$(CONFIG_WL_ROCKCHIP)	+= rockchip_wlan/
 obj-$(CONFIG_RTL8812AU) += rtl8812au/
 obj-$(CONFIG_RTL8822BU) += rtl8812bu/
 obj-$(CONFIG_RTL8852BU) += rtl8852bu/
-obj-$(CONFIG_SPARD_WLAN_SUPPORT) += aic8800_sdio/
+obj-m += aic8800_sdio/
