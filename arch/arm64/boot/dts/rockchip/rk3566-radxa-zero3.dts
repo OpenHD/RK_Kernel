@@ -879,19 +879,6 @@
 	connect = <&vp0_out_hdmi>;
 };
 
-keys {
-	pwr_key: pwr-key {
-		rockchip,pins = 
-			<3 RK_PC1 RK_FUNC_GPIO &pcfg_pull_up>,
-			<4 RK_PB3 RK_FUNC_GPIO &pcfg_pull_up>,
-			<3 RK_PA7 RK_FUNC_GPIO &pcfg_pull_up>,
-			<3 RK_PA6 RK_FUNC_GPIO &pcfg_pull_up>,
-			<3 RK_PA5 RK_FUNC_GPIO &pcfg_pull_up>,
-			<3 RK_PC2 RK_FUNC_GPIO &pcfg_pull_up>,
-			<4 RK_PC6 RK_FUNC_GPIO &pcfg_pull_up>;
-	};
-};	
-
 &sdmmc0 {
 	max-frequency = <150000000>;
 	supports-sd;
@@ -959,6 +946,19 @@ keys {
 
 		wifi_host_wake_irq: wifi-host-wake-irq {
 			rockchip,pins = <0 RK_PB7 RK_FUNC_GPIO &pcfg_pull_down>;
+		};
+	};
+	
+	keys {
+		pwr_key: pwr-key {
+			rockchip,pins =
+				<3 RK_PC1 RK_FUNC_GPIO &pcfg_pull_up>,
+				<4 RK_PB3 RK_FUNC_GPIO &pcfg_pull_up>,
+				<3 RK_PA7 RK_FUNC_GPIO &pcfg_pull_up>,
+				<3 RK_PA6 RK_FUNC_GPIO &pcfg_pull_up>,
+				<3 RK_PA5 RK_FUNC_GPIO &pcfg_pull_up>,
+				<3 RK_PC2 RK_FUNC_GPIO &pcfg_pull_up>,
+				<4 RK_PC6 RK_FUNC_GPIO &pcfg_pull_up>;
 		};
 	};
 
