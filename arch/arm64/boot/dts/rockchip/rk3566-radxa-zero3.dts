@@ -137,8 +137,8 @@
 			linux,code = <2>;
 			label = "key reset";
 		};
-	}
-	
+	};
+
 	gpio_leds: gpio-leds {
 		compatible = "gpio-leds";
 		status = "okay";
