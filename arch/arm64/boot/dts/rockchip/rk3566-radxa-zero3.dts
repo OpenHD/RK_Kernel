@@ -21,47 +21,6 @@
 	model = "Radxa ZERO 3";
 	compatible = "radxa,zero3", "rockchip,rk3566";
 
-	keys: gpio-keys {
-		compatible = "gpio-keys";
-		pinctrl-names = "default";
-		pinctrl-0 = <&pwr_key>;
-		autorepeat;
-		up-key {
-			gpios = <&gpio3 RK_PC1 GPIO_ACTIVE_LOW>;
-			linux,code = <103>;
-			label = "key up";
-		};
-		down-key {
-			gpios = <&gpio4 RK_PC6 GPIO_ACTIVE_LOW>;
-			linux,code = <108>;
-			label = "key down";
-		};
-		left-key {
-			gpios = <&gpio4 RK_PB3 GPIO_ACTIVE_LOW>;
-			linux,code = <106>;
-			label = "key left";
-		};
-		right-key {
-			gpios = <&gpio3 RK_PC2 GPIO_ACTIVE_LOW>;
-			linux,code = <107>;
-			label = "key right";
-		};
-		enter-key {
-			gpios = <&gpio3 RK_PA7 GPIO_ACTIVE_LOW>;
-			linux,code = <29>;
-			label = "key enter";
-		};
-		back-key {
-			gpios = <&gpio3 RK_PA6 GPIO_ACTIVE_LOW>;
-			linux,code = <159>;
-			label = "key back";
-		};
-		reset-key {
-			gpios = <&gpio3 RK_PA5 GPIO_ACTIVE_LOW>;
-			linux,code = <2>;
-			label = "key reset";
-		};
-	}
 	fiq_debugger: fiq-debugger {
 		compatible = "rockchip,fiq-debugger";
 		rockchip,serial-id = <2>;
@@ -138,6 +97,48 @@
 		reset-gpios = <&gpio0 RK_PC0 GPIO_ACTIVE_LOW>;
 	};
 
+	keys: gpio-keys {
+		compatible = "gpio-keys";
+		pinctrl-names = "default";
+		pinctrl-0 = <&pwr_key>;
+		autorepeat;
+		up-key {
+			gpios = <&gpio3 RK_PC1 GPIO_ACTIVE_LOW>;
+			linux,code = <103>;
+			label = "key up";
+		};
+		down-key {
+			gpios = <&gpio4 RK_PC6 GPIO_ACTIVE_LOW>;
+			linux,code = <108>;
+			label = "key down";
+		};
+		left-key {
+			gpios = <&gpio4 RK_PB3 GPIO_ACTIVE_LOW>;
+			linux,code = <106>;
+			label = "key left";
+		};
+		right-key {
+			gpios = <&gpio3 RK_PC2 GPIO_ACTIVE_LOW>;
+			linux,code = <107>;
+			label = "key right";
+		};
+		enter-key {
+			gpios = <&gpio3 RK_PA7 GPIO_ACTIVE_LOW>;
+			linux,code = <29>;
+			label = "key enter";
+		};
+		back-key {
+			gpios = <&gpio3 RK_PA6 GPIO_ACTIVE_LOW>;
+			linux,code = <159>;
+			label = "key back";
+		};
+		reset-key {
+			gpios = <&gpio3 RK_PA5 GPIO_ACTIVE_LOW>;
+			linux,code = <2>;
+			label = "key reset";
+		};
+	}
+	
 	gpio_leds: gpio-leds {
 		compatible = "gpio-leds";
 		status = "okay";
