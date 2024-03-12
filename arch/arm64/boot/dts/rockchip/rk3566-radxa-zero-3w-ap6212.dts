@@ -19,7 +19,7 @@
 
 / {
 	model = "Radxa ZERO 3";
-	compatible ="radxa,zero3w-aic8800ds2", "radxa,zero3", "rockchip,rk3566";
+	compatible = "radxa,zero3", "rockchip,rk3566";
 
 	fiq_debugger: fiq-debugger {
 		compatible = "rockchip,fiq-debugger";
@@ -81,8 +81,10 @@
 
 	wireless_wlan: wireless-wlan {
 		compatible = "wlan-platdata";
-		rockchip,grf = <&grf>;
-		WIFI,poweren_gpio = <&gpio0 RK_PC0 GPIO_ACTIVE_HIGH>;
+		wifi_chip_type = "ap6212";
+		pinctrl-names = "default";
+		pinctrl-0 = <&wifi_host_wake_irq>;
+		WIFI,host_wake_irq = <&gpio0 RK_PB7 GPIO_ACTIVE_HIGH>;
 		status = "okay";
 	};
 
@@ -93,6 +95,48 @@
 		pinctrl-names = "default";
 		pinctrl-0 = <&wifi_enable_h>;
 		reset-gpios = <&gpio0 RK_PC0 GPIO_ACTIVE_LOW>;
+	};
+
+	keys: gpio-keys {
+		compatible = "gpio-keys";
+		pinctrl-names = "default";
+		pinctrl-0 = <&pwr_key>;
+		autorepeat;
+		up-key {
+			gpios = <&gpio3 RK_PC1 GPIO_ACTIVE_LOW>;
+			linux,code = <103>;
+			label = "key up";
+		};
+		down-key {
+			gpios = <&gpio4 RK_PC6 GPIO_ACTIVE_LOW>;
+			linux,code = <108>;
+			label = "key down";
+		};
+		left-key {
+			gpios = <&gpio4 RK_PB3 GPIO_ACTIVE_LOW>;
+			linux,code = <106>;
+			label = "key left";
+		};
+		right-key {
+			gpios = <&gpio3 RK_PC2 GPIO_ACTIVE_LOW>;
+			linux,code = <107>;
+			label = "key right";
+		};
+		enter-key {
+			gpios = <&gpio3 RK_PA7 GPIO_ACTIVE_LOW>;
+			linux,code = <29>;
+			label = "key enter";
+		};
+		back-key {
+			gpios = <&gpio3 RK_PA6 GPIO_ACTIVE_LOW>;
+			linux,code = <159>;
+			label = "key back";
+		};
+		reset-key {
+			gpios = <&gpio3 RK_PA5 GPIO_ACTIVE_LOW>;
+			linux,code = <2>;
+			label = "key reset";
+		};
 	};
 
 	gpio_leds: gpio-leds {
@@ -902,6 +946,19 @@
 
 		wifi_host_wake_irq: wifi-host-wake-irq {
 			rockchip,pins = <0 RK_PB7 RK_FUNC_GPIO &pcfg_pull_down>;
+		};
+	};
+	
+	keys {
+		pwr_key: pwr-key {
+			rockchip,pins =
+				<3 RK_PC1 RK_FUNC_GPIO &pcfg_pull_up>,
+				<4 RK_PB3 RK_FUNC_GPIO &pcfg_pull_up>,
+				<3 RK_PA7 RK_FUNC_GPIO &pcfg_pull_up>,
+				<3 RK_PA6 RK_FUNC_GPIO &pcfg_pull_up>,
+				<3 RK_PA5 RK_FUNC_GPIO &pcfg_pull_up>,
+				<3 RK_PC2 RK_FUNC_GPIO &pcfg_pull_up>,
+				<4 RK_PC6 RK_FUNC_GPIO &pcfg_pull_up>;
 		};
 	};
 
