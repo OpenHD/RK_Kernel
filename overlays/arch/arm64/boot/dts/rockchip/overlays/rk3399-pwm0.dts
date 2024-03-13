@@ -1,0 +1,20 @@
+/dts-v1/;
+/plugin/;
+
+/ {
+	metadata {
+		title = "Enable PWM0";
+		compatible = "rockchip,rk3399";
+		category = "misc";
+		exclusive = "GPIO4_C2";
+		description = "Enable PWM0 on pin 11.";
+	};
+
+	fragment@0 {
+		target = <&pwm0>;
+
+		__overlay__ {
+			status = "okay";
+		};
+	};
+};

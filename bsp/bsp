@@ -1,0 +1,497 @@
+#!/usr/bin/env bash
+
+usage() {
+    cat >&2 << EOF
+Radxa BSP Build Tool
+usage: $(basename "$0") [options] <linux|u-boot> <profile> [product]
+
+When building u-boot, you can also provide 'product' argument,
+which will only build for that specific image.
+
+Supported package generation options:
+    -r, --revision [num]    Specify custom revision number, default=1
+    -c, --clean             Run 'make clean' before building
+    -C, --distclean         Run 'make distclean' before building
+    --no-prepare-source     Allow building against locally modified repos
+    --no-config             Do not load defconfig or apply kconfig
+    --no-container-update   Do not update the container image
+                            Suppress --local-container
+    --dirty                 Build without modifying the source tree.
+                            Equals --no-prepare-source --no-config --no-container-update
+    --no-build              Prepare the source tree but do not build.
+                            Inverse of --dirty
+    -p                      Pause after applying patches from each folder
+    -n, --native-build      Build without using container
+    -l, --local-container   Using locally built container image
+    -s, --container-shell   Start a shell inside the container instead of the build
+    -d, --debug             Build debug package as well
+    --long-version          Add Git commit hash to the end of the version number
+    --dtb                   Build dtb only <only valid for linux build>
+    -b, --backend [backend] Manually specify container backend. supported values are:
+                            docker, podman
+    --no-submodule-check    Do not check for submodules
+    -h, --help              Show this help message
+
+Alternative commands
+    json <catagory>         Print supported options in json format
+                            Available catagories: $(get_supported_infos)
+    export <profile>        Export profile
+    import <profile>        Import profile
+    install <disk> [file]   Install built artifact to specified disk
+                            Root partition will be determined based on the layout
+                            When file is 
+                            Supported file types: deb, dtb, dtbo
+
+Supported Linux profile:
+$(printf_array "    %s\n" "$(get_supported_edition linux)")
+
+Supported U-Boot profile:
+$(printf_array "    %s\n" "$(get_supported_edition u-boot)")
+EOF
+}
+
+get_supported_edition() {
+    while (( $# > 0 )) && [[ "$1" == "--" ]]
+    do
+        shift
+    done
+
+    if [[ ! -d "$SCRIPT_DIR/$1" ]] || [[ -z "$1" ]]
+    then
+        error $EXIT_UNSUPPORTED_OPTION "$1"
+    fi
+
+    local editions=()
+    for f in $(ls $SCRIPT_DIR/$1)
+    do
+        editions+="$f "
+    done
+    echo "${editions[@]}"
+}
+
+get_supported_infos() {
+    while (( $# > 0 )) && [[ "$1" == "--" ]]
+    do
+        shift
+    done
+
+    local infos=("edition linux" "edition u-boot")
+    echo "${infos[@]}"
+}
+
+_json() {
+    local array=( "$(get_supported_infos)" )
+    if ! in_array "$@" "${array[@]}"
+    then
+        error $EXIT_UNKNOWN_OPTION "$1"
+    fi
+
+    local output
+    output=( $(get_supported_$@) )
+    if (( $? != 0 ))
+    then
+        return 1
+    fi
+    printf_array "json" "${output[@]}"
+}
+
+build() {
+    prepare_source "$TARGET"
+
+    bsp_prepare
+
+    if [[ -n "$CLEAN_LEVEL" ]]
+    then
+        bsp_make "${BSP_MAKE_DEFINES[@]}" $CLEAN_LEVEL 2>&1 | tee -a "$SCRIPT_DIR/.src/build.log"
+    fi
+    
+    if ! $NO_CONFIG
+    then
+        bsp_make "${BSP_MAKE_DEFINES[@]}" $BSP_DEFCONFIG 2>&1 | tee -a "$SCRIPT_DIR/.src/build.log"
+        for d in $(find -L "$SCRIPT_DIR/$TARGET/$FORK" -mindepth 1 -type d | sort)
+        do
+            apply_kconfig "$d/kconfig.conf" 2>&1 | tee -a "$SCRIPT_DIR/.src/build.log"
+        done
+        apply_kconfig "$SCRIPT_DIR/$TARGET/$FORK/kconfig.conf" 2>&1 | tee -a "$SCRIPT_DIR/.src/build.log"
+        if $DEBUG_BUILD
+        then
+            apply_kconfig "$SCRIPT_DIR/$TARGET/.debug/kconfig.conf" 2>&1 | tee -a "$SCRIPT_DIR/.src/build.log"
+        fi
+        # Cannot run `bsp_make olddefconfig` seperately here
+        # as it will break the build in the next step
+        BSP_MAKE_TARGETS=("olddefconfig" "${BSP_MAKE_TARGETS[@]}")
+    fi
+
+    if $NO_BUILD
+    then
+        bsp_make "${BSP_MAKE_DEFINES[@]}" ""olddefconfig"" 2>&1 | tee -a "$SCRIPT_DIR/.src/build.log"
+        echo "--no-build option was given. Exiting..."
+        exit
+    else
+        bsp_make "${BSP_MAKE_DEFINES[@]}" "${BSP_MAKE_TARGETS[@]}" 2>&1 | tee -a "$SCRIPT_DIR/.src/build.log"
+    fi
+}
+
+_export() {
+    pushd "$SCRIPT_DIR"
+    echo "PROFILE_BSP_COMMIT='$(git rev-parse HEAD)'" > ".profile"
+    find "linux/$1" "u-boot/$1" ".profile" | tar acvf "$OLDPWD/$1.tar.xz" --files-from -
+    popd
+}
+
+_import() {
+    tar axvf "$1" -C "$SCRIPT_DIR"
+    pushd "$SCRIPT_DIR"
+    if source "$SCRIPT_DIR/.profile" && [[ -n "${PROFILE_BSP_COMMIT:-}" ]] && [[ "$(git rev-parse HEAD)" != "$PROFILE_BSP_COMMIT" ]]
+    then
+        echo "Profile was exported when bsp is at commit $PROFILE_BSP_COMMIT."
+        echo "You can use 'git switch -d $PROFILE_BSP_COMMIT' to ensure the best compatability."
+    fi
+    popd
+}
+
+_install() {
+    local disk="$1" file="${2:-}" i
+    local ext="${file##*.}"
+
+    if [[ ! -b "$disk" ]]
+    then
+        error $EXIT_BAD_BLOCK_DEVICE "$disk"
+    fi
+
+    if [[ -n "$file" ]] && [[ ! -f "$file" ]]
+    then
+        error $EXIT_BAD_FILE "$file"
+    fi
+
+    sudo umount -R /mnt || true
+
+    if [[ -b "$disk"3 ]]
+    then
+        # latest rbuild image
+        sudo mount "$disk"3 /mnt
+        sudo mount "$disk"2 /mnt/boot/efi
+        sudo mount "$disk"1 /mnt/config
+    elif [[ -b "$disk"2 ]]
+    then
+        # old rbuild image
+        sudo mount "$disk"2 /mnt
+        sudo mount "$disk"1 /mnt/config
+    elif [[ -b "$disk"1 ]]
+    then
+        # armbian
+        sudo mount "$disk"1 /mnt
+    else
+        error $EXIT_BAD_BLOCK_DEVICE "$disk"2
+    fi
+
+    case "$ext" in
+        deb)
+            sudo cp "$file" /mnt
+            sudo systemd-nspawn -D /mnt dpkg -i "/$(basename "$file")"
+            ;;
+        dtbo)
+            sudo cp "$file" /mnt/boot/dtbo
+            sudo systemd-nspawn -D /mnt u-boot-update
+            ;;
+        dtb)
+            sudo find /mnt/usr/lib/linux-image-*/ -name "$(basename "$file")" -exec mv "{}" "{}.bak" \; -exec cp "$file" "{}" \;
+            ;;
+        "")
+            if [[ -z "$file" ]]
+            then
+                sudo systemd-nspawn -D /mnt
+            else
+                error $EXIT_UNSUPPORTED_OPTION "$file"
+            fi
+            ;;
+        *)
+            error $EXIT_UNSUPPORTED_OPTION "$file"
+            ;;
+    esac
+
+    sudo umount -R /mnt
+
+    sync
+}
+
+main() {
+    local SCRIPT_DIR="$(dirname "$(realpath "$0")")"
+    source "$SCRIPT_DIR/lib/utils.sh"
+
+    rm -f "$SCRIPT_DIR/.src/build.log"
+
+    local ARGV=("$@")
+    local TEMP
+    if ! TEMP="$(getopt -o "r:cCphnlsdb:" -l "revision:,clean,distclean,no-prepare-source,no-config,help,native-build,local-container,container-shell,debug,dtb,long-version,backend:,no-submodule-check,dirty,no-build,no-container-update" -n "$0" -- "$@")"
+    then
+        return
+    fi
+    eval set -- "$TEMP"
+
+    local PKG_REVISION="1"
+    local NO_PREPARE_SOURCE="false"
+    local NO_CONFIG="false"
+    local NO_BUILD="false"
+    local NO_CONTAINER_UPDATE="false"
+    local CLEAN_LEVEL=
+    local PATCH_PAUSE="false"
+    local NATIVE_BUILD="false"
+    local CONTAINER_REGISTRY="ghcr.io/radxa-repo/"
+    local CONTAINER_SHELL="false"
+    local DEBUG_BUILD="false"
+    local DTB_ONLY="false"
+    local LONG_VERSION="false"
+    local CONTAINER_BACKEND="docker"
+    local NO_SUBMODULE_CHECK="false"
+
+    if [[ -f "$SCRIPT_DIR/.bsp-config" ]]
+    then
+        source "$SCRIPT_DIR/.bsp-config"
+    fi
+
+    while true
+    do
+        TEMP="$1"
+        shift
+        case "$TEMP" in
+            -r|--revision)
+                PKG_REVISION="$1"
+                shift
+                ;;
+            --no-prepare-source)
+                NO_PREPARE_SOURCE="true"
+                ;;
+            --no-config)
+                NO_CONFIG="true"
+                ;;
+            --no-container-update)
+                NO_CONTAINER_UPDATE="true"
+                ;;
+            --dirty)
+                NO_PREPARE_SOURCE="true"
+                NO_CONFIG="true"
+                NO_CONTAINER_UPDATE="true"
+                ;;
+            --no-build)
+                NO_BUILD="true"
+                ;;
+            -p)
+                PATCH_PAUSE="true"
+                ;;
+            -c|--clean)
+                CLEAN_LEVEL="clean"
+                ;;
+            -C|--distclean)
+                CLEAN_LEVEL="distclean"
+                ;;
+            -n|--native-build)
+                NATIVE_BUILD="true"
+                ;;
+            -l|--local-container)
+                CONTAINER_REGISTRY=
+                ;;
+            -s|--container-shell)
+                CONTAINER_SHELL="true"
+                ;;
+            -d|--debug)
+                DEBUG_BUILD="true"
+                ;;
+            --dtb)
+                DTB_ONLY="true"
+                ;;
+            -b|--backend)
+                CONTAINER_BACKEND="$1"
+                shift
+                ;;
+            --long-version)
+                LONG_VERSION="true"
+                ;;
+            --no-submodule-check)
+                NO_SUBMODULE_CHECK="true"
+                ;;
+            -h|--help)
+                usage
+                return
+                ;;
+            --)
+                break
+                ;;
+            *)
+                error $EXIT_UNKNOWN_OPTION "$TEMP"
+                ;;
+        esac
+    done
+
+    if (( $# == 0))
+    then
+        usage
+        return
+    fi
+
+    TEMP="$1"
+    case "$TEMP" in
+        install|export|import|json)
+            shift
+            "_$TEMP" "$@"
+            return
+            ;;
+    esac
+
+    if ! $NO_SUBMODULE_CHECK && [[ -z "$(git submodule status)" ]]
+    then
+        error $EXIT_NO_SUBMODULE
+    fi
+
+    if ! $NATIVE_BUILD
+    then
+        if [[ "$(basename "$CONTAINER_BACKEND")" == "docker" ]] && "$CONTAINER_BACKEND" --help | grep -q podman
+        then
+            echo "'$CONTAINER_BACKEND' backend is selected, but the functionality is actually provided by 'podman' backend. Updating accordingly..."
+            CONTAINER_BACKEND="$(command -v podman)"
+        fi
+
+        local CONTAINER_IMAGE="$($CONTAINER_BACKEND image ls "-qf=reference=${CONTAINER_REGISTRY}bsp:main")"
+        local CONTAINER_EXIT_CODE=0
+
+        if ! $NO_CONTAINER_UPDATE
+        then
+            if [[ -z $CONTAINER_REGISTRY ]]
+            then
+                $CONTAINER_BACKEND build --force-rm -t "${CONTAINER_REGISTRY}bsp:main" "$SCRIPT_DIR/container"
+            else
+                $CONTAINER_BACKEND pull "${CONTAINER_REGISTRY}bsp:main"
+            fi
+        fi
+
+        if [[ $CONTAINER_IMAGE != "$($CONTAINER_BACKEND image ls "-qf=reference=${CONTAINER_REGISTRY}bsp:main")" ]]
+        then
+            $CONTAINER_BACKEND container rm bsp &>/dev/null || true
+            $CONTAINER_BACKEND image rm "${CONTAINER_REGISTRY}bsp:builder" &>/dev/null || true
+        fi
+
+        CONTAINER_BUILDER="$($CONTAINER_BACKEND image ls "-qf=reference=${CONTAINER_REGISTRY}bsp:builder")"
+        if [[ -z $CONTAINER_BUILDER ]]
+        then
+            $CONTAINER_BACKEND tag "${CONTAINER_REGISTRY}bsp:main" "${CONTAINER_REGISTRY}bsp:builder"
+        fi
+
+        CONTAINER_OPTIONS=( "--name" "bsp" )
+        CONTAINER_OPTIONS+=( "--workdir" "$PWD" )
+        CONTAINER_OPTIONS+=( "--mount" "type=bind,source=$PWD,destination=$PWD" )
+        if [[ -t 0 ]]
+        then
+            CONTAINER_OPTIONS+=( "-it" )
+        fi
+        if [[ "$PWD" != "$SCRIPT_DIR" ]]
+        then
+            CONTAINER_OPTIONS+=( "--mount" "type=bind,source=$SCRIPT_DIR,destination=$SCRIPT_DIR" )
+        fi
+        $CONTAINER_BACKEND container kill bsp &>/dev/null || true
+        $CONTAINER_BACKEND container rm bsp &>/dev/null || true
+        if [[ "$(basename "$CONTAINER_BACKEND")" == "podman" ]]
+        then
+            CONTAINER_OPTIONS+=( "--user" "root" )
+            if $CONTAINER_SHELL
+            then
+                if ! $CONTAINER_BACKEND run "${CONTAINER_OPTIONS[@]}" "${CONTAINER_REGISTRY}bsp:builder" bash
+                then
+                    CONTAINER_EXIT_CODE="$($CONTAINER_BACKEND inspect bsp --format='{{.State.ExitCode}}')"
+                fi
+            else
+                if ! $CONTAINER_BACKEND run "${CONTAINER_OPTIONS[@]}" "${CONTAINER_REGISTRY}bsp:builder" bash -c "\"$0\" --native-build ${ARGV[*]}"
+                then
+                    CONTAINER_EXIT_CODE="$($CONTAINER_BACKEND inspect bsp --format='{{.State.ExitCode}}')"
+                fi
+                $CONTAINER_BACKEND container rm bsp
+            fi
+        else
+            local CONTAINER_SUDO="sed -i -E \"s/^(runner):(x?):([0-9]+):([0-9]+):(.*):(.*):(.*)$/\1:\2:$(id -u):$(id -g):\5:\6:\7/\" /etc/passwd && sudo -u runner"
+            if $CONTAINER_SHELL
+            then
+                if ! $CONTAINER_BACKEND run "${CONTAINER_OPTIONS[@]}" "${CONTAINER_REGISTRY}bsp:builder" bash -c "$CONTAINER_SUDO -i"
+                then
+                    CONTAINER_EXIT_CODE="$($CONTAINER_BACKEND inspect bsp --format='{{.State.ExitCode}}')"
+                fi
+            else
+                if ! $CONTAINER_BACKEND run "${CONTAINER_OPTIONS[@]}" "${CONTAINER_REGISTRY}bsp:builder" bash -c "$CONTAINER_SUDO \"$0\" --native-build ${ARGV[*]}"
+                then
+                    CONTAINER_EXIT_CODE="$($CONTAINER_BACKEND inspect bsp --format='{{.State.ExitCode}}')"
+                fi
+                $CONTAINER_BACKEND container rm bsp
+            fi
+        fi
+        return $CONTAINER_EXIT_CODE
+    fi
+
+    TEMP="$1"
+    shift
+    case "$TEMP" in
+        linux)
+            load_edition linux "$1"
+            if $DTB_ONLY
+            then
+                BSP_MAKE_TARGETS=("dtbs")
+                build
+            else
+                build
+                bsp_makedeb
+            fi
+            ;;
+        u-boot)
+            load_edition u-boot "$1"
+
+            if (( $# > 1 )) && [[ -n "$2" ]]
+            then
+                if ! in_array "$2" "${SUPPORTED_BOARDS[@]}"
+                then
+                    error $EXIT_UNKNOWN_OPTION "$2"
+                fi
+                local products=("$2")
+            else
+                local products=("${SUPPORTED_BOARDS[@]}")
+            fi
+
+            rm -rf "$SCRIPT_DIR/.root"
+
+            for BOARD in "${products[@]}"
+            do
+                load_edition u-boot "$1"
+
+                if [[ $(type -t bsp_profile_base) == function ]]
+                then
+                    bsp_profile_base
+                fi
+                if [[ $(type -t bsp_$BOARD) == function ]]
+                then
+                    bsp_$BOARD
+                fi
+                if [[ $(type -t bsp_profile_override) == function ]]
+                then
+                    bsp_profile_override
+                fi
+
+                echo "Start building for $BOARD..."
+                build
+                bsp_preparedeb
+                if $LONG_VERSION
+                then
+                    SOURCE_GITREV_OVERRIDE="${SOURCE_GITREV_OVERRIDE:-$SOURCE_GITREV}"
+                fi
+            done
+
+            SUPPORTED_BOARDS=("${products[@]}")
+            if $LONG_VERSION
+            then
+                SOURCE_GITREV="$SOURCE_GITREV_OVERRIDE"
+            fi
+            bsp_makedeb
+            ;;
+        *)
+            usage
+            return 1
+            ;;
+    esac
+}
+
+main "$@"

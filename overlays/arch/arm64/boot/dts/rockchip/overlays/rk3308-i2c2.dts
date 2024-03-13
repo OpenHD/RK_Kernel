@@ -1,0 +1,30 @@
+/dts-v1/;
+/plugin/;
+
+/ {
+	metadata {
+		title = "Enable I2C2";
+		compatible = "radxa,rock-s0";
+		category = "misc";
+		exclusive = "GPIO2_A2", "GPIO2_A3", "pwm2";
+		description = "Enable I2C2.\nOn ROCK S0 this is SDA pin 37 & SCL pin 13.";
+    };
+
+	fragment@0 {
+		target = <&i2c2>;
+
+		__overlay__ {
+			status = "okay";
+			pinctrl-names = "default";
+			pinctrl-0 = <&i2c2_xfer>;
+		};
+	};
+
+	fragment@1 {
+		target = <&spi0>;
+
+		__overlay__ {
+			status = "disabled";
+		};
+	};
+};

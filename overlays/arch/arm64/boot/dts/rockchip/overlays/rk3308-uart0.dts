@@ -1,0 +1,30 @@
+/dts-v1/;
+/plugin/;
+
+/ {
+	metadata {
+		title = "Enable UART0";
+		compatible = "radxa,rockpis", "radxa,rock-s0";
+		category = "misc";
+		exclusive = "GPIO2_A0", "GPIO2_A1", "spi0";
+		description = "Enable UART0.\nOn ROCK PI S this is TX pin 8 & RX pin 10.\nOn ROCK S0 this is TX pin 8 & RX pin 10.";
+	};
+
+	fragment@0 {
+		target = <&uart0>;
+
+		__overlay__ {
+			status = "okay";
+			pinctrl-names = "default";
+			pinctrl-0 = <&uart0_xfer>;
+		};
+	};
+
+	fragment@1 {
+		target = <&spi0>;
+
+		__overlay__ {
+			status = "disabled";
+		};
+	};
+};

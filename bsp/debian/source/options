@@ -1,0 +1,11 @@
+tar-ignore = .git
+tar-ignore = .output
+tar-ignore = .root
+tar-ignore = .src
+tar-ignore = .vscode*
+tar-ignore = *.deb
+tar-ignore = *.tar.xz
+tar-ignore = .profile
+tar-ignore = .bsp-config
+tar-ignore = SOURCE
+tar-ignore = book
