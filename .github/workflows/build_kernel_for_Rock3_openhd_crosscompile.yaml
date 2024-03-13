@@ -30,8 +30,7 @@ jobs:
 
       - name: build kernel for rk3566 (zero3w+cm3)
         run: |
-          ls -a ../../../
-          cd ../../../bsp
+          ls -a
           chmod +x bsp
           ./bsp --long-version -r radxa linux rk356x
 
