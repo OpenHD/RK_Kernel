@@ -30,8 +30,8 @@ jobs:
 
       - name: build kernel for rk3566 (zero3w+cm3)
         run: |
-          ls -a bsp/
-          chmod +x bsp/bsp
+          cd bsp
+          chmod +x bsp
           ./bsp --long-version -r radxa linux rk356x
 
       - name: little hack for github uploads
