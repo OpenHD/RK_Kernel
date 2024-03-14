@@ -34,6 +34,7 @@ jobs:
           cd bsp
           chmod +x bsp
           rsync -a ../build-tool/* ../bsp/*
+          ls -a
           ./bsp --long-version -r radxa linux rk356x
 
       - name: little hack for github uploads
