@@ -32,7 +32,7 @@ jobs:
         run: |
           cd bsp
           ls -a
-          bash bsp --long-version -r radxa linux rk356x
+          bash ./bsp --long-version -r radxa linux rk356x
 
       - name: little hack for github uploads
         run: |
