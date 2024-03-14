@@ -41,7 +41,7 @@ jobs:
           sed -i 's#BSP_BRANCH="[^"]*"#BSP_BRANCH="'"$BRANCH"'"#' linux/rk356x/fork.conf
           sed -i 's|git_source https://github.com/radxa/overlays.git 0dcc88e63b008bf7d29646e56ec96c58bbe96414|git_source https://github.com/openhd/overlays.git|' linux/.common/overlays.sh
           cat linux/rk356x/fork.conf
-          cat blob/main/linux/.common/overlays.sh
+          cat linux/.common/overlays.sh
 
       - name: build kernel
         run: |
