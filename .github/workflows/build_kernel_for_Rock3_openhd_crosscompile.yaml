@@ -43,7 +43,7 @@ jobs:
           git_source https://github.com/openhd/overlays.git main
           cp -r $SCRIPT_DIR/.src/overlays/arch $TARGET_DIR
           }' > linux/.common/overlays.sh
-          sed -i '237s/.*/git clone http:\/\/github.com\/openhd\/overlays "$SCRIPT_DIR" "$TARGET_DIR"/' lib/utils.sh
+          sed -i '237s/.*/            git clone http:\/\/github.com\/openhd\/overlays "$SCRIPT_DIR" "$TARGET_DIR"/' lib/utils.sh
           cat lib/utils.sh
           exit 1
 
