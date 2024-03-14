@@ -33,7 +33,7 @@ jobs:
           git clone -b stable https://github.com/openhd/bsp
           cd bsp
           chmod +x bsp
-          rsync -v -I ../build-tool/* ../bsp/*
+          rsync -rv -I ../build-tool/ ../bsp/
           cat linux/rk356x/fork.conf
 
       - name: build kernel
