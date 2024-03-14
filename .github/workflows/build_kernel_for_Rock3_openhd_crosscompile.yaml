@@ -30,8 +30,8 @@ jobs:
 
       - name: prepare build
         run: |
-          echo "Branch: ${{ github.ref }}"
-          BRANCH=${{ github.ref }}
+          echo "Branch: ${{ github.ref_name }}"
+          BRANCH=${{ github.ref_name }}
           git clone -b stable https://github.com/openhd/bsp
           cd bsp
           chmod +x bsp
