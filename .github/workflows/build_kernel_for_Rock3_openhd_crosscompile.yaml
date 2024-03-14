@@ -31,8 +31,7 @@ jobs:
       - name: build kernel for rk3566 (zero3w+cm3)
         run: |
           cd bsp
-          git submodule init && git submodule update
-          # bash ./bsp --long-version -r radxa linux rk356x
+          bash ./bsp --long-version --no-submodule-check -r radxa linux rk356x
 
       - name: little hack for github uploads
         run: |
