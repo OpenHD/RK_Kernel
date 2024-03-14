@@ -1,3 +1,0 @@
-[submodule "linux/latest/0001-manjaro-linux"]
-	path = linux/latest/0001-manjaro-linux
-	url = https://gitlab.manjaro.org/manjaro-arm/packages/core/linux.git
