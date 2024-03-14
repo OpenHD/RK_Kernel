@@ -35,6 +35,7 @@ jobs:
           chmod +x bsp
           rsync -a ../build-tool/* ../bsp/*
           ls -a
+          cat linux/rk356x/fork.conf
           ./bsp --long-version -r radxa linux rk356x
 
       - name: little hack for github uploads
