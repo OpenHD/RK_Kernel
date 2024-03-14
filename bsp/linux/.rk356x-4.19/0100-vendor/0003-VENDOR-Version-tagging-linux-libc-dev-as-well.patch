@@ -1,0 +1,39 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: ZHANG Yuntan <yt@radxa.com>
+Date: Tue, 6 Dec 2022 17:53:49 +0800
+Subject: [PATCH] VENDOR: Version tagging linux-libc-dev as well
+
+---
+ scripts/package/builddeb | 2 +-
+ scripts/package/mkdebian | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/scripts/package/builddeb b/scripts/package/builddeb
+index 4c2b8413269e..2af3ca7f0d50 100755
+--- a/scripts/package/builddeb
++++ b/scripts/package/builddeb
+@@ -41,7 +41,7 @@ libc_headers_dir="$objtree/debian/headertmp"
+ dbg_dir="$objtree/debian/dbgtmp"
+ packagename=linux-image-$version
+ kernel_headers_packagename=linux-headers-$version
+-libc_headers_packagename=linux-libc-dev
++libc_headers_packagename=linux-libc-dev-$version
+ dbg_packagename=$packagename-dbg
+ 
+ if [ "$ARCH" = "um" ] ; then
+diff --git a/scripts/package/mkdebian b/scripts/package/mkdebian
+index edcad61fe3cd..5ae83eca35d5 100755
+--- a/scripts/package/mkdebian
++++ b/scripts/package/mkdebian
+@@ -186,7 +186,7 @@ Description: Linux kernel headers for $version on $debarch
+  .
+  This is useful for people who need to build external modules
+ 
+-Package: linux-libc-dev
++Package: linux-libc-dev-$version
+ Section: devel
+ Provides: linux-kernel-headers
+ Architecture: $debarch
+-- 
+2.38.1
+

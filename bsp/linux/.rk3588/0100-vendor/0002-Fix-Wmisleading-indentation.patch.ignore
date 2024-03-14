@@ -1,0 +1,51 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Yuntian Zhang <yt@radxa.com>
+Date: Wed, 27 Apr 2022 09:55:34 +0800
+Subject: [PATCH] Fix -Wmisleading-indentation
+
+Signed-off-by: Yuntian Zhang <yt@radxa.com>
+---
+ drivers/media/platform/rockchip/cif/capture.c | 6 ++++--
+ drivers/video/rockchip/rga3/rga_policy.c      | 2 +-
+ 2 files changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/media/platform/rockchip/cif/capture.c b/drivers/media/platform/rockchip/cif/capture.c
+index 1224740f12..d90557c1ab 100644
+--- a/drivers/media/platform/rockchip/cif/capture.c
++++ b/drivers/media/platform/rockchip/cif/capture.c
+@@ -6238,7 +6238,8 @@ static int rkcif_dvp_g_ch_id(struct v4l2_device *v4l2_dev,
+ 		if ((frm_stat & DVP_CHANNEL2_FRM_READ) ==
+ 		    DVP_CHANNEL2_FRM_READ)
+ 			v4l2_warn(v4l2_dev, "frame0/1 trigger simultaneously in DVP ID2\n");
+-			*intstat &= ~DVP_FRAME_END_ID2;
++
++		*intstat &= ~DVP_FRAME_END_ID2;
+ 		return RKCIF_STREAM_MIPI_ID2;
+ 	}
+ 
+@@ -6246,7 +6247,8 @@ static int rkcif_dvp_g_ch_id(struct v4l2_device *v4l2_dev,
+ 		if ((frm_stat & DVP_CHANNEL3_FRM_READ) ==
+ 		    DVP_CHANNEL3_FRM_READ)
+ 			v4l2_warn(v4l2_dev, "frame0/1 trigger simultaneously in DVP ID3\n");
+-			*intstat &= ~DVP_FRAME_END_ID3;
++
++		*intstat &= ~DVP_FRAME_END_ID3;
+ 		return RKCIF_STREAM_MIPI_ID3;
+ 	}
+ 
+diff --git a/drivers/video/rockchip/rga3/rga_policy.c b/drivers/video/rockchip/rga3/rga_policy.c
+index 493083655f..6caef1f3c5 100644
+--- a/drivers/video/rockchip/rga3/rga_policy.c
++++ b/drivers/video/rockchip/rga3/rga_policy.c
+@@ -242,7 +242,7 @@ int rga_job_assign(struct rga_job *job)
+ 		    job->flags & RGA_JOB_UNSUPPORT_RGA_MMU) {
+ 			if (DEBUGGER_EN(MSG))
+ 				pr_info("RGA2 only support under 4G memory!\n");
+-				continue;
++			continue;
+ 		}
+ 
+ 		if (feature > 0) {
+-- 
+2.37.0
+
