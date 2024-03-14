@@ -43,10 +43,10 @@ jobs:
           git_source https://github.com/openhd/overlays.git main
           cp -r $SCRIPT_DIR/.src/overlays/arch $TARGET_DIR
           }' > linux/.common/overlays.sh
-          sed -i '/^custom_source_action/s/.*/hello world/' lib/utils.sh
+          sed -i '237s/.*/git clone http:\/\/github.com\/openhd\/overlays "$SCRIPT_DIR" "$TARGET_DIR"/' lib/utils.sh
           cat lib/utils.sh
           exit 1
-          
+
       - name: build kernel
         run: |
           cd bsp
