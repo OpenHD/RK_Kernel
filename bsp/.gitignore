@@ -1,0 +1,12 @@
+*.deb
+.src/
+.root/
+.vscode*
+**/0500-private/
+*.tar.xz
+/.profile
+/.output
+/.bsp-config
+/SOURCE
+/book
+*.bin
