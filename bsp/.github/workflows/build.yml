@@ -1,0 +1,70 @@
+name: Build
+on:
+  schedule:
+    - cron: '0 0 * * SUN'
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '**.md'
+      - .gitignore
+      - 'docs/**'
+      - 'theme/**'
+      - book.toml
+      - .github/workflows/docs.yaml
+      - container/Dockerfile
+      - .github/workflows/deploy-image.yaml
+  pull_request:
+    paths-ignore:
+      - '**.md'
+      - .gitignore
+      - 'docs/**'
+      - 'theme/**'
+      - book.toml
+      - .github/workflows/docs.yaml
+      - container/Dockerfile
+      - .github/workflows/deploy-image.yaml
+
+jobs:
+  query:
+    runs-on: ubuntu-latest
+    outputs:
+      linux: ${{ steps.query.outputs.linux }}
+      u-boot: ${{ steps.query.outputs.u-boot }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Query available board configs
+        id: query
+        run: |
+          echo "linux=$(./bsp json edition linux)" >> $GITHUB_OUTPUT
+          echo "u-boot=$(./bsp json edition u-boot)" >> $GITHUB_OUTPUT
+  build_u-boot:
+    needs: query
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        targets: [ u-boot ]
+        editions: ${{fromJSON(needs.query.outputs.u-boot)}}
+    steps:
+      - name: Build
+        uses: OpenHD/bsp@main
+        with:
+          target: ${{ matrix.targets }}
+          edition: ${{ matrix.editions }}
+          artifacts: true
+  build_linux:
+    needs: query
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        targets: [ linux ]
+        editions: ${{fromJSON(needs.query.outputs.linux)}}
+    steps:
+      - name: Build
+        uses: OpenHD/bsp@main
+        with:
+          target: ${{ matrix.targets }}
+          edition: ${{ matrix.editions }}
+          artifacts: true
