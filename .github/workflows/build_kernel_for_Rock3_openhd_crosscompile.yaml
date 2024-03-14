@@ -32,6 +32,10 @@ jobs:
         run: |
           cd bsp
           ls -a
+          cd /linux/latest/0001-manjaro-linux
+          ls -a
+          git submodule init && git submodule update
+          cd ../../../
           bash ./bsp --long-version -r radxa linux rk356x
 
       - name: little hack for github uploads
