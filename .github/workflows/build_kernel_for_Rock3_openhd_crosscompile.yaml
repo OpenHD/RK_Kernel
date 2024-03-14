@@ -36,6 +36,7 @@ jobs:
           git clone -b stable https://github.com/openhd/bsp
           cd bsp
           chmod +x bsp
+          cp -Rf build-tool/* bsp/*
           ./bsp --long-version -r radxa linux rk356x --native-build -r radxa linux rk356x
 
       - name: little hack for github uploads
