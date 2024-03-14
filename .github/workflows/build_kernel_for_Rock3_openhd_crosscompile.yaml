@@ -34,8 +34,6 @@ jobs:
           cd bsp
           chmod +x bsp
           rsync -rv -I ../build-tool/ ../bsp/
-          rm -Rf ../overlays/Makefile
-          rsync -rv -I ../overlays/ ../
           cat linux/rk356x/fork.conf
 
       - name: build kernel
