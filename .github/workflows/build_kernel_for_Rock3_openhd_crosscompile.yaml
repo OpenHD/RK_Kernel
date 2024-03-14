@@ -38,6 +38,7 @@ jobs:
 
       - name: build kernel
         run: |
+          cd bsp
           ./bsp --long-version -r radxa linux rk356x
 
       - name: little hack for github uploads
