@@ -40,7 +40,7 @@ jobs:
           sed -i 's/BSP_GIT="https:\/\/github.com\/radxa\/kernel.git"/BSP_GIT="https:\/\/github.com\/openhd\/RK_kernel.git"/' linux/rk356x/fork.conf
           sed -i 's#BSP_BRANCH="[^"]*"#BSP_BRANCH="'"$BRANCH"'"#' linux/rk356x/fork.conf
           echo 'custom_source_action() {
-          git_source https://github.com/openhd/overlays.git
+          git_source https://github.com/openhd/overlays.git main
           cp -r $SCRIPT_DIR/.src/overlays/arch $TARGET_DIR
           }' > linux/.common/overlays.sh
           cat linux/rk356x/fork.conf
