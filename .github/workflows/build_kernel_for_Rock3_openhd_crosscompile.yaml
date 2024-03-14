@@ -45,7 +45,6 @@ jobs:
           }' > linux/.common/overlays.sh
           sed -i '237s/.*/            git clone http:\/\/github.com\/openhd\/overlays "$SCRIPT_DIR" "$TARGET_DIR"/' lib/utils.sh
           cat lib/utils.sh
-          exit 1
 
       - name: build kernel
         run: |
