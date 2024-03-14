@@ -44,6 +44,7 @@ jobs:
           cp -r $SCRIPT_DIR/.src/overlays/arch $TARGET_DIR
           }' > linux/.common/overlays.sh
           sed -i 's/^custom_source_action "$SCRIPT_DIR" "$TARGET_DIR"$/git clone https:\/\/github.com\/openhd\/overlays "$SCRIPT_DIR" "$TARGET_DIR"/' lib/utils.sh
+          cat lib/utils.sh
       - name: build kernel
         run: |
           cd bsp
