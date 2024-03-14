@@ -28,7 +28,7 @@ jobs:
           rm -Rf rtl8812au
           rm -Rf rtl8812bu
 
-      - name: build kernel for rk3566 (zero3w+cm3)
+      - name: prepare build
         run: |
           git clone -b stable https://github.com/openhd/bsp
           cd bsp
@@ -36,6 +36,9 @@ jobs:
           rsync -a ../build-tool/* ../bsp/*
           ls -a
           cat linux/rk356x/fork.conf
+
+      - name: build kernel
+        run: |
           ./bsp --long-version -r radxa linux rk356x
 
       - name: little hack for github uploads
