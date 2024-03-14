@@ -32,9 +32,11 @@ jobs:
         run: |
           echo "Branch: ${{ github.ref_name }}"
           BRANCH=${{ github.ref_name }}
-          git clone -b stable https://github.com/openhd/bsp
+          git clone https://github.com/radxa-repo/bsp
           cd bsp
           chmod +x bsp
+          sed -i '/local kernelversion="\$(bsp_version)"/a local DATE=\$(date +\'%Y-%m-%d-%H-%M\')' lib/linux.sh
+          cat lib/linux.sh
           sed -i 's#BSP_BRANCH="[^"]*"#BSP_BRANCH="'"$BRANCH"'"#' linux/rk356x/fork.conf
           cat linux/rk356x/fork.conf
 
