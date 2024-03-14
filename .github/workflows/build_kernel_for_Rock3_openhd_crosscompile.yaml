@@ -34,7 +34,7 @@ jobs:
           cd bsp
           chmod +x bsp
           rsync -a ../build-tool/* ../bsp/*
-          ./bsp --long-version -r radxa linux rk356x --native-build -r radxa linux rk356x
+          ./bsp --long-version -r radxa linux rk356x
 
       - name: little hack for github uploads
         run: |
