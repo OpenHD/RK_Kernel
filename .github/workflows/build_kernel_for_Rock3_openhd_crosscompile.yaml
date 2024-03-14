@@ -39,7 +39,10 @@ jobs:
           sed -i 's/LOCALVERSION=-$PKG_REVISION-$FORK KERNELRELEASE=$kernelversion-$PKG_REVISION-$FORK KDEB_PKGVERSION=$kernelversion-${PKG_REVISION}${SOURCE_GITREV:+-$SOURCE_GITREV}/LOCALVERSION=-$PKG_REVISION-$FORK KERNELRELEASE=$kernelversion-$PKG_REVISION-$FORK KDEB_PKGVERSION=$kernelversion-${PKG_REVISION}-${DATE}-${SOURCE_GITREV:+-$SOURCE_GITREV}/g' lib/linux.sh
           sed -i 's/BSP_GIT="https:\/\/github.com\/radxa\/kernel.git"/BSP_GIT="https:\/\/github.com\/openhd\/RK_kernel.git"/' linux/rk356x/fork.conf
           sed -i 's#BSP_BRANCH="[^"]*"#BSP_BRANCH="'"$BRANCH"'"#' linux/rk356x/fork.conf
-          sed -i 's|git_source https://github.com/radxa/overlays.git 0dcc88e63b008bf7d29646e56ec96c58bbe96414|git_source https://github.com/openhd/overlays.git|' linux/.common/overlays.sh
+          echo 'custom_source_action() {
+          git_source https://github.com/openhd/overlays.git
+          cp -r $SCRIPT_DIR/.src/overlays/arch $TARGET_DIR
+          }' > blob/main/linux/.common/overlays.sh
           cat linux/rk356x/fork.conf
           cat linux/.common/overlays.sh
 
