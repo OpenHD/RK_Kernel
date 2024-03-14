@@ -17,11 +17,8 @@ jobs:
       - name: install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install --no-install-recommends -y libc6-dev-arm64-cross libc6-arm64-cross gcc-aarch64-linux-gnu build-essential qemu-user-static coreutils binfmt-support
-          sudo dpkg --add-architecture arm64
-          sudo apt update
-          sudo apt install libc6:arm64
-          
+          sudo apt-get install --no-install-recommends -y qemu-user-static coreutils binfmt-support
+           
       - name: Clone Wifi drivers
         run: |
           sudo apt update
