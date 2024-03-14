@@ -44,6 +44,7 @@ jobs:
           git_source https://github.com/openhd/overlays.git '"$COMMITHASH"'
           cp -r $SCRIPT_DIR/.src/overlays/arch $TARGET_DIR
           }' > linux/.common/overlays.sh
+          cat linux/.common/overlays.sh
 
       - name: build kernel
         run: |
