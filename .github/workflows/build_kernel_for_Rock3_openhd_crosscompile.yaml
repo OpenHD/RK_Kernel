@@ -32,7 +32,7 @@ jobs:
         run: |
           cd bsp
           chmod +x bsp
-          ./bsp --long-version --no-submodule-check -r radxa linux rk356x
+          ./bsp --long-version --no-submodule-check --native-build -r radxa linux rk356x
 
       - name: little hack for github uploads
         run: |
