@@ -30,10 +30,12 @@ jobs:
 
       - name: prepare build
         run: |
+          echo "Branch: ${{ github.ref }}"
+          BRANCH=${{ github.ref }}
           git clone -b stable https://github.com/openhd/bsp
           cd bsp
           chmod +x bsp
-          rsync -rv -I ../build-tool/ ../bsp/
+          sed -i 's/BSP_BRANCH="[^"]*"/BSP_BRANCH="'"$BRANCH"'"/' linux/rk356x/fork.conf
           cat linux/rk356x/fork.conf
 
       - name: build kernel
