@@ -17,12 +17,12 @@ jobs:
       - name: install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install --no-install-recommends -y build-essential qemu-user-static coreutils binfmt-support
+          sudo apt-get install --no-install-recommends -y gcc-aarch64-linux-gnu build-essential qemu-user-static coreutils binfmt-support
 
       - name: Clone Wifi drivers
         run: |
           sudo apt update
-          sudo apt install -y git
+          sudo apt install -y git 
           mkdir modules
           cd drivers/net/wireless/
           rm -Rf rtl8812au
